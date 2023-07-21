@@ -1,8 +1,14 @@
-import * as ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
+import { MantineProvider } from '@mantine/core';
 import './app.css';
+import CreatePage from './pages/create/create';
 
-function render() {
-  ReactDOM.render(<h2>Hello from React!</h2>, document.body);
-}
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 
-render();
+root.render(
+<MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
+  <CreatePage />
+</MantineProvider>
+);
