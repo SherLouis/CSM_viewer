@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-contextBridge.exposeInMainWorld('api', {
-  ping: () => ipcRenderer.invoke('ping')
-  // we can also expose variables, not just functions
+contextBridge.exposeInMainWorld('electronAPI', {
+  getSystemInfo: (arg1: string) => ipcRenderer.invoke('system:getInfo', {params: {param1: arg1}})
 })
 
+// TODO: use typescript to make api respect a type and make validations

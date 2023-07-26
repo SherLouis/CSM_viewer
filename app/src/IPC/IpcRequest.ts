@@ -1,5 +1,3 @@
 export interface IpcRequest {
-    responseChannel?: string;
-
-    params?: string[];
+    params?: object;
 }

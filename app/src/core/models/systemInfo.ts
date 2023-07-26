@@ -1,4 +1,4 @@
-export type systemInfo = {
+export type SystemInfo = {
     kernel: string;
     otherNonUsefulInfo: string;
 }

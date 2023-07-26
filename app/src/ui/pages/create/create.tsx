@@ -1,11 +1,7 @@
 import { Button } from '@mantine/core';
-import { IpcService } from '../../../app/IpcService';
-import { systemInfoDto } from '../../../IPC/dtos/systemInfoDto';
-
-const ipc = new IpcService();
 
 const buttonClicked = async () => {
-    const response = await ipc.send<systemInfoDto>('system-info');
+    const response = await window.electronAPI.getSystemInfo("test")
     console.log(response)
 }
 
