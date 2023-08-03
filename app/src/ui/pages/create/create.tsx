@@ -1,5 +1,5 @@
-import { AppShell, Button, Header, Navbar } from '@mantine/core';
-import AppHeader from '../../components/AppHeader/AppHeader'
+import { Accordion, Button, Title} from '@mantine/core';
+import BasePage from '../../components/BasePage/basePage'
 
 
 const buttonClicked = async () => {
@@ -8,20 +8,19 @@ const buttonClicked = async () => {
 }
 
 export default function CreatePage() {
-    return (
-        <AppShell
-          padding="md"
-          //navbar={<Navbar width={{ base: "20%" }} height={500} p="xs">{/* Navbar content */}</Navbar>}
-          header={<AppHeader/>}
-          styles={(theme) => ({
-            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-          })}
-        >
-            <Button onClick={buttonClicked}>Click me!</Button>
-          {/* Your application here */}
-        </AppShell>
-      );
+  return (
+    <BasePage title='Insert new data'>
+      <Accordion defaultValue='reference'>
+        <Accordion.Item value='reference'>
+          <Accordion.Control>{<Title order={2}>Reference</Title>}</Accordion.Control>
+          <Accordion.Panel>{<Button onClick={buttonClicked}>Click me!</Button>}</Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item value='test'>
+          <Accordion.Control>{<Title order={2}>Test</Title>}</Accordion.Control>
+          <Accordion.Panel>{<Button onClick={buttonClicked}>Click me!</Button>}</Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </BasePage>
+    );
 }
-
-
-
