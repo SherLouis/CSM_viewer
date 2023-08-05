@@ -25,5 +25,4 @@
  *  });
  * ```
  */
-
-import './ui/components/App/app';
+import './ui/entry/App'

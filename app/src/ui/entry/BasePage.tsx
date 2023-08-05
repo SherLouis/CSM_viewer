@@ -1,5 +1,5 @@
 import { AppShell, Button, Header, Navbar } from '@mantine/core';
-import AppHeader from '../../components/AppHeader/AppHeader'
+import AppHeader from '../components/AppHeader/AppHeader'
 import { PropsWithChildren } from 'react'
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {

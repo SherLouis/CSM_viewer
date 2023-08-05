@@ -1,5 +1,5 @@
 import { Accordion, Button, Title} from '@mantine/core';
-import BasePage from '../../components/BasePage/basePage'
+import BasePage from '../../entry/BasePage'
 
 
 const buttonClicked = async () => {
