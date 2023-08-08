@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import BasePage from './BasePage';
 import { ArticlesPage } from '../pages/Edit/ArticlesPage/ArticlesPage';
-import { ArticleResultsPage } from '../pages/Edit/ArticleResultsPage/ArticleResultsPage';
+import { ArticleDetailsPage } from '../pages/Edit/ArticleDetailsPage/ArticleDetailsPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,7 +17,7 @@ root.render(
 );
 
 function App() {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
@@ -28,7 +28,7 @@ function App() {
           <Routes>
             <Route path='*' element={<ArticlesPage/>} /> {/* This is the default Route */}
             <Route path='/edit/sources' element={<ArticlesPage/>} />
-            <Route path='/edit/sources/:articleId/results' element={<ArticleResultsPage/>}/>
+            <Route path='/edit/sources/:articleId' element={<ArticleDetailsPage/>}/>
           </Routes>
         </BasePage>
       </MantineProvider>

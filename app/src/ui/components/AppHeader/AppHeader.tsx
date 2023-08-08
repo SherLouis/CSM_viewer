@@ -4,7 +4,8 @@ import { IconSun, IconMoonStars } from "@tabler/icons-react";
 export default function AppHeader(props: HeaderProps) {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
-  
+
+    // TODO: Add menu https://mantine.dev/core/menu/
     return (
       <Header height={60} p="xs">
         <Group position={"apart"}>
