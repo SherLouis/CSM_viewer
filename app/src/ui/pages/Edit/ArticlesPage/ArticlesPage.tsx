@@ -16,7 +16,7 @@ export function ArticlesPage() {
   // Hooks
   let navigate = useNavigate();
   const [createOpened, createHandlers] = useDisclosure(false);
-  
+
   // Functions
   const viewArticle = (articleId: string) => {
     navigate(`/edit/sources/${articleId}`);
@@ -32,6 +32,7 @@ export function ArticlesPage() {
 
   const createNewArticle = (values: CreateFormValues) => {
     // TODO
+    console.log(values);
   }
 
   return (
@@ -51,8 +52,8 @@ export function ArticlesPage() {
         />
       </Stack>
 
-      <Modal opened={createOpened} onClose={createHandlers.close} title="New Article" centered>
-        <CreateArticleForm onSubmit={(values) => createNewArticle(values)}/>
+      <Modal opened={createOpened} onClose={createHandlers.close} title="New Article" centered size="70%">
+        <CreateArticleForm onSubmit={(values) => createNewArticle(values)} />
       </Modal>
 
     </Box>

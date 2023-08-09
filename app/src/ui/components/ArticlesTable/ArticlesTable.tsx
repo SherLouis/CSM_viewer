@@ -1,4 +1,4 @@
-import {MouseEvent} from 'react';
+import { MouseEvent } from 'react';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
@@ -30,6 +30,7 @@ const ArticlesTable = (props: ArticlesTableProps) => {
       withColumnBorders
       striped
       highlightOnHover
+      idAccessor={"doi"}
       records={props.data}
       columns={[
         {
@@ -48,7 +49,7 @@ const ArticlesTable = (props: ArticlesTableProps) => {
           width: "10%",
           render: (article) => (
             <Group spacing={4} position="right" noWrap>
-              <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e ,article.doi)}>
+              <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, article.doi)}>
                 <IconEye size={16} />
               </ActionIcon>
               <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, article.doi)}>
@@ -61,8 +62,7 @@ const ArticlesTable = (props: ArticlesTableProps) => {
           ),
         }
       ]}
-      onRowClick={(article) => { props.onRowClick(article.doi) }
-      }
+      onRowClick={(article) => { props.onRowClick(article.doi) }}
     />
   );
 }
