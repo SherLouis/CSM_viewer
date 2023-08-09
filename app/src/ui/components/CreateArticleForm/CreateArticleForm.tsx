@@ -2,18 +2,18 @@ import { Box, TextInput, Checkbox, Group, Button, Accordion, NativeSelect, Numbe
 import { useForm } from '@mantine/form';
 
 export const CreateArticleForm = ({ onSubmit }: CreateArticleFormProps) => {
-  // TODO: should be able to have null values
+  // TODO: Ajouter validations
   const form = useForm<CreateFormValues>({
     initialValues: {
       reference: { doi: '', title: '' },
       stimulation_params: {
-        type: '',
+        type: 'grid',
         electrode_separation: 0,
-        polatiry: '',
+        polatiry: 'unknown',
         current_mA: 0,
-        pulse_width_ms: 0,
-        pulse_freq_Hz: 0,
-        train_duration_s: 0
+        pulse_width_ms: null,
+        pulse_freq_Hz: null,
+        train_duration_s: null
       }
     } as CreateFormValues,
   });
@@ -75,6 +75,7 @@ export const CreateArticleForm = ({ onSubmit }: CreateArticleFormProps) => {
                 {...form.getInputProps('stimulation_params.polarity')}
               />
               <NumberInput
+                required
                 label="Current"
                 description="In mA"
                 hideControls
@@ -113,9 +114,9 @@ export interface CreateFormValues {
     title?: string
   }
   stimulation_params: {
-    type: StimulationType | ""
+    type: StimulationType | ''
     electrode_separation: number
-    polatiry?: StimulationPolarity | ""
+    polatiry?: StimulationPolarity
     current_mA: number
     pulse_width_ms?: number
     pulse_freq_Hz?: number
