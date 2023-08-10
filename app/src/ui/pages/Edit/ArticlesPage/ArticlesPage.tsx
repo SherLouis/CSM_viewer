@@ -5,15 +5,13 @@ import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { CreateArticleForm, CreateFormValues } from "../../../components/CreateArticleForm/CreateArticleForm";
 import { getAllArticlesSummary } from "../../../services/ArticleUIService";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 
 export function ArticlesPage() {
-  // TODO: get the actual articles from main using ui service and IPC, etc. 
-  /**let articles: ArticleSummaryDdo[] = [
-    { doi: "1234", title: "Test", nb_results: 1 },
-    { doi: "5678", title: "Test", nb_results: 1 }
-  ];*/
+  // [x]: get the actual articles from main using ui service and IPC, etc. 
+
+  // Hooks
   const [articles, setArticles] = useState<ArticleSummaryDdo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,7 +25,15 @@ export function ArticlesPage() {
       });
   }, []);
 
-  // Hooks
+  const refreshArticles = useCallback(() => {
+    setIsLoading(true);
+    getAllArticlesSummary()
+      .then((res) => {
+        setArticles(res);
+        setIsLoading(false)
+      });
+  }, [articles]);
+
   let navigate = useNavigate();
   const [createOpened, createHandlers] = useDisclosure(false);
 
@@ -57,7 +63,7 @@ export function ArticlesPage() {
 
         <Group>
           <Button leftIcon={<IconPlus />} variant="outline" onClick={() => createHandlers.open()}>New</Button>
-          <Button leftIcon={<IconRefresh />} variant="subtle" onClick={() => createHandlers.open()}>New</Button>
+          <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshArticles}>Refresh</Button>
         </Group>
 
         <ArticlesTable
