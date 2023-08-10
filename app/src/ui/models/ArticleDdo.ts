@@ -1,11 +1,12 @@
-type Article = {
+// ddo = data display object
+type ArticleDdo = {
     doi: string,
     title: string,
     methodology: {
         stimulation_parameters: {
-            type: StimulationType,
+            type: StimulationTypeDdo,
             electrode_separation: number,
-            polatiry: StimulationPolarity,
+            polatiry: StimulationPolarityDdo,
             current_mA: number,
             pulse_width_ms: number,
             pulse_freq_Hz: number,
@@ -14,10 +15,10 @@ type Article = {
     }
 }
 
-type StimulationType = "grid" | "depth" | "HFTS";
-type StimulationPolarity = "unipolar" | "bipolar" | "unknown"
+type StimulationTypeDdo = "grid" | "depth" | "HFTS";
+type StimulationPolarityDdo = "unipolar" | "bipolar" | "unknown"
 
-type ArticleSummary = {
+type ArticleSummaryDdo = {
     doi: string,
     title: string,
     nb_results: number

@@ -68,7 +68,7 @@ const ArticlesTable = (props: ArticlesTableProps) => {
 }
 
 type ArticlesTableProps = {
-  data: ArticleSummary[],
+  data: ArticleSummaryDdo[],
   onRowClick: (articleId: string) => void,
   onEdit: (articleId: string) => void,
   onDelete: (articleId: string) => void

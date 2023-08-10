@@ -1,4 +1,4 @@
-import { Box, TextInput, Checkbox, Group, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
+import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
 import { useForm } from '@mantine/form';
 
 export const CreateArticleForm = ({ onSubmit }: CreateArticleFormProps) => {
@@ -114,9 +114,9 @@ export interface CreateFormValues {
     title?: string
   }
   stimulation_params: {
-    type: StimulationType | ''
+    type: StimulationTypeDdo | ''
     electrode_separation: number
-    polatiry?: StimulationPolarity
+    polatiry?: StimulationPolarityDdo
     current_mA: number
     pulse_width_ms?: number
     pulse_freq_Hz?: number

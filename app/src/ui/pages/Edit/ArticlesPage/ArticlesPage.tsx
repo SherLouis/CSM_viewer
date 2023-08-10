@@ -1,17 +1,31 @@
-import { Box, Button, Group, Modal, NavLink, Space, Stack } from "@mantine/core"
+import { Box, Button, Group, LoadingOverlay, Modal, NavLink, Space, Stack } from "@mantine/core"
 import { useNavigate } from "react-router-dom"
 import ArticlesTable from "../../../components/ArticlesTable/ArticlesTable";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { CreateArticleForm, CreateFormValues } from "../../../components/CreateArticleForm/CreateArticleForm";
+import { getAllArticlesSummary } from "../../../services/ArticleUIService";
+import { useEffect, useState } from "react";
 
 
 export function ArticlesPage() {
   // TODO: get the actual articles from main using ui service and IPC, etc. 
-  let articles: ArticleSummary[] = [
+  /**let articles: ArticleSummaryDdo[] = [
     { doi: "1234", title: "Test", nb_results: 1 },
     { doi: "5678", title: "Test", nb_results: 1 }
-  ];
+  ];*/
+  const [articles, setArticles] = useState<ArticleSummaryDdo[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    console.debug("using effect");
+    setIsLoading(true);
+    getAllArticlesSummary()
+      .then((res) => {
+        setArticles(res);
+        setIsLoading(false)
+      });
+  }, []);
 
   // Hooks
   let navigate = useNavigate();
@@ -37,11 +51,13 @@ export function ArticlesPage() {
 
   return (
     <Box>
+      <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Stack>
         "TODO: Articles page. Breadcrumps, table with edit button for each entry, button to add article to table."
 
         <Group>
           <Button leftIcon={<IconPlus />} variant="outline" onClick={() => createHandlers.open()}>New</Button>
+          <Button leftIcon={<IconRefresh />} variant="subtle" onClick={() => createHandlers.open()}>New</Button>
         </Group>
 
         <ArticlesTable

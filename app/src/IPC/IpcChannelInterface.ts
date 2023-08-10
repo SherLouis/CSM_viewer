@@ -4,5 +4,5 @@ import { IpcRequest } from "./IpcRequest";
 export interface IpcChannelInterface {
     getName(): string;
 
-    handle(event: IpcMainInvokeEvent, request: IpcRequest): any;
+    handle(event: IpcMainInvokeEvent, request?: IpcRequest): any;
 }
