@@ -4,7 +4,7 @@ import ArticlesTable from "../../../components/ArticlesTable/ArticlesTable";
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { CreateArticleForm, CreateFormValues } from "../../../components/CreateArticleForm/CreateArticleForm";
-import { getAllArticlesSummary } from "../../../services/ArticleUIService";
+import ArticleUIService from "../../../services/ArticleUIService";
 import { useCallback, useEffect, useState } from "react";
 
 
@@ -18,7 +18,7 @@ export function ArticlesPage() {
   useEffect(() => {
     console.debug("using effect");
     setIsLoading(true);
-    getAllArticlesSummary()
+    ArticleUIService.getAllArticlesSummary()
       .then((res) => {
         setArticles(res);
         setIsLoading(false)
@@ -27,9 +27,22 @@ export function ArticlesPage() {
 
   const refreshArticles = useCallback(() => {
     setIsLoading(true);
-    getAllArticlesSummary()
+    ArticleUIService.getAllArticlesSummary()
       .then((res) => {
         setArticles(res);
+        setIsLoading(false)
+      });
+  }, [articles]);
+
+  const createArticle = useCallback((article: ArticleDdo) => {
+    setIsLoading(true);
+    ArticleUIService.createArticle(article)
+      .then((res) => {
+        console.debug(res);
+        if(res.successful) {console.log("Success")}
+        else {console.log("Failed")}
+        // TODO: display if success or not
+        // TODO: get created article from response and add to articles
         setIsLoading(false)
       });
   }, [articles]);
@@ -53,6 +66,8 @@ export function ArticlesPage() {
   const createNewArticle = (values: CreateFormValues) => {
     // TODO
     console.log(values);
+    const article = {doi: values.reference.doi, title: values.reference.title, methodology: {stimulation_parameters: values.stimulation_params}} as ArticleDdo;
+    createArticle(article);
   }
 
   return (

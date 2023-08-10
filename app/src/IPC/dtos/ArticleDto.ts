@@ -1,10 +1,7 @@
-export type ArticleSummary = {
-    doi: string,
-    title: string,
-    nb_results: number
-}
+import { Article } from "../../core/models/Article"
 
-export type Article = {
+// TODO
+export type ArticleDto = {
     doi: string,
     title: string,
     methodology: {
@@ -20,5 +17,6 @@ export type Article = {
     }
 }
 
-type StimulationTypeDdo = "grid" | "depth" | "HFTS";
-type StimulationPolarityDdo = "unipolar" | "bipolar" | "unknown"
+export const ArticleDtoFromDdo = (ddo: ArticleDdo): ArticleDto => { return ddo as ArticleDto }
+
+export const ModelFromDto = (dto: ArticleDto) => { return dto as Article}
