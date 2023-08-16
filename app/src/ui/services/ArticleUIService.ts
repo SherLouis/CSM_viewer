@@ -5,7 +5,7 @@ export default class ArticleUIService {
     public static getAllArticlesSummary = async () => {
         console.debug('Getting articles summary');
         // TODO: remove this delay. Only for testing purpose
-        await new Promise(res => setTimeout(res, 5000));
+        //await new Promise(res => setTimeout(res, 5000));
         let response = await window.electronAPI.getArticlesSummary();
         return response.map((dto) => this.toArticleSummaryDdo(dto));
     }

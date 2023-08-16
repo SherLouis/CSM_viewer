@@ -6,6 +6,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { CreateArticleForm, CreateFormValues } from "../../../components/CreateArticleForm/CreateArticleForm";
 import ArticleUIService from "../../../services/ArticleUIService";
 import { useCallback, useEffect, useState } from "react";
+import { CreateResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
 
 
 export function ArticlesPage() {
@@ -37,12 +38,15 @@ export function ArticlesPage() {
   const createArticle = useCallback((article: ArticleDdo) => {
     setIsLoading(true);
     ArticleUIService.createArticle(article)
-      .then((res) => {
+      .then((res: CreateResponseDto) => {
         console.debug(res);
-        if(res.successful) {console.log("Success")}
-        else {console.log("Failed")}
+        if (res.successful) {
+          console.log("Success");
+          // TODO: get created article from response and add to articles
+          setArticles([...articles, {doi: article.doi, title: article.title, nb_results: 0} as ArticleSummaryDdo])
+        }
+        else { console.log("Failed") }
         // TODO: display if success or not
-        // TODO: get created article from response and add to articles
         setIsLoading(false)
       });
   }, [articles]);
@@ -64,10 +68,9 @@ export function ArticlesPage() {
   }
 
   const createNewArticle = (values: CreateFormValues) => {
-    // TODO
-    console.log(values);
-    const article = {doi: values.reference.doi, title: values.reference.title, methodology: {stimulation_parameters: values.stimulation_params}} as ArticleDdo;
+    const article = { doi: values.reference.doi, title: values.reference.title, methodology: { stimulation_parameters: values.stimulation_params } } as ArticleDdo;
     createArticle(article);
+    createHandlers.close();
   }
 
   return (

@@ -9,9 +9,9 @@ export type Article = {
     title: string,
     methodology: {
         stimulation_parameters: {
-            type: StimulationTypeDdo,
+            type: StimulationType,
             electrode_separation: number,
-            polatiry: StimulationPolarityDdo,
+            polatiry: StimulationPolarity,
             current_mA: number,
             pulse_width_ms: number,
             pulse_freq_Hz: number,
@@ -20,5 +20,5 @@ export type Article = {
     }
 }
 
-type StimulationTypeDdo = "grid" | "depth" | "HFTS";
-type StimulationPolarityDdo = "unipolar" | "bipolar" | "unknown"
+export type StimulationType = "grid" | "depth" | "HFTS";
+export type StimulationPolarity = "unipolar" | "bipolar" | "unknown"

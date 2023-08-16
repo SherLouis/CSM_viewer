@@ -1,16 +1,24 @@
-import { ArticleSummary, Article} from "../models/Article";
+import IArticleRepository from "../../infra/IArticleRepository";
+import { ArticleSummary, Article } from "../models/Article";
 
 export class ArticleService {
+    articleRepository: IArticleRepository;
+
+    constructor(articleRepository: IArticleRepository) { this.articleRepository = articleRepository }
+
     public getAllSummary(): ArticleSummary[] {
-        // TODO
-        return [
-            { doi: "1234", title: "Test1", nb_results: 1 },
-            { doi: "5678", title: "Test2", nb_results: 1 }
-        ];
+        return this.articleRepository.getArticles();
     }
 
     public createArticle(article: Article): boolean {
-        // TODO
-        return false;
+        console.log(article);
+        try {
+            this.articleRepository.createArticle(article);
+            return true;
+        }
+        catch (e){
+            console.log(e);
+            return false;
+        }
     }
 }
