@@ -31,7 +31,7 @@ export default class ArticleRepository implements IArticleRepository {
         this._insertNewArticle(ArticleToEntity(newArticle));
     }
     deleteArticle(articleId: string): void {
-        throw new Error("Method not implemented.");
+        this._deleteArticle(articleId);
     }
     editArticle(articleId: string, newValue: Article): void {
         this._editArticle(articleId, ArticleToEntity(newValue));
@@ -71,7 +71,7 @@ export default class ArticleRepository implements IArticleRepository {
         console.debug("Inserting new article: ");
         console.debug(newArticle);
         const insetStmt = 'INSERT INTO Articles (doi, title, stimulation_type, stimulation_electrode_separation, stimulation_polarity, stimulation_current_mA, stimulation_pulse_width_ms, stimulation_pulse_freq_Hz, stimulation_train_duration_s) VALUES (@doi, @title, @stimulation_type, @stimulation_electrode_separation, @stimulation_polarity, @stimulation_current_mA, @stimulation_pulse_width_ms, @stimulation_pulse_freq_Hz, @stimulation_train_duration_s)';
-        const insert = this.db.prepare(insetStmt).run(newArticle);
+        this.db.prepare(insetStmt).run(newArticle);
     }
 
     private _editArticle(articleId: string, article: ArticleEntity) {
@@ -90,6 +90,11 @@ export default class ArticleRepository implements IArticleRepository {
             stimulation_train_duration_s=@stimulation_train_duration_s
         WHERE doi=@articleDoiToEdit`
         const result = this.db.prepare(stmt).run({ ...article, articleDoiToEdit: articleId });
+    }
+
+    private _deleteArticle(articleId: string): void {
+        const stmt = 'DELETE FROM Articles WHERE doi = ?';
+        this.db.prepare(stmt).run(articleId);
     }
 
     private createTablesIfNotExist() {

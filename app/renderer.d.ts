@@ -9,6 +9,7 @@ export interface IElectronAPI {
   createArticle: (ArticleDto) => CreateResponseDto
   editArticle: (articleId: string, dto:ArticleDto) => EditResponseDto
   getArticle: (articleId:string) => Promise<ArticleDto>
+  deleteArticle: (articleId: string) => Promise<EditResponseDto>
 }
 
 declare global {

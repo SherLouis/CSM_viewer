@@ -38,4 +38,16 @@ export class ArticleService {
             return false;
         }
     }
+
+    public deleteArticle(articleId: string): boolean {
+        console.log(articleId);
+        try {
+            this.articleRepository.deleteArticle(articleId);
+            return true;
+        }
+        catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
 }

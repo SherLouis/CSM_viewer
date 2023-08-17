@@ -21,6 +21,12 @@ export default class ArticleUIService {
         return response;
     }
 
+    public static deleteArticle = async(articleId: string) : Promise<EditResponseDto> => {
+        console.debug(`Deleting article ${articleId}`);
+        let response = await window.electronAPI.deleteArticle(articleId);
+        return response;
+    }
+
     private static ArticleDtoToArticleDdo = (dto: ArticleDto) => {
         return dto as ArticleDdo;
     }

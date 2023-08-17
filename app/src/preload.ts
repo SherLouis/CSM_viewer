@@ -6,7 +6,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getArticlesSummary: () => ipcRenderer.invoke('article:getAll'),
   getArticle: (articleId: string) => ipcRenderer.invoke('article:get', {params: {articleId: articleId}}),
   createArticle: (article: ArticleDto) => ipcRenderer.invoke('article:create', {params: {dto: article}}),
-  editArticle: (articleId: string, dto:ArticleDto) => ipcRenderer.invoke('article:edit', {params: {articleId: articleId, dto:dto}})
+  editArticle: (articleId: string, dto:ArticleDto) => ipcRenderer.invoke('article:edit', {params: {articleId: articleId, dto:dto}}),
+  deleteArticle: (articleId: string) => ipcRenderer.invoke('article:delete', {params: {articleId: articleId}})
 })
 
 // TODO: use typescript to make api respect a type and make validations

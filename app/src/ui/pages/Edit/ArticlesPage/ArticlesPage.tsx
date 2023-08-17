@@ -44,10 +44,9 @@ export function ArticlesPage() {
       .then((res: CreateResponseDto) => {
         console.debug(res);
         if (res.successful) {
-          console.log("Success");
           setArticles([...articles, { doi: article.doi, title: article.title, nb_results: 0 } as ArticleSummaryDdo])
         }
-        else { console.log("Failed") }
+        console.log(res.message)
         // TODO: display if success or not in notistack
         setIsLoading(false)
       });
@@ -60,7 +59,6 @@ export function ArticlesPage() {
       .then((res: EditResponseDto) => {
         createEditModalHandlers.close();
         if (res.successful) {
-          console.log("Success updating article");
           setArticles(articles.map(a => {
             if (a.doi === currentArticle.doi) {
               return { doi: article.doi, title: article.title, nb_results: a.nb_results };
@@ -70,7 +68,7 @@ export function ArticlesPage() {
             }
           }));
         }
-        else { console.log("Failed updating article"); }
+        console.log(res.message);
         setIsLoading(false);
       });
   }, [currentArticle])
@@ -79,6 +77,21 @@ export function ArticlesPage() {
     ArticleUIService.getArticle(articleId)
       .then((res: ArticleDdo) => setCurrentArticle(res));
   }, [currentArticle]);
+
+  const deleteArticle = useCallback((articleId: string) => {
+    setIsLoading(true);
+    ArticleUIService.deleteArticle(articleId)
+      .then((res: EditResponseDto) => {
+        console.debug(res);
+        if (res.successful) {
+          setArticles(articles.filter(a => a.doi != articleId));
+        }
+        console.log(res.message)
+        // TODO: display if success or not in notistack
+        setIsLoading(false)
+      })
+  }, [articles])
+
   let navigate = useNavigate();
   const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
 
@@ -87,7 +100,7 @@ export function ArticlesPage() {
     navigate(`/edit/sources/${articleId}`);
   }
 
-  const openEditArticle = (articleId: string) => {
+  const onEditArticle = (articleId: string) => {
     setIsLoading(true);
     getCurrentArticle(articleId);
     setMode("edit");
@@ -95,8 +108,9 @@ export function ArticlesPage() {
     createEditModalHandlers.open();
   }
 
-  const deleteArticle = (articleId: string) => {
-    // TODO
+  const onDeleteArticle = (articleId: string) => {
+    // TODO: add a confirmation
+    deleteArticle(articleId);
   }
 
   const createNewArticle = (values: CreateFormValues) => {
@@ -119,13 +133,13 @@ export function ArticlesPage() {
         <ArticlesTable
           data={articles}
           onRowClick={(articleId) => viewArticle(articleId)}
-          onEdit={(articleId) => openEditArticle(articleId)}
-          onDelete={(articleId) => deleteArticle(articleId)}
+          onEdit={(articleId) => onEditArticle(articleId)}
+          onDelete={(articleId) => onDeleteArticle(articleId)}
         />
       </Stack>
 
       <Modal opened={createEditOpened}
-        onClose={() => {createEditModalHandlers.close(); setMode("create")}}
+        onClose={() => { createEditModalHandlers.close(); setMode("create") }}
         title={mode === "create" ? "New Article" : "Edit Article"}
         centered size="70%">
         <CreateArticleForm
