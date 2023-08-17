@@ -1,4 +1,4 @@
-import { Box, Button, Group, LoadingOverlay, Modal, NavLink, Space, Stack } from "@mantine/core"
+import { Box, Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core"
 import { useNavigate } from "react-router-dom"
 import ArticlesTable from "../../../components/ArticlesTable/ArticlesTable";
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
@@ -16,6 +16,8 @@ export function ArticlesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<ArticleDdo | null>(null);
   const [mode, setMode] = useState<"create" | "edit">("create");
+  const navigate = useNavigate();
+  const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
 
   useEffect(() => {
     console.debug("using effect");
@@ -89,9 +91,6 @@ export function ArticlesPage() {
         setIsLoading(false)
       })
   }, [articles])
-
-  let navigate = useNavigate();
-  const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
 
   // Functions
   const viewArticle = (articleId: string) => {
