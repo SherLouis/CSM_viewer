@@ -11,8 +11,6 @@ import { ArticleDtoFromDdo } from "../../../../IPC/dtos/ArticleDto";
 
 
 export function ArticlesPage() {
-  // [x]: get the actual articles from main using ui service and IPC, etc. 
-
   // Hooks
   const [articles, setArticles] = useState<ArticleSummaryDdo[]>([]);
   const [isLoading, setIsLoading] = useState(false);

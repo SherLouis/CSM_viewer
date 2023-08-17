@@ -117,7 +117,6 @@ export const CreateArticleForm = ({ onSubmit, mode, edit_article }: CreateArticl
 }
 
 export interface CreateFormValues {
-  // TODO
   reference: {
     doi: string
     title?: string

@@ -6,7 +6,6 @@ import { DataTable } from 'mantine-datatable';
 const ArticlesTable = (props: ArticlesTableProps) => {
   // [ ] add sorting and filtering
   // [ ] add pagination
-  // TODO actions should take minimum amount of space
 
   const handleView = (event: MouseEvent, articleDoi: string) => {
     event.stopPropagation();
