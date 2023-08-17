@@ -1,14 +1,13 @@
-import { Article } from "../../core/models/Article"
+import { Article, StimulationPolarity, StimulationType } from "../../core/models/Article"
 
-// TODO
 export type ArticleDto = {
     doi: string,
     title: string,
     methodology: {
         stimulation_parameters: {
-            type: StimulationTypeDdo,
+            type: StimulationType,
             electrode_separation: number,
-            polatiry: StimulationPolarityDdo,
+            polarity: StimulationPolarity,
             current_mA: number,
             pulse_width_ms: number,
             pulse_freq_Hz: number,
@@ -20,3 +19,5 @@ export type ArticleDto = {
 export const ArticleDtoFromDdo = (ddo: ArticleDdo): ArticleDto => { return ddo as ArticleDto }
 
 export const ModelFromDto = (dto: ArticleDto) => { return dto as Article}
+
+export const DtoFromModel = (model: Article) => {return model as ArticleDto}

@@ -11,7 +11,7 @@ export type Article = {
         stimulation_parameters: {
             type: StimulationType,
             electrode_separation: number,
-            polatiry: StimulationPolarity,
+            polarity: StimulationPolarity,
             current_mA: number,
             pulse_width_ms: number,
             pulse_freq_Hz: number,

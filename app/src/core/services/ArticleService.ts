@@ -16,7 +16,24 @@ export class ArticleService {
             this.articleRepository.createArticle(article);
             return true;
         }
-        catch (e){
+        catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
+    public getArticle(articleId: string): Article {
+        return this.articleRepository.getArticle(articleId);
+    }
+
+    public editArticle(articleId: string, article: Article): boolean {
+        try {
+            console.debug("editArticle service");
+            console.debug(article);
+            this.articleRepository.editArticle(articleId, article);
+            return true;
+        }
+        catch (e) {
             console.log(e);
             return false;
         }

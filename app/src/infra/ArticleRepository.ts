@@ -1,6 +1,6 @@
 import { ArticleSummary, Article } from "../core/models/Article";
 import IArticleRepository from "./IArticleRepository";
-import { ArticleEntity, ArticleToEntity } from "./entity/ArticleEntity";
+import { ArticleEntity, ArticleEntityToModel, ArticleToEntity } from "./entity/ArticleEntity";
 import { ArticleSummaryEntity, ArticleSummaryEntityToModel } from "./entity/ArticleSummaryEntity";
 import Database from "better-sqlite3";
 
@@ -14,30 +14,41 @@ export default class ArticleRepository implements IArticleRepository {
         this.createTablesIfNotExist();
     }
 
+    getArticle(articleId: string): Article {
+        const entity = this._getArticle(articleId);
+        return ArticleEntityToModel(entity);
+    }
+
     getArticles(): ArticleSummary[] {
         /*const articles = [
             { doi: "1234", title: "Test1", nb_results: 1 },
             { doi: "5678", title: "Test2", nb_results: 1 }
         ] as ArticleSummaryEntity[];*/
-        // TODO: call db instead
-        const articles = this.getAllArticlesSummary();
+        const articles = this._getAllArticlesSummary();
         return articles.map((a) => ArticleSummaryEntityToModel(a))
     }
     createArticle(newArticle: Article): void {
-        this.insertNewArticle(ArticleToEntity(newArticle));
+        this._insertNewArticle(ArticleToEntity(newArticle));
     }
     deleteArticle(articleId: string): void {
         throw new Error("Method not implemented.");
     }
     editArticle(articleId: string, newValue: Article): void {
-        throw new Error("Method not implemented.");
+        this._editArticle(articleId, ArticleToEntity(newValue));
     }
 
     close(): void {
         this.db.close();
     }
 
-    private getAllArticlesSummary(): ArticleSummaryEntity[] {
+    private _getArticle(articleId: string): ArticleEntity {
+        const stmt = 'SELECT * FROM Articles WHERE doi = ?';
+        const result = this.db.prepare(stmt).get(articleId) as ArticleEntity;
+        console.debug(result);
+        return result;
+    }
+
+    private _getAllArticlesSummary(): ArticleSummaryEntity[] {
         const stmt = `
         SELECT
             Articles.doi,
@@ -56,15 +67,35 @@ export default class ArticleRepository implements IArticleRepository {
         return results;
     }
 
-    private insertNewArticle(newArticle: ArticleEntity) {
-        const insetStmt = 'INSERT INTO Articles (doi, title, stimulation_type, stimulation_electrode_separation, stimulation_polatiry, stimulation_current_mA, stimulation_pulse_width_ms, stimulation_pulse_freq_Hz, stimulation_train_duration_s) VALUES (@doi, @title, @stimulation_type, @stimulation_electrode_separation, @stimulation_polatiry, @stimulation_current_mA, @stimulation_pulse_width_ms, @stimulation_pulse_freq_Hz, @stimulation_train_duration_s)';
+    private _insertNewArticle(newArticle: ArticleEntity) {
+        console.debug("Inserting new article: ");
+        console.debug(newArticle);
+        const insetStmt = 'INSERT INTO Articles (doi, title, stimulation_type, stimulation_electrode_separation, stimulation_polarity, stimulation_current_mA, stimulation_pulse_width_ms, stimulation_pulse_freq_Hz, stimulation_train_duration_s) VALUES (@doi, @title, @stimulation_type, @stimulation_electrode_separation, @stimulation_polarity, @stimulation_current_mA, @stimulation_pulse_width_ms, @stimulation_pulse_freq_Hz, @stimulation_train_duration_s)';
         const insert = this.db.prepare(insetStmt).run(newArticle);
+    }
+
+    private _editArticle(articleId: string, article: ArticleEntity) {
+        console.debug(`Editing article ${articleId} with new value:`);
+        console.debug(article);
+        const stmt = `
+        UPDATE Articles SET 
+            doi=@doi,
+            title=@title,
+            stimulation_type=@stimulation_type,
+            stimulation_electrode_separation=@stimulation_electrode_separation,
+            stimulation_polarity=@stimulation_polarity,
+            stimulation_current_mA=@stimulation_current_mA,
+            stimulation_pulse_width_ms=@stimulation_pulse_width_ms,
+            stimulation_pulse_freq_Hz=@stimulation_pulse_freq_Hz,
+            stimulation_train_duration_s=@stimulation_train_duration_s
+        WHERE doi=@articleDoiToEdit`
+        const result = this.db.prepare(stmt).run({ ...article, articleDoiToEdit: articleId });
     }
 
     private createTablesIfNotExist() {
         console.debug('Creating tables...');
         try {
-            const createArticlesTableStmt = "CREATE TABLE IF NOT EXISTS Articles (doi TEXT NOT NULL PRIMARY KEY, title TEXT, stimulation_type TEXT, stimulation_electrode_separation INTEGER, stimulation_polatiry TEXT, stimulation_current_mA INTEGER, stimulation_pulse_width_ms INTEGER, stimulation_pulse_freq_Hz INTEGER, stimulation_train_duration_s INTEGER);";
+            const createArticlesTableStmt = "CREATE TABLE IF NOT EXISTS Articles (doi TEXT NOT NULL PRIMARY KEY, title TEXT, stimulation_type TEXT, stimulation_electrode_separation INTEGER, stimulation_polarity TEXT, stimulation_current_mA INTEGER, stimulation_pulse_width_ms INTEGER, stimulation_pulse_freq_Hz INTEGER, stimulation_train_duration_s INTEGER);";
             // TODO: add other fields for Results table
             const createResultsTableStmt = "CREATE TABLE IF NOT EXISTS Results (id INTEGER PRIMARY KEY AUTOINCREMENT, article_doi TEXT NOT NULL);";
             this.db.prepare(createArticlesTableStmt).run();

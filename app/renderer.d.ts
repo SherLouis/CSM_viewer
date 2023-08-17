@@ -7,7 +7,8 @@ export interface IElectronAPI {
   // getSystemInfo: (param:string) => Promise<systemInfoDto>,
   getArticlesSummary: () => Promise<ArticleSummaryDto[]>
   createArticle: (ArticleDto) => CreateResponseDto
-  editArticle: (ArticleDto) => EditResponseDto
+  editArticle: (articleId: string, dto:ArticleDto) => EditResponseDto
+  getArticle: (articleId:string) => Promise<ArticleDto>
 }
 
 declare global {

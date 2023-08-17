@@ -6,7 +6,7 @@ type ArticleDdo = {
         stimulation_parameters: {
             type: StimulationTypeDdo,
             electrode_separation: number,
-            polatiry: StimulationPolarityDdo,
+            polarity: StimulationPolarityDdo,
             current_mA: number,
             pulse_width_ms: number,
             pulse_freq_Hz: number,
