@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import ArticlesTable from "../../../components/ArticlesTable/ArticlesTable";
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { CreateArticleForm, CreateFormValues } from "../../../components/CreateArticleForm/CreateArticleForm";
+import { CreateEditArticleForm, CreateFormValues } from "../../../components/CreateEditArticleForm/CreateEditArticleForm";
 import ArticleUIService from "../../../services/ArticleUIService";
 import { useCallback, useEffect, useState } from "react";
 import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
@@ -139,7 +139,7 @@ export function ArticlesPage() {
         onClose={() => { createEditModalHandlers.close(); setMode("create") }}
         title={mode === "create" ? "New Article" : "Edit Article"}
         centered size="70%">
-        <CreateArticleForm
+        <CreateEditArticleForm
           onSubmit={(values) => { mode === "create" ? createNewArticle(values) : editArticle(values) }}
           mode={mode}
           edit_article={mode === "edit" ? currentArticle : null} />

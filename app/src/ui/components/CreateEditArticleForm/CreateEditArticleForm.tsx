@@ -1,7 +1,7 @@
 import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
 import { useForm } from '@mantine/form';
 
-export const CreateArticleForm = ({ onSubmit, mode, edit_article }: CreateArticleFormProps) => {
+export const CreateEditArticleForm = ({ onSubmit, mode, edit_article }: CreateArticleFormProps) => {
   // TODO: Ajouter validations
   const form = useForm<CreateFormValues>({
     initialValues: {

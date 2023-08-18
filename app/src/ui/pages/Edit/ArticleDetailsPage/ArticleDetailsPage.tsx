@@ -4,40 +4,42 @@ import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, Link } from 'react-router-dom'
 import ArticleUIService from "../../../services/ArticleUIService";
+import ResultUIService from "../../../services/ResultUIService";
 import { useDisclosure, useListState } from "@mantine/hooks";
+import { ResultDdo } from "../../../models/ResultDdo";
 
 export const ArticleDetailsPage = () => {
     // hooks
     const { articleId } = useParams<string>();
-
+    
     const [isLoading, setIsLoading] = useState(true);
     const [currentArticle, setCurrentArticle] = useState<ArticleDdo>();
-    //const [results, resultsHandlers] = useListState<ResultDdo[]>([]);
+    const [results, resultsHandlers] = useListState<ResultDdo>([]);
     const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
     const [mode, setMode] = useState<"create" | "edit">("create");
 
     // Load current article
     useEffect(() => {
-        console.debug("using effect");
-        setIsLoading(true);
+        console.debug("getting current article");
         ArticleUIService.getArticle(articleId)
             .then((res) => {
                 setCurrentArticle(res);
-                setIsLoading(false)
+                ResultUIService.getAllResultsForArticle(articleId)
+                    .then((res) => {
+                        resultsHandlers.setState(res);
+                        setIsLoading(false)
+                    });
             });
     }, []);
 
-    // TODO
-    /*
     const refreshResults = useCallback(() => {
         setIsLoading(true);
-        ArticleUIService.getResults(articleId)
-          .then((res) => {
-            resultsHandlers.setState(res);
-            setIsLoading(false)
-          });
-      }, [results]);
-      */
+        ResultUIService.getAllResultsForArticle(articleId)
+            .then((res) => {
+                resultsHandlers.setState(res);
+                setIsLoading(false);
+            });
+    }, [results]);
 
     return (
         <Box>
@@ -62,10 +64,11 @@ export const ArticleDetailsPage = () => {
                     <Title w="h3">{currentArticle.doi} ({currentArticle.title})</Title>
                     {JSON.stringify(currentArticle.methodology.stimulation_parameters)}
 
+                    {JSON.stringify(results)}
 
                     <Group>
                         <Button leftIcon={<IconPlus />} variant="filled" onClick={() => createEditModalHandlers.open()}>New</Button>
-                        {/*<Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>*/}
+                        <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>
                     </Group>
 
                     {/*TODO: ResultsTable */}
