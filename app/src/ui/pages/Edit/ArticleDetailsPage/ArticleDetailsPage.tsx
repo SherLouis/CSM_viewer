@@ -11,19 +11,20 @@ import { ResultDdo } from "../../../models/ResultDdo";
 export const ArticleDetailsPage = () => {
     // hooks
     const { articleId } = useParams<string>();
-    
+
     const [isLoading, setIsLoading] = useState(true);
     const [currentArticle, setCurrentArticle] = useState<ArticleDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
     const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
     const [mode, setMode] = useState<"create" | "edit">("create");
 
-    // Load current article
+    // Load current article and results
     useEffect(() => {
         console.debug("getting current article");
         ArticleUIService.getArticle(articleId)
             .then((res) => {
                 setCurrentArticle(res);
+                console.debug("getting results");
                 ResultUIService.getAllResultsForArticle(articleId)
                     .then((res) => {
                         resultsHandlers.setState(res);
@@ -34,6 +35,7 @@ export const ArticleDetailsPage = () => {
 
     const refreshResults = useCallback(() => {
         setIsLoading(true);
+        console.debug("getting results");
         ResultUIService.getAllResultsForArticle(articleId)
             .then((res) => {
                 resultsHandlers.setState(res);
