@@ -1,4 +1,4 @@
-import { Box, Button, Group, LoadingOverlay, Modal, Stack, Title } from "@mantine/core"
+import { Box, Button, Container, Flex, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
@@ -58,7 +58,7 @@ export const ArticleDetailsPage = () => {
     }
 
     return (
-        <Box>
+        <Container size={"80%"}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
 
             <Breadcrumbs>
@@ -78,14 +78,40 @@ export const ArticleDetailsPage = () => {
                 */}
 
                     {/* TODO: mettre ça beau*/}
-                    <Title w="h3">{currentArticle.doi} ({currentArticle.title})</Title>
-                    {JSON.stringify(currentArticle.methodology.stimulation_parameters)}
+                    <Title order={3}>{currentArticle.title}</Title>
+
+                    <Title order={3}>Stimulation parameters</Title>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>type</th>
+                                <th>electrode separation</th>
+                                <th>polarity</th>
+                                <th>current</th>
+                                <th>pulse width</th>
+                                <th>pulse frequency</th>
+                                <th>train duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{currentArticle.methodology.stimulation_parameters.type}</td>
+                                <td>{currentArticle.methodology.stimulation_parameters.electrode_separation} mm</td>
+                                <td>{currentArticle.methodology.stimulation_parameters.polarity}</td>
+                                <td>{currentArticle.methodology.stimulation_parameters.current_mA} mA</td>
+                                <td>{currentArticle.methodology.stimulation_parameters.pulse_width_ms} ms</td>
+                                <td>{currentArticle.methodology.stimulation_parameters.pulse_freq_Hz} Hz</td>
+                                <td>{currentArticle.methodology.stimulation_parameters.train_duration_s} s</td>
+                            </tr>
+                        </tbody>
+                    </Table>
 
                     <Group>
                         <Button leftIcon={<IconPlus />} variant="filled" onClick={() => createEditModalHandlers.open()}>New</Button>
                         <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>
                     </Group>
 
+                    {/*TODO: scroll left problem when window is too smal*/}
                     <ResultsTable
                         data={results}
                         onRowClick={(resultId) => viewResult(resultId)}
@@ -100,6 +126,6 @@ export const ArticleDetailsPage = () => {
                 centered size="70%">
                 {/*TODO: CreateEditResultForm */}
             </Modal>
-        </Box>
+        </Container>
     )
 }
