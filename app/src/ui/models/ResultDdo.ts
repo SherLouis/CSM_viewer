@@ -5,12 +5,13 @@ export type ResultDdo = {
         side: "left" | "right",
         lobe: string,
         gyrus: string,
-        broadman: string[]
+        broadmann: string[]
     },
     effect: {
         category: string,
         semiology: string,
-        characteristic: string
+        characteristic: string,
+        post_discharge: boolean
     }
     comments?: string
 }

@@ -8,19 +8,19 @@ const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add sorting and filtering
     // [ ] add pagination
 
-    const handleView = (event: MouseEvent, articleDoi: string) => {
+    const handleView = (event: MouseEvent, result: ResultDdo) => {
         event.stopPropagation();
-        props.onRowClick(articleDoi);
+        props.onRowClick(result);
     }
 
-    const handleEdit = (event: MouseEvent, articleDoi: string) => {
+    const handleEdit = (event: MouseEvent, result: ResultDdo) => {
         event.stopPropagation();
-        props.onEdit(articleDoi);
+        props.onEdit(result);
     }
 
-    const handleDelete = (event: MouseEvent, articleDoi: string) => {
+    const handleDelete = (event: MouseEvent, resultId: string) => {
         event.stopPropagation();
-        props.onDelete(articleDoi);
+        props.onDelete(resultId);
     }
 
     console.debug(props.data);
@@ -62,10 +62,10 @@ const ResultsTable = (props: ResultsTableProps) => {
                             width: "10%",
                             render: (result) => (
                                 <Group spacing={4} position="right" noWrap>
-                                    <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, result.id)}>
+                                    <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, result)}>
                                         <IconEye size={16} />
                                     </ActionIcon>
-                                    <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, result.id)}>
+                                    <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, result)}>
                                         <IconEdit size={16} />
                                     </ActionIcon>
                                     <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, result.id)}>
@@ -76,15 +76,15 @@ const ResultsTable = (props: ResultsTableProps) => {
                         }]
                 }
             ]}
-            onRowClick={(result) => { props.onRowClick(result.id) }}
+            onRowClick={(result) => { props.onRowClick(result) }}
         />
     );
 }
 
 type ResultsTableProps = {
     data: ResultDdo[],
-    onRowClick: (resultId: string) => void,
-    onEdit: (resultId: string) => void,
+    onRowClick: (result: ResultDdo) => void,
+    onEdit: (result: ResultDdo) => void,
     onDelete: (resultId: string) => void
 }
 

@@ -1,4 +1,4 @@
-import { Box, Button, Container, Flex, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
+import { Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import ResultUIService from "../../../services/ResultUIService";
 import { useDisclosure, useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
 import ResultsTable from "../../../components/ResultsTable/ResultsTable";
+import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
 
 export const ArticleDetailsPage = () => {
     // hooks
@@ -17,7 +18,8 @@ export const ArticleDetailsPage = () => {
     const [currentArticle, setCurrentArticle] = useState<ArticleDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
     const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
-    const [mode, setMode] = useState<"create" | "edit">("create");
+    const [mode, setMode] = useState<"create" | "edit" | "view">("view");
+    const [selectedResult, setSelectedResult] = useState<ResultDdo>();
 
     // Load current article and results
     useEffect(() => {
@@ -44,17 +46,35 @@ export const ArticleDetailsPage = () => {
             });
     }, [results]);
 
+    const editResult = useCallback((values: CreateEditResultFormValues) => {
+        setIsLoading(true);
+        // TODO
+    }, [selectedResult])
+
     // Functions
-    const viewResult = (resultId: string) => {
-        return;
+    const viewResult = (result: ResultDdo) => {
+        setMode("view");
+        setSelectedResult(result);
+        createEditModalHandlers.open();
     }
 
-    const onEditResult = (resultId: string) => {
-        return;
+    const onEditResult = (result: ResultDdo) => {
+        setMode("edit");
+        setSelectedResult(result);
+        createEditModalHandlers.open();
     }
 
     const onDeleteResult = (resultId: string) => {
         return;
+    }
+
+    const onCreateResult = (values: CreateEditResultFormValues) => {
+        return;
+    }
+
+    const onCreateButton = () => {
+        setMode("create");
+        createEditModalHandlers.open();
     }
 
     return (
@@ -107,15 +127,15 @@ export const ArticleDetailsPage = () => {
                     </Table>
 
                     <Group>
-                        <Button leftIcon={<IconPlus />} variant="filled" onClick={() => createEditModalHandlers.open()}>New</Button>
+                        <Button leftIcon={<IconPlus />} variant="filled" onClick={onCreateButton}>New</Button>
                         <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>
                     </Group>
 
                     {/*TODO: scroll left problem when window is too smal*/}
                     <ResultsTable
                         data={results}
-                        onRowClick={(resultId) => viewResult(resultId)}
-                        onEdit={(resultId) => onEditResult(resultId)}
+                        onRowClick={(result) => viewResult(result)}
+                        onEdit={(result) => onEditResult(result)}
                         onDelete={(resultId) => onDeleteResult(resultId)} />
                 </Stack>
             }
@@ -124,7 +144,11 @@ export const ArticleDetailsPage = () => {
                 onClose={() => { createEditModalHandlers.close(); setMode("create") }}
                 title={mode === "create" ? "New Result" : "Edit Result"}
                 centered size="70%">
-                {/*TODO: CreateEditResultForm */}
+                <CreateEditResultForm
+                    onSubmit={(values) => { mode === "create" ? onCreateResult(values) : mode === "edit" ? editResult(values) : createEditModalHandlers.close() }}
+                    mode={mode}
+                    edit_result={mode === "edit" ? selectedResult : null}
+                />
             </Modal>
         </Container>
     )

@@ -1,140 +1,184 @@
-import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
+import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch } from "@mantine/core"
 import { useForm } from '@mantine/form';
-import { ResultDdo } from "src/ui/models/ResultDdo";
+import { ResultDdo, effectCategorisationMap } from "../../models/ResultDdo";
 
-export const CreateEditArticleForm = ({ onSubmit, mode, edit_result }: CreateEditResultFormProps) => {
-  // TODO: Ajouter validations
-  const form = useForm<CreateEditResultFormValues>({
-    initialValues: {
-      reference: {
-        doi: edit_article != null ? edit_article.doi : '',
-        title: edit_article != null ? edit_article.title : ''
-      },
-      stimulation_params: {
-        type: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.type : 'grid',
-        electrode_separation: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.electrode_separation : 0,
-        polarity: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.polarity : 'unknown',
-        current_mA: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.current_mA : 0,
-        pulse_width_ms: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.pulse_width_ms : 0,
-        pulse_freq_Hz: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.pulse_freq_Hz : 0,
-        train_duration_s: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.train_duration_s : 0
-      }
-    } as CreateEditResultFormValues,
-  });
+export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEditResultFormProps) => {
+    // TODO: Ajouter validations
+    const form = useForm<CreateEditResultFormValues>({
+        initialValues: {
+            location: {
+                side: edit_result != null ? edit_result.location.side : "",
+                lobe: edit_result != null ? edit_result.location.lobe : "",
+                gyrus: edit_result != null ? edit_result.location.gyrus : "",
+                broadmann: edit_result != null ? edit_result.location.broadmann : [],
+            },
+            effect: {
+                category: edit_result != null ? edit_result.effect.category : "",
+                semiology: edit_result != null ? edit_result.effect.semiology : "",
+                characteristic: edit_result != null ? edit_result.effect.characteristic : "",
+                post_discharge: edit_result != null ? edit_result.effect.post_discharge : false,
+            },
+            comments: edit_result != null ? edit_result.comments : ""
+        } as CreateEditResultFormValues,
+    });
 
-  const handleSubmit = (values: CreateEditResultFormValues) => {
-    form.validate();
-    console.debug(values);
-    onSubmit(values);
-  }
+    const handleSubmit = (values: CreateEditResultFormValues) => {
+        form.validate();
+        console.debug(values);
+        onSubmit(values);
+    }
 
-  return (
-    <Box>
-      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-        <Accordion defaultValue="reference">
-          <Accordion.Item value="reference">
-            <Accordion.Control>Reference</Accordion.Control>
-            <Accordion.Panel>
-              <TextInput
-                required
-                label="DOI"
-                {...form.getInputProps('reference.doi')}
-                disabled={mode==="edit"}
-              />
-              <TextInput
-                label="Title"
-                {...form.getInputProps('reference.title')}
-              />
-            </Accordion.Panel>
-          </Accordion.Item>
+    const GYRUS_LIST = [
+        "Superior frontal gyrus",
+        "Middle frontal gyrus",
+        "Inferior frontal gyrus",
+        "Superior temporal gyrus",
+        "Middle temporal gyrus",
+        "Inferior temporal gyrus",
+        "Fusiform gyrus",
+        "Parahippocampal gyrus",
+    ]
 
-          <Accordion.Item value="methodology">
-            <Accordion.Control>Methodology - Stimulation Parameters</Accordion.Control>
-            <Accordion.Panel>
-              <NativeSelect
-                required
-                label="Type"
-                data={[
-                  { value: 'grid', label: 'Grid' },
-                  { value: 'depth', label: 'Depth' },
-                  { value: 'HTFS', label: 'HFTS' },
-                ]}
-                placeholder="Pick one"
-                {...form.getInputProps('stimulation_params.type')}
-              />
-              <NumberInput
-                label="Electrodes separation"
-                description="In mm"
-                required
-                hideControls
-                {...form.getInputProps('stimulation_params.electrode_separation')}
-              />
-              <NativeSelect
-                required
-                label="Polarity"
-                data={[
-                  { value: 'unknown', label: 'Unknown' },
-                  { value: 'unipolar', label: 'Unipolar' },
-                  { value: 'bipolar', label: 'Bipolar' },
-                ]}
-                placeholder="Pick one"
-                {...form.getInputProps('stimulation_params.polarity')}
-              />
-              <NumberInput
-                required
-                label="Current"
-                description="In mA"
-                hideControls
-                {...form.getInputProps('stimulation_params.current_mA')}
-              />
-              <NumberInput
-                label="Pulse Width"
-                description="In ms"
-                hideControls
-                {...form.getInputProps('stimulation_params.pulse_width_ms')}
-              />
-              <NumberInput
-                label="Pulse Frequency"
-                description="In Hz"
-                hideControls
-                {...form.getInputProps('stimulation_params.pulse_freq_Hz')}
-              />
-              <NumberInput
-                label="Train Duration"
-                description="In s"
-                hideControls
-                {...form.getInputProps('stimulation_params.train_duration_s')}
-              />
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
+    const BROADMANN_LIST = Array.from({ length: 47 }, (v, k) => String(k + 1));
 
-        <Group position="right" mt="md">
-          <Button type="submit">{mode === "create" ? "Create" : "Save"}</Button>
-        </Group>
-      </form>
-    </Box>
-  )
+    const getSemiologyOptions = () => {
+        let category = form.getInputProps('effect.category').value;
+        if (Object.keys(effectCategorisationMap).includes(category)) {
+            return Object.keys(effectCategorisationMap[category]);
+        }
+        return [];
+    }
+
+    const getCharacteristicOptions = () => {
+        let category = form.getInputProps('effect.category').value;
+        let semiology = form.getInputProps('effect.semiology').value;
+        if (Object.keys(effectCategorisationMap).includes(category) &&
+            Object.keys(effectCategorisationMap[category]).includes(semiology)) {
+            return effectCategorisationMap[category][semiology];
+        }
+        return [];
+    }
+
+    const shouldShowCharacteristic = (): boolean => {
+        let category = form.getInputProps('effect.category').value;
+        let semiology = form.getInputProps('effect.semiology').value;
+        return (
+            Object.keys(effectCategorisationMap).includes(category) &&
+            Object.keys(effectCategorisationMap[category]).includes(semiology) &&
+            effectCategorisationMap[category][semiology].length > 0)
+    }
+
+    return (
+        <Box>
+            <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+                <Accordion defaultValue="location">
+                    <Accordion.Item value="location">
+                        <Accordion.Control>Location</Accordion.Control>
+                        <Accordion.Panel>
+                            <NativeSelect
+                                required
+                                disabled={mode === "view"}
+                                label="Side"
+                                data={[{ value: '', label: 'Pick One', disabled: true }, { value: 'left', label: 'Left' }, { value: 'right', label: 'Rigth' }]}
+                                placeholder="Pick one"
+                                {...form.getInputProps('location.side')}
+                            />
+                            <Autocomplete
+                                required
+                                disabled={mode === "view"}
+                                label="Lobe"
+                                data={[
+                                    { value: 'frontal', label: 'Frontal' },
+                                    { value: 'parietal', label: 'Parietal' },
+                                    { value: 'occipital', label: 'Occipital' },
+                                    { value: 'temporal', label: 'Temporal' },
+                                    { value: 'limbic', label: 'Limbic' },
+                                    { value: 'insular', label: 'Insular' },
+                                ]}
+                                placeholder="Pick one"
+                                {...form.getInputProps('location.lobe')}
+                            />
+                            <Autocomplete
+                                required
+                                disabled={mode === "view"}
+                                label="Gyrus"
+                                data={GYRUS_LIST}
+                                {...form.getInputProps('location.gyrus')}
+                            />
+                            <MultiSelect
+                                required={false}
+                                disabled={mode === "view"}
+                                label="Broadmann"
+                                data={BROADMANN_LIST}
+                                {...form.getInputProps('location.broadmann')}
+                            />
+                        </Accordion.Panel>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="effect">
+                        <Accordion.Control>Effect</Accordion.Control>
+                        <Accordion.Panel>
+                            <NativeSelect
+                                required
+                                disabled={mode === "view"}
+                                label="Category"
+                                data={[{ value: '', label: 'Pick One' }, ...Object.keys(effectCategorisationMap)]}
+                                placeholder="Pick one"
+                                {...form.getInputProps('effect.category')}
+                            />
+                            <NativeSelect
+                                required
+                                disabled={mode === "view"}
+                                label="Semiology"
+                                data={[{ value: '', label: 'Pick One' }, ...getSemiologyOptions()]}
+                                {...form.getInputProps('effect.semiology')}
+                            />
+                            {shouldShowCharacteristic() &&
+                                <NativeSelect
+                                    required={shouldShowCharacteristic()}
+                                    disabled={mode === "view"}
+                                    label="characteristic"
+                                    data={[{ value: '', label: 'Pick One' }, ...getCharacteristicOptions()]}
+                                    {...form.getInputProps('effect.characteristic')}
+                                />
+                            }
+                            <Switch
+                                required
+                                disabled={mode === "view"}
+                                label="Post discharge ?"
+                                labelPosition="left"
+                                {...form.getInputProps('effect.post_discharge')}
+                            />
+                        </Accordion.Panel>
+                    </Accordion.Item>
+                </Accordion>
+
+                <Group position="right" mt="md">
+                    <Button type="submit">{mode === "create" ? "Create" : mode === "edit" ? "Save" : "OK"}</Button>
+                </Group>
+            </form>
+        </Box>
+    )
 }
 
 export interface CreateEditResultFormValues {
-  reference: {
-    doi: string
-    title?: string
-  }
-  stimulation_params: {
-    type: StimulationTypeDdo | ''
-    electrode_separation: number
-    polarity?: StimulationPolarityDdo
-    current_mA: number
-    pulse_width_ms?: number
-    pulse_freq_Hz?: number
-    train_duration_s?: number
-  }
+    location: {
+        side: "left" | "right" | "",
+        lobe: string,
+        gyrus: string,
+        broadmann: string[]
+    },
+    effect: {
+        category: string,
+        semiology: string,
+        characteristic: string,
+        post_discharge: boolean
+    }
+    comments?: string
 }
 
 interface CreateEditResultFormProps {
-  onSubmit: (values: CreateEditResultFormValues) => void;
-  mode: "edit" | "create";
-  edit_result?: ResultDdo;
+    onSubmit: (values: CreateEditResultFormValues) => void;
+    mode: "edit" | "create" | "view";
+    edit_result?: ResultDdo;
 }
