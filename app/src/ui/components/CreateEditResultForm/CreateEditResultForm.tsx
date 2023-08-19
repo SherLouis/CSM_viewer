@@ -1,4 +1,4 @@
-import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch } from "@mantine/core"
+import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo, effectCategorisationMap } from "../../models/ResultDdo";
 
@@ -142,12 +142,22 @@ export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEdit
                                     {...form.getInputProps('effect.characteristic')}
                                 />
                             }
+                            <Space />
                             <Switch
                                 required
                                 disabled={mode === "view"}
                                 label="Post discharge ?"
                                 labelPosition="left"
                                 {...form.getInputProps('effect.post_discharge')}
+                            />
+                        </Accordion.Panel>
+                    </Accordion.Item>
+                    <Accordion.Item value="comments">
+                        <Accordion.Control>Comments</Accordion.Control>
+                        <Accordion.Panel>
+                            <Textarea
+                                label="Comments"
+                                placeholder="Write your comments here"
                             />
                         </Accordion.Panel>
                     </Accordion.Item>
