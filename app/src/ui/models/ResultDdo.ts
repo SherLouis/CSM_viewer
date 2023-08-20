@@ -1,6 +1,6 @@
 // ddo = data display object
 export type ResultDdo = {
-    id: string,
+    id: number,
     location: {
         side: "left" | "right",
         lobe: string,

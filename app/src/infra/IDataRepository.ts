@@ -1,6 +1,7 @@
+import { Result } from "../core/models/Result";
 import { ArticleSummary, Article } from "../core/models/Article";
 
-export default interface IArticleRepository {
+export default interface IDataRepository {
     getArticle(articleId: string): Article
 
     getArticles(): ArticleSummary[]
@@ -10,6 +11,14 @@ export default interface IArticleRepository {
     deleteArticle(articleId: string): void
 
     editArticle(articleId: string, newValue: Article): void
+
+    getResults(articleId: string): Result[]
+
+    createResult(articleId: string, result: Result): void
+
+    deleteResult(resultId: string): void
+
+    editResult(resultId: string, newValue: Result): void
 
     close(): void
 }

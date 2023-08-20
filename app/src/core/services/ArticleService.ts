@@ -1,19 +1,19 @@
-import IArticleRepository from "../../infra/IArticleRepository";
+import IDataRepository from "../../infra/IDataRepository";
 import { ArticleSummary, Article } from "../models/Article";
 
 export class ArticleService {
-    articleRepository: IArticleRepository;
+    dataRepository: IDataRepository;
 
-    constructor(articleRepository: IArticleRepository) { this.articleRepository = articleRepository }
+    constructor(articleRepository: IDataRepository) { this.dataRepository = articleRepository }
 
     public getAllSummary(): ArticleSummary[] {
-        return this.articleRepository.getArticles();
+        return this.dataRepository.getArticles();
     }
 
     public createArticle(article: Article): boolean {
         console.log(article);
         try {
-            this.articleRepository.createArticle(article);
+            this.dataRepository.createArticle(article);
             return true;
         }
         catch (e) {
@@ -23,14 +23,14 @@ export class ArticleService {
     }
 
     public getArticle(articleId: string): Article {
-        return this.articleRepository.getArticle(articleId);
+        return this.dataRepository.getArticle(articleId);
     }
 
     public editArticle(articleId: string, article: Article): boolean {
         try {
             console.debug("editArticle service");
             console.debug(article);
-            this.articleRepository.editArticle(articleId, article);
+            this.dataRepository.editArticle(articleId, article);
             return true;
         }
         catch (e) {
@@ -42,7 +42,7 @@ export class ArticleService {
     public deleteArticle(articleId: string): boolean {
         console.log(articleId);
         try {
-            this.articleRepository.deleteArticle(articleId);
+            this.dataRepository.deleteArticle(articleId);
             return true;
         }
         catch (e) {

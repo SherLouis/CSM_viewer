@@ -1,12 +1,10 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { IpcChannelInterface } from '../IPC/IpcChannelInterface';
-import { SystemInfoChannel } from '../IPC/IpcChannels/SystemInfoIpcChannel';
-import { SystemInfoService } from '../core/services/systemInfoService';
 import { GetArticlesChannel } from '../IPC/IpcChannels/Article/GetArticlesChannel';
 import { ArticleService } from '../core/services/ArticleService';
 import { CreateArticleChannel } from '../IPC/IpcChannels/Article/CreateArticleChannel';
-import IArticleRepository from '../infra/IArticleRepository';
-import ArticleRepository from '../infra/ArticleRepository';
+import IDataRepository from '../infra/IDataRepository';
+import DataRepository from '../infra/DataRepository';
 import { GetArticleChannel } from '../IPC/IpcChannels/Article/GetArticleChannel';
 import { EditArticleChannel } from '../IPC/IpcChannels/Article/EditArticleChannel';
 import { DeleteArticleChannel } from '../IPC/IpcChannels/Article/DeleteArticleChannel';
@@ -24,7 +22,7 @@ if (require('electron-squirrel-startup')) {
 
 class Main {
   //private systemInfoService: SystemInfoService = new SystemInfoService(); 
-  private articleRepository: IArticleRepository = new ArticleRepository(":memory:");
+  private articleRepository: IDataRepository = new DataRepository(":memory:");
   private articleService: ArticleService = new ArticleService(this.articleRepository);
   private createWindow = (): void => {
     // Create the browser window.

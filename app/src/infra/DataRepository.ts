@@ -1,10 +1,12 @@
+import { Result } from "../core/models/Result";
 import { ArticleSummary, Article } from "../core/models/Article";
-import IArticleRepository from "./IArticleRepository";
+import IDataRepository from "./IDataRepository";
 import { ArticleEntity, ArticleEntityToModel, ArticleToEntity } from "./entity/ArticleEntity";
 import { ArticleSummaryEntity, ArticleSummaryEntityToModel } from "./entity/ArticleSummaryEntity";
 import Database from "better-sqlite3";
+import { ResultEntity, ResultEntityToModel } from "./entity/ResultEntity";
 
-export default class ArticleRepository implements IArticleRepository {
+export default class DataRepository implements IDataRepository {
     private dbLocation: string;
     private db: Database.Database;
 
@@ -20,10 +22,6 @@ export default class ArticleRepository implements IArticleRepository {
     }
 
     getArticles(): ArticleSummary[] {
-        /*const articles = [
-            { doi: "1234", title: "Test1", nb_results: 1 },
-            { doi: "5678", title: "Test2", nb_results: 1 }
-        ] as ArticleSummaryEntity[];*/
         const articles = this._getAllArticlesSummary();
         return articles.map((a) => ArticleSummaryEntityToModel(a))
     }
@@ -35,6 +33,20 @@ export default class ArticleRepository implements IArticleRepository {
     }
     editArticle(articleId: string, newValue: Article): void {
         this._editArticle(articleId, ArticleToEntity(newValue));
+    }
+
+    getResults(articleId: string): Result[] {
+        const results = this._getResultsForArticleId(articleId);
+        return results.map((r) => ResultEntityToModel(r));
+    }
+    createResult(articleId: string, result: Result): void {
+        throw new Error("Method not implemented.");
+    }
+    deleteResult(resultId: string): void {
+        throw new Error("Method not implemented.");
+    }
+    editResult(resultId: string, newValue: Result): void {
+        throw new Error("Method not implemented.");
     }
 
     close(): void {
@@ -97,12 +109,18 @@ export default class ArticleRepository implements IArticleRepository {
         this.db.prepare(stmt).run(articleId);
     }
 
+    private _getResultsForArticleId(articleId: string): ResultEntity[] {
+        const stmt = 'SELECT * FROM Results WHERE article_id = ?';
+        const results = this.db.prepare(stmt).all() as ResultEntity[];
+        return results;
+    }
+
     private createTablesIfNotExist() {
         console.debug('Creating tables...');
         try {
             const createArticlesTableStmt = "CREATE TABLE IF NOT EXISTS Articles (doi TEXT NOT NULL PRIMARY KEY, title TEXT, stimulation_type TEXT, stimulation_electrode_separation INTEGER, stimulation_polarity TEXT, stimulation_current_mA INTEGER, stimulation_pulse_width_ms INTEGER, stimulation_pulse_freq_Hz INTEGER, stimulation_train_duration_s INTEGER);";
-            // TODO: add other fields for Results table
-            const createResultsTableStmt = "CREATE TABLE IF NOT EXISTS Results (id INTEGER PRIMARY KEY AUTOINCREMENT, article_doi TEXT NOT NULL);";
+            const createResultsTableStmt = "CREATE TABLE IF NOT EXISTS Results (id INTEGER PRIMARY KEY AUTOINCREMENT, article_id TEXT NOT NULL, location_side TEXT NOT NULL, location_lobe TEXT NOT NULL, location_gyrus TEXT NOT NULL, location_broadmann TEXT NOT NULL, effect_category TEXT NOT NULL, effect_semiology TEXT NOT NULL, effect_characteristic TEXT NOT NULL, effect_post_discharge INTEGER NOT NULL, comments TEXT NOT NULL);";
+
             this.db.prepare(createArticlesTableStmt).run();
             this.db.prepare(createResultsTableStmt).run();
         }
