@@ -2,7 +2,8 @@ import { Result } from "../../core/models/Result"
 import { ResultDdo } from "../../ui/models/ResultDdo"
 
 export type ResultDto = {
-    id: number,
+    id?: number,
+    article_id: string,
     location: {
         side: "left" | "right",
         lobe: string,
@@ -19,8 +20,13 @@ export type ResultDto = {
 }
 
 export class ResultsDtoMapper {
-    public static DdotoDto = (ddo: ResultDdo) => {
-        return ddo as ResultDto;
+    public static DdotoDto = (article_id: string, ddo: ResultDdo) : ResultDto=> {
+        return {
+            article_id: article_id,
+            location: ddo.location,
+            effect: ddo.effect,
+            comments: ddo.comments
+        };
     }
     
     public static DtoToDdo = (dto: ResultDto) => {
@@ -31,7 +37,7 @@ export class ResultsDtoMapper {
         return model as ResultDto;
     }
 
-    public static DtoToModel = (dto: Result) => {
+    public static DtoToModel = (dto: ResultDto) => {
         return dto as Result;
     }
 }

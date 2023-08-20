@@ -11,9 +11,9 @@ export class ResultService {
         return this.dataRepository.getResults(articleId);
     }
 
-    public createResult(articleId: string, result: Result): boolean {
+    public createResult(result: Result): boolean {
         try {
-            this.dataRepository.createResult(articleId, result);
+            this.dataRepository.createResult(result);
             return true;
         }
         catch (e) {

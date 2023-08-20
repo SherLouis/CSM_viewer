@@ -18,7 +18,7 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onEdit(result);
     }
 
-    const handleDelete = (event: MouseEvent, resultId: string) => {
+    const handleDelete = (event: MouseEvent, resultId: number) => {
         event.stopPropagation();
         props.onDelete(resultId);
     }
@@ -38,17 +38,17 @@ const ResultsTable = (props: ResultsTableProps) => {
                 {
                     id: "location",
                     columns: [
-                        { accessor: "location.side" },
-                        { accessor: "location.lobe" },
-                        { accessor: "location.gyrus" }
+                        { accessor: "location.side", title: "Side" },
+                        { accessor: "location.lobe", title: "Lobe"},
+                        { accessor: "location.gyrus", title: "Gyrus" }
                     ]
                 },
                 {
                     id: "effect",
                     columns: [
-                        { accessor: "effect.category" },
-                        { accessor: "effect.semiology" },
-                        { accessor: "effect.characteristic" }
+                        { accessor: "effect.category", title: "Category" },
+                        { accessor: "effect.semiology", title: "Semiology" },
+                        { accessor: "effect.characteristic", title: "Characteristic" }
                     ]
                 },
                 {
@@ -85,7 +85,7 @@ type ResultsTableProps = {
     data: ResultDdo[],
     onRowClick: (result: ResultDdo) => void,
     onEdit: (result: ResultDdo) => void,
-    onDelete: (resultId: string) => void
+    onDelete: (resultId: number) => void
 }
 
 

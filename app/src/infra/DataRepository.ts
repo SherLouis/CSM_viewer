@@ -4,7 +4,7 @@ import IDataRepository from "./IDataRepository";
 import { ArticleEntity, ArticleEntityToModel, ArticleToEntity } from "./entity/ArticleEntity";
 import { ArticleSummaryEntity, ArticleSummaryEntityToModel } from "./entity/ArticleSummaryEntity";
 import Database from "better-sqlite3";
-import { ResultEntity, ResultEntityToModel } from "./entity/ResultEntity";
+import { ResultEntity, ResultEntityToModel, ResultToEntity } from "./entity/ResultEntity";
 
 export default class DataRepository implements IDataRepository {
     private dbLocation: string;
@@ -39,8 +39,8 @@ export default class DataRepository implements IDataRepository {
         const results = this._getResultsForArticleId(articleId);
         return results.map((r) => ResultEntityToModel(r));
     }
-    createResult(articleId: string, result: Result): void {
-        throw new Error("Method not implemented.");
+    createResult(result: Result): void {
+        this._insertNewResult(ResultToEntity(result));
     }
     deleteResult(resultId: string): void {
         throw new Error("Method not implemented.");
@@ -70,11 +70,11 @@ export default class DataRepository implements IDataRepository {
             Articles
         LEFT JOIN (
             SELECT
-                article_doi,
+                article_id,
                 COUNT(*) AS nb_results
             FROM Results
-            GROUP BY article_doi
-        ) AS ResultCounts ON Articles.doi = ResultCounts.article_doi;`;
+            GROUP BY article_id
+        ) AS ResultCounts ON Articles.doi = ResultCounts.article_id;`;
         const results = this.db.prepare(stmt).all() as ArticleSummaryEntity[];
         return results;
     }
@@ -111,8 +111,17 @@ export default class DataRepository implements IDataRepository {
 
     private _getResultsForArticleId(articleId: string): ResultEntity[] {
         const stmt = 'SELECT * FROM Results WHERE article_id = ?';
-        const results = this.db.prepare(stmt).all() as ResultEntity[];
+        const results = this.db.prepare(stmt).all(articleId) as ResultEntity[];
         return results;
+    }
+
+    private _insertNewResult(newResult: ResultEntity): void {
+        console.debug("Inserting new result: ");
+        console.debug(newResult);
+        const stmt = `INSERT INTO Results 
+        (article_id, location_side, location_lobe, location_gyrus, location_broadmann, effect_category, effect_semiology, effect_characteristic, effect_post_discharge, comments) 
+        Values (@article_id, @location_side, @location_lobe, @location_gyrus, @location_broadmann, @effect_category, @effect_semiology, @effect_characteristic, @effect_post_discharge, @comments);`
+        this.db.prepare(stmt).run(newResult)
     }
 
     private createTablesIfNotExist() {

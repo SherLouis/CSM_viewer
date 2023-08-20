@@ -9,6 +9,7 @@ import { useDisclosure, useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
 import ResultsTable from "../../../components/ResultsTable/ResultsTable";
 import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
+import { CreateResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
 
 export const ArticleDetailsPage = () => {
     // hooks
@@ -44,10 +45,24 @@ export const ArticleDetailsPage = () => {
                 resultsHandlers.setState(res);
                 setIsLoading(false);
             });
-    }, [results]);
+    }, [currentArticle]);
+
+    const createResult = useCallback((result: ResultDdo) => {
+        setIsLoading(true);
+        ResultUIService.createResult(articleId, result)
+            .then((res: CreateResponseDto) => {
+                console.debug(res);
+                if (res.successful) {
+                    resultsHandlers.append(result)
+                }
+                console.log(res.message)
+                // TODO: display if success or not in notistack
+                setIsLoading(false)
+            });
+    }, [currentArticle]);
 
     const editResult = useCallback((values: CreateEditResultFormValues) => {
-        setIsLoading(true);
+        //setIsLoading(true);
         // TODO
     }, [selectedResult])
 
@@ -64,12 +79,14 @@ export const ArticleDetailsPage = () => {
         createEditModalHandlers.open();
     }
 
-    const onDeleteResult = (resultId: string) => {
+    const onDeleteResult = (resultId: number) => {
         return;
     }
 
     const onCreateResult = (values: CreateEditResultFormValues) => {
-        return;
+        const result = {location: values.location, effect: values.effect, comments: values.comments} as ResultDdo;
+        createResult(result);
+        createEditModalHandlers.close();
     }
 
     const onCreateButton = () => {
@@ -147,7 +164,7 @@ export const ArticleDetailsPage = () => {
                 <CreateEditResultForm
                     onSubmit={(values) => { mode === "create" ? onCreateResult(values) : mode === "edit" ? editResult(values) : createEditModalHandlers.close() }}
                     mode={mode}
-                    edit_result={mode === "edit" ? selectedResult : null}
+                    edit_result={(mode === "edit" || mode === "view") ? selectedResult : null}
                 />
             </Modal>
         </Container>

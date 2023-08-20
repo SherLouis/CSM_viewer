@@ -1,9 +1,10 @@
-import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea } from "@mantine/core"
+import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea, Checkbox } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo, effectCategorisationMap } from "../../models/ResultDdo";
 
 export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEditResultFormProps) => {
     // TODO: Ajouter validations
+    // TODO: post_discharge switch value
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
             location: {
@@ -148,7 +149,7 @@ export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEdit
                                 disabled={mode === "view"}
                                 label="Post discharge ?"
                                 labelPosition="left"
-                                {...form.getInputProps('effect.post_discharge')}
+                                {...form.getInputProps('effect.post_discharge', {type: 'checkbox'})}
                             />
                         </Accordion.Panel>
                     </Accordion.Item>
