@@ -42,11 +42,11 @@ export default class DataRepository implements IDataRepository {
     createResult(result: Result): void {
         this._insertNewResult(ResultToEntity(result));
     }
-    deleteResult(resultId: string): void {
-        throw new Error("Method not implemented.");
+    deleteResult(resultId: number): void {
+        this._deleteResult(resultId);
     }
-    editResult(resultId: string, newValue: Result): void {
-        throw new Error("Method not implemented.");
+    editResult(resultId: number, newValue: Result): void {
+        this._editResult(resultId, ResultToEntity(newValue));
     }
 
     close(): void {
@@ -109,6 +109,8 @@ export default class DataRepository implements IDataRepository {
         this.db.prepare(stmt).run(articleId);
     }
 
+    // Results
+
     private _getResultsForArticleId(articleId: string): ResultEntity[] {
         const stmt = 'SELECT * FROM Results WHERE article_id = ?';
         const results = this.db.prepare(stmt).all(articleId) as ResultEntity[];
@@ -122,6 +124,30 @@ export default class DataRepository implements IDataRepository {
         (article_id, location_side, location_lobe, location_gyrus, location_broadmann, effect_category, effect_semiology, effect_characteristic, effect_post_discharge, comments) 
         Values (@article_id, @location_side, @location_lobe, @location_gyrus, @location_broadmann, @effect_category, @effect_semiology, @effect_characteristic, @effect_post_discharge, @comments);`
         this.db.prepare(stmt).run(newResult)
+    }
+
+    private _editResult(resultId: number, newResult: ResultEntity): void {
+        console.debug("Editing result: ");
+        console.debug(resultId);
+        console.debug(newResult);
+        const stmt = `
+        UPDATE Results SET 
+            location_side = @location_side,
+            location_lobe = @location_lobe,
+            location_gyrus = @location_gyrus,
+            location_broadmann = @location_broadmann,
+            effect_category = @effect_category,
+            effect_semiology = @effect_semiology,
+            effect_characteristic = @effect_characteristic,
+            effect_post_discharge = @effect_post_discharge,
+            comments = @comments
+        WHERE id=@resultIdToEdit`
+        this.db.prepare(stmt).run({...newResult, resultIdToEdit:resultId});
+    }
+
+    private _deleteResult(resultId: number): void {
+        const stmt = 'DELETE FROM Results WHERE id = ?';
+        this.db.prepare(stmt).run(resultId);
     }
 
     private createTablesIfNotExist() {

@@ -120,8 +120,6 @@ export function ArticlesPage() {
     <Box>
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Stack>
-        "TODO: Articles page. Breadcrumps, table with edit button for each entry, button to add article to table."
-
         <Group>
           <Button leftIcon={<IconPlus />} variant="filled" onClick={() => createEditModalHandlers.open()}>New</Button>
           <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshArticles}>Refresh</Button>

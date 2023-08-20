@@ -9,14 +9,17 @@ export default class ResultUIService {
         return response.map((dto) => ResultsDtoMapper.DtoToDdo(dto));
     }
 
-    public static editResult = async (newValue: ResultDdo): Promise<EditResponseDto> => {
-        console.debug(`Editing result ${newValue.id}`);
-        throw new Error("Not yet implemented");
+    public static editResult = async (resultId:number, newValue: ResultDdo): Promise<EditResponseDto> => {
+        console.debug(`Editing result ${resultId} with new value: `);
+        console.debug(newValue);
+        let response = await window.electronAPI.editResult(resultId, newValue);
+        return response;
     }
 
-    public static deleteResult = async (resultId: string): Promise<EditResponseDto> => {
+    public static deleteResult = async (resultId: number): Promise<EditResponseDto> => {
         console.debug(`Deleting result ${resultId}`);
-        throw new Error("Not yet implemented");
+        let response = await window.electronAPI.deleteResult(resultId);
+        return response;
     }
 
     public static createResult = async (articleId: string, result: ResultDdo): Promise<CreateResponseDto> => {

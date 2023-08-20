@@ -13,8 +13,8 @@ export interface IElectronAPI {
   deleteArticle: (articleId: string) => Promise<EditResponseDto>
   // Results
   getAllResultsForArticle: (articleId: string) => Promise<ResultDto[]>
-  editResult: (result: ResultDto) => Promise<EditResponseDto>
-  deleteResult: (resultId: string) => Promise<EditResponseDto>
+  editResult: (resultId: number, result: ResultDto) => Promise<EditResponseDto>
+  deleteResult: (resultId: number) => Promise<EditResponseDto>
   createResult: (result: ResultDto) => Promise<CreateResponseDto>
 }
 

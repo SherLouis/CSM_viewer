@@ -11,8 +11,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteArticle: (articleId: string) => ipcRenderer.invoke('article:delete', { params: { articleId: articleId } }),
 
   getAllResultsForArticle: (articleId: string) => ipcRenderer.invoke('results:getForArticle', { params: { articleId: articleId } }),
-  // TODO: editResult: (result: ResultDto) => Promise<EditResponseDto>
-  // TODO: deleteResult: (resultId: string) => Promise<EditResponseDto>
+  editResult: (resultId: number, result: ResultDto) => ipcRenderer.invoke('result:edit', { params: { resultId: resultId, dto: result } }),
+  deleteResult: (resultId: number) => ipcRenderer.invoke('result:delete', { params: { resultId: resultId } }),
   createResult: (result: ResultDto) => ipcRenderer.invoke('results:create', { params: { dto: result } }),
 })
 

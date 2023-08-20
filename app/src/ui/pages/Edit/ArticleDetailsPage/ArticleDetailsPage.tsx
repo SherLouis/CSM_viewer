@@ -9,7 +9,7 @@ import { useDisclosure, useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
 import ResultsTable from "../../../components/ResultsTable/ResultsTable";
 import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
-import { CreateResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
+import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
 
 export const ArticleDetailsPage = () => {
     // hooks
@@ -62,8 +62,20 @@ export const ArticleDetailsPage = () => {
     }, [currentArticle]);
 
     const editResult = useCallback((values: CreateEditResultFormValues) => {
-        //setIsLoading(true);
-        // TODO
+        setIsLoading(true);
+        const result = { id: selectedResult.id, ...values } as ResultDdo;
+        ResultUIService.editResult(selectedResult.id, result)
+            .then((res: EditResponseDto) => {
+                createEditModalHandlers.close();
+                if (res.successful) {
+                    resultsHandlers.applyWhere(
+                        (r) => (r.id === selectedResult.id),
+                        (r) => result
+                    );
+                }
+                console.log(res.message);
+                setIsLoading(false);
+            });
     }, [selectedResult])
 
     // Functions
@@ -80,11 +92,21 @@ export const ArticleDetailsPage = () => {
     }
 
     const onDeleteResult = (resultId: number) => {
-        return;
+        setIsLoading(true);
+        ResultUIService.deleteResult(resultId)
+            .then((res: EditResponseDto) => {
+                console.debug(res);
+                if (res.successful) {
+                    resultsHandlers.filter((a) => a.id != resultId);
+                }
+                console.log(res.message)
+                // TODO: display if success or not in notistack
+                setIsLoading(false)
+            })
     }
 
     const onCreateResult = (values: CreateEditResultFormValues) => {
-        const result = {location: values.location, effect: values.effect, comments: values.comments} as ResultDdo;
+        const result = { location: values.location, effect: values.effect, comments: values.comments } as ResultDdo;
         createResult(result);
         createEditModalHandlers.close();
     }
@@ -93,6 +115,8 @@ export const ArticleDetailsPage = () => {
         setMode("create");
         createEditModalHandlers.open();
     }
+
+    console.debug(results);
 
     return (
         <Container size={"80%"}>

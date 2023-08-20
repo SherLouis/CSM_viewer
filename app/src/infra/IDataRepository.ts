@@ -16,9 +16,9 @@ export default interface IDataRepository {
 
     createResult(result: Result): void
 
-    deleteResult(resultId: string): void
+    deleteResult(resultId: number): void
 
-    editResult(resultId: string, newValue: Result): void
+    editResult(resultId: number, newValue: Result): void
 
     close(): void
 }

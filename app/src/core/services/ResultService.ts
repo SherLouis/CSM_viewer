@@ -22,7 +22,7 @@ export class ResultService {
         }
     }
 
-    public editResult(resultId: string, result: Result): boolean {
+    public editResult(resultId: number, result: Result): boolean {
         try {
             this.dataRepository.editResult(resultId, result);
             return true;
@@ -33,7 +33,7 @@ export class ResultService {
         }
     }
 
-    public deleteResult(resultId: string): boolean {
+    public deleteResult(resultId: number): boolean {
         try {
             this.dataRepository.deleteResult(resultId);
             return true;
