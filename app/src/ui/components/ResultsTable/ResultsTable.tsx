@@ -32,7 +32,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             withColumnBorders
             striped
             highlightOnHover
-            idAccessor={"id"}
+            idAccessor={(record)=>String(record.id)}
             records={props.data}
             groups={[
                 {
