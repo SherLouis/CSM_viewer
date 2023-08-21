@@ -4,7 +4,6 @@ import { ResultDdo, effectCategorisationMap } from "../../models/ResultDdo";
 
 export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEditResultFormProps) => {
     // TODO: Ajouter validations
-    // TODO: post_discharge switch value
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
             location: {
@@ -24,8 +23,7 @@ export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEdit
     });
 
     const handleSubmit = (values: CreateEditResultFormValues) => {
-        form.validate();
-        console.debug(values);
+        //form.validate();
         onSubmit(values);
     }
 
@@ -145,7 +143,6 @@ export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEdit
                             }
                             <Space />
                             <Switch
-                                required
                                 disabled={mode === "view"}
                                 label="Post discharge ?"
                                 labelPosition="left"
