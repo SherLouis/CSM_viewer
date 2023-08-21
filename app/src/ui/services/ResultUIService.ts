@@ -24,6 +24,7 @@ export default class ResultUIService {
 
     public static createResult = async (articleId: string, result: ResultDdo): Promise<CreateResponseDto> => {
         console.debug('Creating result');
+        console.debug(result)
         let response = await window.electronAPI.createResult(ResultsDtoMapper.DdotoDto(articleId, result));
         return response;
     }

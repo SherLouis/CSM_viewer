@@ -158,7 +158,9 @@ export const CreateEditResultForm = ({ onSubmit, mode, edit_result }: CreateEdit
                         <Accordion.Panel>
                             <Textarea
                                 label="Comments"
+                                disabled={mode === "view"}
                                 placeholder="Write your comments here"
+                                {...form.getInputProps('comments')}
                             />
                         </Accordion.Panel>
                     </Accordion.Item>

@@ -2,7 +2,7 @@
   "name": "my-new-app",
   "productName": "my-new-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "CSM viewer app",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
