@@ -1,4 +1,4 @@
-import { Box, Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core"
+import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack } from "@mantine/core"
 import { useNavigate } from "react-router-dom"
 import ArticlesTable from "../../../components/ArticlesTable/ArticlesTable";
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
@@ -117,7 +117,7 @@ export function ArticlesPage() {
   }
 
   return (
-    <Box>
+    <Container size={"80%"}>
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Stack>
         <Group>
@@ -125,12 +125,14 @@ export function ArticlesPage() {
           <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshArticles}>Refresh</Button>
         </Group>
 
-        <ArticlesTable
-          data={articles}
-          onRowClick={(articleId) => viewArticle(articleId)}
-          onEdit={(articleId) => onEditArticle(articleId)}
-          onDelete={(articleId) => onDeleteArticle(articleId)}
-        />
+        <Box h={"70vh"}>
+          <ArticlesTable
+            data={articles}
+            onRowClick={(articleId) => viewArticle(articleId)}
+            onEdit={(articleId) => onEditArticle(articleId)}
+            onDelete={(articleId) => onDeleteArticle(articleId)}
+          />
+        </Box>
       </Stack>
 
       <Modal opened={createEditOpened}
@@ -143,6 +145,6 @@ export function ArticlesPage() {
           edit_article={mode === "edit" ? currentArticle : null} />
       </Modal>
 
-    </Box>
+    </Container>
   )
 }

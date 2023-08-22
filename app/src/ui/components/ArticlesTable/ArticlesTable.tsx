@@ -24,8 +24,6 @@ const ArticlesTable = (props: ArticlesTableProps) => {
 
   return (
     <DataTable
-      withBorder
-      borderRadius="sm"
       withColumnBorders
       striped
       highlightOnHover

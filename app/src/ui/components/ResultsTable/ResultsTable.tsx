@@ -27,19 +27,17 @@ const ResultsTable = (props: ResultsTableProps) => {
 
     return (
         <DataTable
-            withBorder
-            borderRadius="sm"
             withColumnBorders
             striped
             highlightOnHover
-            idAccessor={(record)=>String(record.id)}
+            idAccessor={(record) => String(record.id)}
             records={props.data}
             groups={[
                 {
                     id: "location",
                     columns: [
                         { accessor: "location.side", title: "Side" },
-                        { accessor: "location.lobe", title: "Lobe"},
+                        { accessor: "location.lobe", title: "Lobe" },
                         { accessor: "location.gyrus", title: "Gyrus" }
                     ]
                 },

@@ -1,4 +1,4 @@
-import { Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
+import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
@@ -129,16 +129,6 @@ export const ArticleDetailsPage = () => {
 
             {!isLoading &&
                 <Stack>
-                    {/*TODO: 
-                 [ ] Specific Article page: Reference infos (DOI, title, etc)
-                 [ ] Methodology infos (stimulation params)
-                 [x] Results table with 
-                 [ ] edit and delete button for each entry
-                 [x] Breadcrumps
-                 [ ] Button to add result to table.
-                */}
-
-                    {/* TODO: mettre ça beau*/}
                     <Title order={3}>{currentArticle.title}</Title>
 
                     <Title order={3}>Stimulation parameters</Title>
@@ -172,15 +162,15 @@ export const ArticleDetailsPage = () => {
                         <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>
                     </Group>
 
-                    {/*TODO: scroll left problem when window is too smal*/}
-                    <ResultsTable
-                        data={results}
-                        onRowClick={(result) => viewResult(result)}
-                        onEdit={(result) => onEditResult(result)}
-                        onDelete={(resultId) => onDeleteResult(resultId)} />
+                    <Box h={"50vh"}>
+                        <ResultsTable
+                            data={results}
+                            onRowClick={(result) => viewResult(result)}
+                            onEdit={(result) => onEditResult(result)}
+                            onDelete={(resultId) => onDeleteResult(resultId)} />
+                    </Box>
                 </Stack>
             }
-
             <Modal opened={createEditOpened}
                 onClose={() => { createEditModalHandlers.close(); setMode("create") }}
                 title={mode === "create" ? "New Result" : "Edit Result"}
