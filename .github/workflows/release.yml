@@ -1,20 +1,24 @@
 name: Release
 on:
-  release:
-    types:
-      - created
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   publish_on_win:
     runs-on: windows-latest
+    env:
+      working-directory: ./app
     steps:
     - uses: actions/checkout@v2       
     - uses: actions/setup-node@master
       with:
         node-version: 18
     - name: install dependencies
+      working-directory: ${{env.working-directory}}
       run: npm install
     - name: publish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      working-directory: ${{env.working-directory}}
       run: npm run publish
