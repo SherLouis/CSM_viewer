@@ -12,6 +12,8 @@ jobs:
       with:
         node-version: 18
     - name: install dependencies
+      working-directory: ${{env.working-directory}}
       run: npm install
     - name: build
+      working-directory: ${{env.working-directory}}
       run: npm run make
