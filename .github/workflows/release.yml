@@ -4,8 +4,6 @@ on:
     tags:
       - 'v*'
 
-permissions: read-all|write-all
-
 jobs:
   publish_on_win:
     runs-on: windows-latest
