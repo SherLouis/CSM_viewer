@@ -3,23 +3,23 @@ import { ActionIcon, Group, Text } from '@mantine/core';
 import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 
-const ArticlesTable = (props: ArticlesTableProps) => {
+const SourcesTable = (props: SourcesTableProps) => {
   // [ ] add sorting and filtering
   // [ ] add pagination
 
-  const handleView = (event: MouseEvent, articleDoi: string) => {
+  const handleView = (event: MouseEvent, sourceId: number) => {
     event.stopPropagation();
-    props.onRowClick(articleDoi);
+    props.onRowClick(sourceId);
   }
 
-  const handleEdit = (event: MouseEvent, articleDoi: string) => {
+  const handleEdit = (event: MouseEvent, sourceId: number) => {
     event.stopPropagation();
-    props.onEdit(articleDoi);
+    props.onEdit(sourceId);
   }
 
-  const handleDelete = (event: MouseEvent, articleDoi: string) => {
+  const handleDelete = (event: MouseEvent, sourceId: number) => {
     event.stopPropagation();
-    props.onDelete(articleDoi);
+    props.onDelete(sourceId);
   }
 
   return (
@@ -27,12 +27,12 @@ const ArticlesTable = (props: ArticlesTableProps) => {
       withColumnBorders
       striped
       highlightOnHover
-      idAccessor={"doi"}
+      idAccessor={"id"}
       records={props.data}
       columns={[
         {
-          accessor: 'doi',
-          title: 'DOI'
+          accessor: 'id',
+          title: 'ID'
         },
         { accessor: 'title' },
         {
@@ -44,32 +44,32 @@ const ArticlesTable = (props: ArticlesTableProps) => {
           title: <Text mr="xs">Actions</Text>,
           textAlignment: 'right',
           width: "10%",
-          render: (article) => (
+          render: (source) => (
             <Group spacing={4} position="right" noWrap>
-              <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, article.doi)}>
+              <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, source.id)}>
                 <IconEye size={16} />
               </ActionIcon>
-              <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, article.doi)}>
+              <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, source.id)}>
                 <IconEdit size={16} />
               </ActionIcon>
-              <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, article.doi)}>
+              <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, source.id)}>
                 <IconTrash size={16} />
               </ActionIcon>
             </Group>
           ),
         }
       ]}
-      onRowClick={(article) => { props.onRowClick(article.doi) }}
+      onRowClick={(source) => { props.onRowClick(source.id) }}
     />
   );
 }
 
-type ArticlesTableProps = {
-  data: ArticleSummaryDdo[],
-  onRowClick: (articleId: string) => void,
-  onEdit: (articleId: string) => void,
-  onDelete: (articleId: string) => void
+type SourcesTableProps = {
+  data: SourceSummaryDdo[],
+  onRowClick: (sourceId: number) => void,
+  onEdit: (sourceId: number) => void,
+  onDelete: (sourceId: number) => void
 }
 
 
-export default ArticlesTable;
+export default SourcesTable;

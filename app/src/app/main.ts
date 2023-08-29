@@ -1,13 +1,13 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { IpcChannelInterface } from '../IPC/IpcChannelInterface';
-import { GetArticlesChannel } from '../IPC/IpcChannels/Article/GetArticlesChannel';
-import { ArticleService } from '../core/services/ArticleService';
-import { CreateArticleChannel } from '../IPC/IpcChannels/Article/CreateArticleChannel';
+import { GetSourcesChannel } from '../IPC/IpcChannels/Source/GetSourcesChannel';
+import { SourceService } from '../core/services/SourceService';
+import { CreateSourceChannel } from '../IPC/IpcChannels/Source/CreateSourceChannel';
 import IDataRepository from '../infra/IDataRepository';
 import DataRepository from '../infra/DataRepository';
-import { GetArticleChannel } from '../IPC/IpcChannels/Article/GetArticleChannel';
-import { EditArticleChannel } from '../IPC/IpcChannels/Article/EditArticleChannel';
-import { DeleteArticleChannel } from '../IPC/IpcChannels/Article/DeleteArticleChannel';
+import { GetSourceChannel } from '../IPC/IpcChannels/Source/GetSourceChannel';
+import { EditSourceChannel } from '../IPC/IpcChannels/Source/EditSourceChannel';
+import { DeleteSourceChannel } from '../IPC/IpcChannels/Source/DeleteSourceChannel';
 import { GetResultsChannel } from '../IPC/IpcChannels/Result/GetResultsChannel';
 import { ResultService } from '../core/services/ResultService';
 import { CreateResultsChannel } from '../IPC/IpcChannels/Result/CreateResultsChannel';
@@ -28,7 +28,7 @@ if (require('electron-squirrel-startup')) {
 class Main {
   //private systemInfoService: SystemInfoService = new SystemInfoService(); 
   private dataRepository: IDataRepository = new DataRepository(":memory:");
-  private articleService: ArticleService = new ArticleService(this.dataRepository);
+  private sourceService: SourceService = new SourceService(this.dataRepository);
   private resultService: ResultService = new ResultService(this.dataRepository);
   private createWindow = (): void => {
     // Create the browser window.
@@ -50,11 +50,11 @@ class Main {
     // TODO: import handlers from other file or setup here. This is the interaction between the window and the main process.
     this.registerIpcChannels([
       //new SystemInfoChannel(this.systemInfoService)
-      new GetArticlesChannel(this.articleService),
-      new CreateArticleChannel(this.articleService),
-      new GetArticleChannel(this.articleService),
-      new EditArticleChannel(this.articleService),
-      new DeleteArticleChannel(this.articleService),
+      new GetSourcesChannel(this.sourceService),
+      new CreateSourceChannel(this.sourceService),
+      new GetSourceChannel(this.sourceService),
+      new EditSourceChannel(this.sourceService),
+      new DeleteSourceChannel(this.sourceService),
       // Results
       new GetResultsChannel(this.resultService),
       new CreateResultsChannel(this.resultService),

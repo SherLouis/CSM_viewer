@@ -3,9 +3,9 @@ import { CreateResponseDto, EditResponseDto } from "../../IPC/dtos/CreateEditRes
 import { ResultDdo } from "../models/ResultDdo";
 
 export default class ResultUIService {
-    public static getAllResultsForArticle = async (articleId: string): Promise<ResultDdo[]> => {
-        console.debug(`Getting Results for article ${articleId}`);
-        let response = await window.electronAPI.getAllResultsForArticle(articleId);
+    public static getAllResultsForSource = async (sourceId: number): Promise<ResultDdo[]> => {
+        console.debug(`Getting Results for source ${sourceId}`);
+        let response = await window.electronAPI.getAllResultsForSource(sourceId);
         return response.map((dto) => ResultsDtoMapper.DtoToDdo(dto));
     }
 
@@ -22,10 +22,10 @@ export default class ResultUIService {
         return response;
     }
 
-    public static createResult = async (articleId: string, result: ResultDdo): Promise<CreateResponseDto> => {
+    public static createResult = async (sourceId: number, result: ResultDdo): Promise<CreateResponseDto> => {
         console.debug('Creating result');
         console.debug(result)
-        let response = await window.electronAPI.createResult(ResultsDtoMapper.DdotoDto(articleId, result));
+        let response = await window.electronAPI.createResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
     }
 }

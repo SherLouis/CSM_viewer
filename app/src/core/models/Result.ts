@@ -1,6 +1,6 @@
 export type Result = {
     id: number,
-    article_id: string,
+    source_id: number,
     location: {
         side: string,
         lobe: string,

@@ -1,18 +1,18 @@
 import { Result } from "../core/models/Result";
-import { ArticleSummary, Article } from "../core/models/Article";
+import { SourceSummary, Source } from "../core/models/Source";
 
 export default interface IDataRepository {
-    getArticle(articleId: string): Article
+    getSource(sourceId: number): Source
 
-    getArticles(): ArticleSummary[]
+    getSources(): SourceSummary[]
 
-    createArticle(newArticle: Article): void
+    createSource(newSource: Source): void
 
-    deleteArticle(articleId: string): void
+    deleteSource(sourceId: number): void
 
-    editArticle(articleId: string, newValue: Article): void
+    editSource(sourceId: number, newValue: Source): void
 
-    getResults(articleId: string): Result[]
+    getResults(sourceId: number): Result[]
 
     createResult(result: Result): void
 

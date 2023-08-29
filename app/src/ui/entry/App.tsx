@@ -3,8 +3,8 @@ import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core
 import { useState } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import BasePage from './BasePage';
-import { ArticlesPage } from '../pages/Edit/ArticlesPage/ArticlesPage';
-import { ArticleDetailsPage } from '../pages/Edit/ArticleDetailsPage/ArticleDetailsPage';
+import { SourcesPage } from '../pages/Edit/SourcesPage/SourcesPage';
+import { SourceDetailsPage } from '../pages/Edit/SourceDetailsPage/SourceDetailsPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -27,9 +27,9 @@ function App() {
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
         <BasePage title='CSM viewer'>
           <Routes>
-            <Route path='*' element={<ArticlesPage/>} /> {/* This is the default Route */}
-            <Route path='/edit/sources' element={<ArticlesPage/>} />
-            <Route path='/edit/sources/:articleId' element={<ArticleDetailsPage/>}/>
+            <Route path='*' element={<SourcesPage/>} /> {/* This is the default Route */}
+            <Route path='/edit/sources' element={<SourcesPage/>} />
+            <Route path='/edit/sources/:sourceIdParam' element={<SourceDetailsPage/>}/>
           </Routes>
         </BasePage>
       </MantineProvider>

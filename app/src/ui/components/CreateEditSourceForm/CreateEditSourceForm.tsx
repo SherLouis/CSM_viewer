@@ -1,24 +1,34 @@
 import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
 import { useForm } from '@mantine/form';
 
-export const CreateEditArticleForm = ({ onSubmit, mode, edit_article }: CreateArticleFormProps) => {
+export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSourceFormProps) => {
   // TODO: Ajouter validations
   const form = useForm<CreateFormValues>({
     initialValues: {
       reference: {
-        doi: edit_article != null ? edit_article.doi : '',
-        title: edit_article != null ? edit_article.title : ''
+        type: edit_source != null ? edit_source.type : '',
+        author: edit_source != null ? edit_source.author : '',
+        date: edit_source != null ? edit_source.date : '',
+        publisher: edit_source != null ? edit_source.publisher : '',
+        location: edit_source != null ? edit_source.location : '',
+        doi: edit_source != null ? edit_source.doi : '',
+        title: edit_source != null ? edit_source.title : ''
       },
       stimulation_params: {
-        type: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.type : 'grid',
-        electrode_separation: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.electrode_separation : 0,
-        polarity: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.polarity : 'unknown',
-        current_mA: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.current_mA : 0,
-        pulse_width_ms: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.pulse_width_ms : 0,
-        pulse_freq_Hz: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.pulse_freq_Hz : 0,
-        train_duration_s: (mode == "edit" && edit_article != null) ? edit_article.methodology.stimulation_parameters.train_duration_s : 0
+        type: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.type : 'grid',
+        electrode_separation: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.electrode_separation : 0,
+        polarity: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.polarity : 'unknown',
+        current_mA: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.current_mA : 0,
+        pulse_width_ms: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.pulse_width_ms : 0,
+        pulse_freq_Hz: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.pulse_freq_Hz : 0,
+        train_duration_s: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.train_duration_s : 0
       }
     } as CreateFormValues,
+    validate: {
+      reference: {
+        date: (value) => (value === '' || /^\d{4}\/\d{2}\/\d{2}$/.test(value) ? null : 'Invalid date format')
+      }
+    },
   });
 
   const handleSubmit = (values: CreateFormValues) => {
@@ -34,15 +44,42 @@ export const CreateEditArticleForm = ({ onSubmit, mode, edit_article }: CreateAr
           <Accordion.Item value="reference">
             <Accordion.Control>Reference</Accordion.Control>
             <Accordion.Panel>
-              <TextInput
+              <NativeSelect
                 required
-                label="DOI"
-                {...form.getInputProps('reference.doi')}
-                disabled={mode==="edit"}
+                label="Type"
+                data={[
+                  { value: '', label: 'Pick one', disabled: true },
+                  { value: 'article', label: 'Article' },
+                  { value: 'experimental', label: 'Experimental' },
+                  { value: 'other', label: 'Other' },
+                ]}
+                placeholder="Pick one"
+                {...form.getInputProps('reference.type')}
+              />
+              {form.getInputProps('reference.type').value === 'article' &&
+                <TextInput
+                  label="DOI"
+                  {...form.getInputProps('reference.doi')}
+                />
+              }
+
+              <TextInput
+                label="Author"
+                {...form.getInputProps('reference.author')}
               />
               <TextInput
                 label="Title"
                 {...form.getInputProps('reference.title')}
+              />
+              <TextInput
+                label="Date"
+                {...form.getInputProps('reference.date')}
+                placeholder="YYYY/MM/DD"
+              />
+              <TextInput
+                label="Location"
+                {...form.getInputProps('reference.location')}
+                placeholder="Enter location"
               />
             </Accordion.Panel>
           </Accordion.Item>
@@ -118,6 +155,11 @@ export const CreateEditArticleForm = ({ onSubmit, mode, edit_article }: CreateAr
 
 export interface CreateFormValues {
   reference: {
+    type: "article" | "experimental" | "other"
+    author: string
+    date: string
+    publisher: string
+    location: string
     doi: string
     title?: string
   }
@@ -132,8 +174,8 @@ export interface CreateFormValues {
   }
 }
 
-interface CreateArticleFormProps {
+interface CreateSourceFormProps {
   onSubmit: (values: CreateFormValues) => void;
   mode: "edit" | "create";
-  edit_article?: ArticleDdo;
+  edit_source?: SourceDdo;
 }

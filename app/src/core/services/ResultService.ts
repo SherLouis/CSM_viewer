@@ -7,8 +7,8 @@ export class ResultService {
 
     constructor(dataRepository: IDataRepository) { this.dataRepository = dataRepository }
 
-    public getForArticleId(articleId: string): Result[] {
-        return this.dataRepository.getResults(articleId);
+    public getForSourceId(sourceId: number): Result[] {
+        return this.dataRepository.getResults(sourceId);
     }
 
     public createResult(result: Result): boolean {

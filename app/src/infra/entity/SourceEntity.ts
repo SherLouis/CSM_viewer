@@ -1,6 +1,12 @@
-import { Article } from "../../core/models/Article";
+import { Source } from "../../core/models/Source";
 
-export type ArticleEntity = {
+export type SourceEntity = {
+    id: number,
+    type: "article" | "experimental" | "other",
+    author: string,
+    date: string,
+    publisher: string,
+    location: string,
     doi: string,
     title: string,
     stimulation_type: "grid" | "depth" | "HFTS";
@@ -12,8 +18,14 @@ export type ArticleEntity = {
     stimulation_train_duration_s: number | null
 }
 
-export const ArticleToEntity = (model: Article): ArticleEntity => {
+export const SourceToEntity = (model: Source): SourceEntity => {
     return {
+        id: model.id,
+        type: model.type,
+        author: model.author,
+        date: model.date,
+        publisher: model.publisher,
+        location: model.location,
         doi: model.doi,
         title: model.title,
         stimulation_type: model.methodology.stimulation_parameters.type,
@@ -26,8 +38,14 @@ export const ArticleToEntity = (model: Article): ArticleEntity => {
     }
 }
 
-export const ArticleEntityToModel = (entity: ArticleEntity) : Article => {
+export const SourceEntityToModel = (entity: SourceEntity): Source => {
     return {
+        id: entity.id,
+        type: entity.type,
+        author: entity.author,
+        date: entity.date,
+        publisher: entity.publisher,
+        location: entity.location,
         doi: entity.doi,
         title: entity.title,
         methodology: {

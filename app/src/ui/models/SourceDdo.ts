@@ -1,5 +1,11 @@
 // ddo = data display object
-type ArticleDdo = {
+type SourceDdo = {
+    id: number,
+    type: "article" | "experimental" | "other",
+    author: string,
+    date: string,
+    publisher: string,
+    location: string,
     doi: string,
     title: string,
     methodology: {
@@ -18,8 +24,8 @@ type ArticleDdo = {
 type StimulationTypeDdo = "grid" | "depth" | "HFTS";
 type StimulationPolarityDdo = "unipolar" | "bipolar" | "unknown"
 
-type ArticleSummaryDdo = {
-    doi: string,
+type SourceSummaryDdo = {
+    id: number,
     title: string,
     nb_results: number
 }

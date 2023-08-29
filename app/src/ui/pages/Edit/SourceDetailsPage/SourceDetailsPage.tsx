@@ -3,7 +3,7 @@ import { Breadcrumbs, Anchor, Text } from '@mantine/core';
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, Link } from 'react-router-dom'
-import ArticleUIService from "../../../services/ArticleUIService";
+import SourceUIService from "../../../services/SourceUIService";
 import ResultUIService from "../../../services/ResultUIService";
 import { useDisclosure, useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
@@ -11,25 +11,27 @@ import ResultsTable from "../../../components/ResultsTable/ResultsTable";
 import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
 import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
 
-export const ArticleDetailsPage = () => {
+export const SourceDetailsPage = () => {
     // hooks
-    const { articleId } = useParams<string>();
+    const { sourceIdParam } = useParams<string>();
+    const sourceId = parseInt(sourceIdParam);
+    console.debug(sourceId);
 
     const [isLoading, setIsLoading] = useState(true);
-    const [currentArticle, setCurrentArticle] = useState<ArticleDdo>();
+    const [currentSource, setCurrentSource] = useState<SourceDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
     const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
     const [mode, setMode] = useState<"create" | "edit" | "view">("view");
     const [selectedResult, setSelectedResult] = useState<ResultDdo>();
 
-    // Load current article and results
+    // Load current source and results
     useEffect(() => {
-        console.debug("getting current article");
-        ArticleUIService.getArticle(articleId)
+        console.debug("getting current source");
+        SourceUIService.getSource(sourceId)
             .then((res) => {
-                setCurrentArticle(res);
+                setCurrentSource(res);
                 console.debug("getting results");
-                ResultUIService.getAllResultsForArticle(articleId)
+                ResultUIService.getAllResultsForSource(sourceId)
                     .then((res) => {
                         resultsHandlers.setState(res);
                         setIsLoading(false)
@@ -40,16 +42,16 @@ export const ArticleDetailsPage = () => {
     const refreshResults = useCallback(() => {
         setIsLoading(true);
         console.debug("getting results");
-        ResultUIService.getAllResultsForArticle(articleId)
+        ResultUIService.getAllResultsForSource(sourceId)
             .then((res) => {
                 resultsHandlers.setState(res);
                 setIsLoading(false);
             });
-    }, [currentArticle]);
+    }, [currentSource]);
 
     const createResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);
-        ResultUIService.createResult(articleId, result)
+        ResultUIService.createResult(sourceId, result)
             .then((res: CreateResponseDto) => {
                 console.debug(res);
                 if (res.successful) {
@@ -59,7 +61,7 @@ export const ArticleDetailsPage = () => {
                 // TODO: display if success or not in notistack
                 setIsLoading(false)
             });
-    }, [currentArticle]);
+    }, [currentSource]);
 
     const editResult = useCallback((values: CreateEditResultFormValues) => {
         setIsLoading(true);
@@ -123,13 +125,13 @@ export const ArticleDetailsPage = () => {
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
 
             <Breadcrumbs>
-                <Anchor component={Link} title="Articles" to="/edit/sources">Articles</Anchor>
-                <Text>{articleId}</Text>
+                <Anchor component={Link} title="Sources" to="/edit/sources">Sources</Anchor>
+                <Text>{sourceId}</Text>
             </Breadcrumbs>
 
             {!isLoading &&
                 <Stack>
-                    <Title order={3}>{currentArticle.title}</Title>
+                    <Title order={3}>{currentSource.title}</Title>
 
                     <Title order={3}>Stimulation parameters</Title>
                     <Table>
@@ -146,13 +148,13 @@ export const ArticleDetailsPage = () => {
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{currentArticle.methodology.stimulation_parameters.type}</td>
-                                <td>{currentArticle.methodology.stimulation_parameters.electrode_separation} mm</td>
-                                <td>{currentArticle.methodology.stimulation_parameters.polarity}</td>
-                                <td>{currentArticle.methodology.stimulation_parameters.current_mA} mA</td>
-                                <td>{currentArticle.methodology.stimulation_parameters.pulse_width_ms} ms</td>
-                                <td>{currentArticle.methodology.stimulation_parameters.pulse_freq_Hz} Hz</td>
-                                <td>{currentArticle.methodology.stimulation_parameters.train_duration_s} s</td>
+                                <td>{currentSource.methodology.stimulation_parameters.type}</td>
+                                <td>{currentSource.methodology.stimulation_parameters.electrode_separation} mm</td>
+                                <td>{currentSource.methodology.stimulation_parameters.polarity}</td>
+                                <td>{currentSource.methodology.stimulation_parameters.current_mA} mA</td>
+                                <td>{currentSource.methodology.stimulation_parameters.pulse_width_ms} ms</td>
+                                <td>{currentSource.methodology.stimulation_parameters.pulse_freq_Hz} Hz</td>
+                                <td>{currentSource.methodology.stimulation_parameters.train_duration_s} s</td>
                             </tr>
                         </tbody>
                     </Table>

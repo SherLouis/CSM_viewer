@@ -1,8 +1,8 @@
 import { Result } from "../core/models/Result";
-import { ArticleSummary, Article } from "../core/models/Article";
+import { SourceSummary, Source } from "../core/models/Source";
 import IDataRepository from "./IDataRepository";
-import { ArticleEntity, ArticleEntityToModel, ArticleToEntity } from "./entity/ArticleEntity";
-import { ArticleSummaryEntity, ArticleSummaryEntityToModel } from "./entity/ArticleSummaryEntity";
+import { SourceEntity, SourceEntityToModel, SourceToEntity } from "./entity/SourceEntity";
+import { SourceSummaryEntity, SourceSummaryEntityToModel } from "./entity/SourceSummaryEntity";
 import Database from "better-sqlite3";
 import { ResultEntity, ResultEntityToModel, ResultToEntity } from "./entity/ResultEntity";
 
@@ -16,27 +16,27 @@ export default class DataRepository implements IDataRepository {
         this.createTablesIfNotExist();
     }
 
-    getArticle(articleId: string): Article {
-        const entity = this._getArticle(articleId);
-        return ArticleEntityToModel(entity);
+    getSource(sourceId: number): Source {
+        const entity = this._getSource(sourceId);
+        return SourceEntityToModel(entity);
     }
 
-    getArticles(): ArticleSummary[] {
-        const articles = this._getAllArticlesSummary();
-        return articles.map((a) => ArticleSummaryEntityToModel(a))
+    getSources(): SourceSummary[] {
+        const sources = this._getAllSourcesSummary();
+        return sources.map((a) => SourceSummaryEntityToModel(a))
     }
-    createArticle(newArticle: Article): void {
-        this._insertNewArticle(ArticleToEntity(newArticle));
+    createSource(newSource: Source): void {
+        this._insertNewSource(SourceToEntity(newSource));
     }
-    deleteArticle(articleId: string): void {
-        this._deleteArticle(articleId);
+    deleteSource(sourceId: number): void {
+        this._deleteSource(sourceId);
     }
-    editArticle(articleId: string, newValue: Article): void {
-        this._editArticle(articleId, ArticleToEntity(newValue));
+    editSource(sourceId: number, newValue: Source): void {
+        this._editSource(sourceId, SourceToEntity(newValue));
     }
 
-    getResults(articleId: string): Result[] {
-        const results = this._getResultsForArticleId(articleId);
+    getResults(sourceId: number): Result[] {
+        const results = this._getResultsForSourceId(sourceId);
         return results.map((r) => ResultEntityToModel(r));
     }
     createResult(result: Result): void {
@@ -53,44 +53,78 @@ export default class DataRepository implements IDataRepository {
         this.db.close();
     }
 
-    private _getArticle(articleId: string): ArticleEntity {
-        const stmt = 'SELECT * FROM Articles WHERE doi = ?';
-        const result = this.db.prepare(stmt).get(articleId) as ArticleEntity;
+    private _getSource(sourceId: number): SourceEntity {
+        const stmt = 'SELECT * FROM Sources WHERE id = ?';
+        const result = this.db.prepare(stmt).get(sourceId) as SourceEntity;
         console.debug(result);
         return result;
     }
 
-    private _getAllArticlesSummary(): ArticleSummaryEntity[] {
+    private _getAllSourcesSummary(): SourceSummaryEntity[] {
         const stmt = `
         SELECT
-            Articles.doi,
-            Articles.title,
+            Sources.id,
+            Sources.title,
             COALESCE(ResultCounts.nb_results, 0) AS nb_results
         FROM
-            Articles
+            Sources
         LEFT JOIN (
             SELECT
-                article_id,
+                source_id,
                 COUNT(*) AS nb_results
             FROM Results
-            GROUP BY article_id
-        ) AS ResultCounts ON Articles.doi = ResultCounts.article_id;`;
-        const results = this.db.prepare(stmt).all() as ArticleSummaryEntity[];
+            GROUP BY source_id
+        ) AS ResultCounts ON Sources.id = ResultCounts.source_id;`;
+        const results = this.db.prepare(stmt).all() as SourceSummaryEntity[];
         return results;
     }
 
-    private _insertNewArticle(newArticle: ArticleEntity) {
-        console.debug("Inserting new article: ");
-        console.debug(newArticle);
-        const insetStmt = 'INSERT INTO Articles (doi, title, stimulation_type, stimulation_electrode_separation, stimulation_polarity, stimulation_current_mA, stimulation_pulse_width_ms, stimulation_pulse_freq_Hz, stimulation_train_duration_s) VALUES (@doi, @title, @stimulation_type, @stimulation_electrode_separation, @stimulation_polarity, @stimulation_current_mA, @stimulation_pulse_width_ms, @stimulation_pulse_freq_Hz, @stimulation_train_duration_s)';
-        this.db.prepare(insetStmt).run(newArticle);
+    private _insertNewSource(newSource: SourceEntity) {
+        console.debug("Inserting new source: ");
+        console.debug(newSource);
+        const insetStmt = `INSERT INTO Sources (
+            type,
+            author,
+            date,
+            publisher,
+            location,
+            doi, 
+            title, 
+            stimulation_type, 
+            stimulation_electrode_separation, 
+            stimulation_polarity, 
+            stimulation_current_mA, 
+            stimulation_pulse_width_ms, 
+            stimulation_pulse_freq_Hz, 
+            stimulation_train_duration_s
+            ) VALUES (
+                @type,
+                @author,
+                @date,
+                @publisher,
+                @location,
+                @doi, 
+                @title, 
+                @stimulation_type, 
+                @stimulation_electrode_separation, 
+                @stimulation_polarity, 
+                @stimulation_current_mA, 
+                @stimulation_pulse_width_ms, @stimulation_pulse_freq_Hz, 
+                @stimulation_train_duration_s
+            )`;
+        this.db.prepare(insetStmt).run(newSource);
     }
 
-    private _editArticle(articleId: string, article: ArticleEntity) {
-        console.debug(`Editing article ${articleId} with new value:`);
-        console.debug(article);
+    private _editSource(sourceId: number, source: SourceEntity) {
+        console.debug(`Editing source ${sourceId} with new value:`);
+        console.debug(source);
         const stmt = `
-        UPDATE Articles SET 
+        UPDATE Sources SET 
+            type=@type,
+            author=@author,
+            date=@date,
+            publisher=@publisher,
+            location=@location,
             doi=@doi,
             title=@title,
             stimulation_type=@stimulation_type,
@@ -100,20 +134,20 @@ export default class DataRepository implements IDataRepository {
             stimulation_pulse_width_ms=@stimulation_pulse_width_ms,
             stimulation_pulse_freq_Hz=@stimulation_pulse_freq_Hz,
             stimulation_train_duration_s=@stimulation_train_duration_s
-        WHERE doi=@articleDoiToEdit`
-        const result = this.db.prepare(stmt).run({ ...article, articleDoiToEdit: articleId });
+        WHERE id=@sourceDoiToEdit`
+        const result = this.db.prepare(stmt).run({ ...source, sourceDoiToEdit: sourceId });
     }
 
-    private _deleteArticle(articleId: string): void {
-        const stmt = 'DELETE FROM Articles WHERE doi = ?';
-        this.db.prepare(stmt).run(articleId);
+    private _deleteSource(sourceId: number): void {
+        const stmt = 'DELETE FROM Sources WHERE id = ?';
+        this.db.prepare(stmt).run(sourceId);
     }
 
     // Results
 
-    private _getResultsForArticleId(articleId: string): ResultEntity[] {
-        const stmt = 'SELECT * FROM Results WHERE article_id = ?';
-        const results = this.db.prepare(stmt).all(articleId) as ResultEntity[];
+    private _getResultsForSourceId(sourceId: number): ResultEntity[] {
+        const stmt = 'SELECT * FROM Results WHERE source_id = ?';
+        const results = this.db.prepare(stmt).all(sourceId) as ResultEntity[];
         return results;
     }
 
@@ -121,8 +155,8 @@ export default class DataRepository implements IDataRepository {
         console.debug("Inserting new result: ");
         console.debug(newResult);
         const stmt = `INSERT INTO Results 
-        (article_id, location_side, location_lobe, location_gyrus, location_broadmann, effect_category, effect_semiology, effect_characteristic, effect_post_discharge, comments) 
-        Values (@article_id, @location_side, @location_lobe, @location_gyrus, @location_broadmann, @effect_category, @effect_semiology, @effect_characteristic, @effect_post_discharge, @comments);`
+        (source_id, location_side, location_lobe, location_gyrus, location_broadmann, effect_category, effect_semiology, effect_characteristic, effect_post_discharge, comments) 
+        Values (@source_id, @location_side, @location_lobe, @location_gyrus, @location_broadmann, @effect_category, @effect_semiology, @effect_characteristic, @effect_post_discharge, @comments);`
         this.db.prepare(stmt).run(newResult)
     }
 
@@ -142,7 +176,7 @@ export default class DataRepository implements IDataRepository {
             effect_post_discharge = @effect_post_discharge,
             comments = @comments
         WHERE id=@resultIdToEdit`
-        this.db.prepare(stmt).run({...newResult, resultIdToEdit:resultId});
+        this.db.prepare(stmt).run({ ...newResult, resultIdToEdit: resultId });
     }
 
     private _deleteResult(resultId: number): void {
@@ -153,10 +187,38 @@ export default class DataRepository implements IDataRepository {
     private createTablesIfNotExist() {
         console.debug('Creating tables...');
         try {
-            const createArticlesTableStmt = "CREATE TABLE IF NOT EXISTS Articles (doi TEXT NOT NULL PRIMARY KEY, title TEXT, stimulation_type TEXT, stimulation_electrode_separation INTEGER, stimulation_polarity TEXT, stimulation_current_mA INTEGER, stimulation_pulse_width_ms INTEGER, stimulation_pulse_freq_Hz INTEGER, stimulation_train_duration_s INTEGER);";
-            const createResultsTableStmt = "CREATE TABLE IF NOT EXISTS Results (id INTEGER PRIMARY KEY AUTOINCREMENT, article_id TEXT NOT NULL, location_side TEXT NOT NULL, location_lobe TEXT NOT NULL, location_gyrus TEXT NOT NULL, location_broadmann TEXT NOT NULL, effect_category TEXT NOT NULL, effect_semiology TEXT NOT NULL, effect_characteristic TEXT NOT NULL, effect_post_discharge INTEGER NOT NULL, comments TEXT NOT NULL);";
+            const createSourcesTableStmt = `
+            CREATE TABLE IF NOT EXISTS Sources (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                type TEXT,
+                author TEXT,
+                date TEXT,
+                publisher TEXT,
+                location TEXT,
+                doi TEXT, 
+                title TEXT, 
+                stimulation_type TEXT, 
+                stimulation_electrode_separation INTEGER, 
+                stimulation_polarity TEXT, 
+                stimulation_current_mA INTEGER, 
+                stimulation_pulse_width_ms INTEGER, 
+                stimulation_pulse_freq_Hz INTEGER, 
+                stimulation_train_duration_s INTEGER);`;
+            const createResultsTableStmt = `
+            CREATE TABLE IF NOT EXISTS Results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                source_id INTEGER NOT NULL, 
+                location_side TEXT NOT NULL, 
+                location_lobe TEXT NOT NULL, 
+                location_gyrus TEXT NOT NULL, 
+                location_broadmann TEXT NOT NULL, 
+                effect_category TEXT NOT NULL, 
+                effect_semiology TEXT NOT NULL, 
+                effect_characteristic TEXT NOT NULL, 
+                effect_post_discharge INTEGER NOT NULL, 
+                comments TEXT NOT NULL);`;
 
-            this.db.prepare(createArticlesTableStmt).run();
+            this.db.prepare(createSourcesTableStmt).run();
             this.db.prepare(createResultsTableStmt).run();
         }
         catch (e) { console.log(e) }

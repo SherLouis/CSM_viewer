@@ -2,7 +2,7 @@ import { Result } from "../../core/models/Result"
 
 export type ResultEntity = {
     id: number,
-    article_id: string,
+    source_id: number,
     location_side: string,
     location_lobe: string,
     location_gyrus: string,
@@ -17,7 +17,7 @@ export type ResultEntity = {
 export const ResultToEntity = (model: Result): ResultEntity => {
     return {
         id: model.id,
-        article_id: model.article_id,
+        source_id: model.source_id,
         location_side: model.location.side,
         location_lobe: model.location.lobe,
         location_gyrus: model.location.gyrus,
@@ -33,7 +33,7 @@ export const ResultToEntity = (model: Result): ResultEntity => {
 export const ResultEntityToModel = (entity: ResultEntity): Result => {
     return {
         id: entity.id,
-        article_id: entity.article_id,
+        source_id: entity.source_id,
         location: {
             side: entity.location_side,
             lobe: entity.location_lobe,
