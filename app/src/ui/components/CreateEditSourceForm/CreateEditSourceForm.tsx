@@ -1,5 +1,8 @@
-import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
+import { Box, TextInput, Group, Flex, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
 import { useForm } from '@mantine/form';
+const citejs = require('@citation-js/core')
+require('@citation-js/plugin-pubmed')
+import { useCallback, useState } from "react";
 
 export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSourceFormProps) => {
   // TODO: Ajouter validations
@@ -31,6 +34,31 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
     },
   });
 
+  const getInfoFromPubMedId = useCallback((id: string) => {
+    setLoadingFromPubMed(true);
+    citejs.Cite.async(id, { forceType: '@pubmed/id' })
+      .then(
+        (cite: any) => {
+          console.log(cite);
+          const doi = cite.data[0].DOI;
+          const author = cite.data[0].author[0];
+          const location = cite.data[0]['publisher-place'];
+          const title = cite.data[0].title;
+          const _date = cite.data[0].issued['date-parts'][0]
+          const date = String(_date[0]) + '/' + String(_date[1]).padStart(2,'0') + '/' + String(_date[2]).padStart(2,'0')
+          form.setFieldValue('reference.doi', doi);
+          form.setFieldValue('reference.author', author.family + ',' + author.given);
+          form.setFieldValue('reference.location', location);
+          form.setFieldValue('reference.title', title);
+          form.setFieldValue('reference.date', date);
+          setLoadingFromPubMed(false);
+        },
+        (reason: any) => { console.error(reason); setLoadingFromPubMed(false) })
+  }, [])
+
+  const [pubMedId, setPubMedId] = useState<string>();
+  const [loadingFromPubMed, setLoadingFromPubMed] = useState<boolean>(false);
+
   const handleSubmit = (values: CreateFormValues) => {
     form.validate();
     console.debug(values);
@@ -56,6 +84,18 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
                 placeholder="Pick one"
                 {...form.getInputProps('reference.type')}
               />
+              {form.getInputProps('reference.type').value === 'article' &&
+                <Flex direction='row' align='flex-end'>
+                  <TextInput
+                    label="PubMed ID"
+                    name="pubmedId"
+                    placeholder="Paste PubMed ID here to try to autofill reference fields"
+                    onChange={(e) => setPubMedId(e.target.value)}
+                  />
+                  <Button onClick={() => getInfoFromPubMedId(pubMedId)} loading={loadingFromPubMed}>Get from pubmed</Button>
+                </Flex>
+
+              }
               {form.getInputProps('reference.type').value === 'article' &&
                 <TextInput
                   label="DOI"
