@@ -5,6 +5,7 @@ import { ResultDto } from "src/IPC/dtos/ResultDto";
 import { systemInfoDto } from "src/IPC/dtos/systemInfoDto";
 
 export interface IElectronAPI {
+  dbLocationChanged: (callback: (event: Event, value: string) => void) => void,
   // Sources
   getSourcesSummary: () => Promise<SourceSummaryDto[]>
   createSource: (source: SourceDto) => CreateResponseDto

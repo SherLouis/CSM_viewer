@@ -2,7 +2,7 @@ import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Tit
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
 import { IconPlus, IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, Navigate, useNavigate } from 'react-router-dom'
 import SourceUIService from "../../../services/SourceUIService";
 import ResultUIService from "../../../services/ResultUIService";
 import { useDisclosure, useListState } from "@mantine/hooks";
@@ -15,6 +15,8 @@ export const SourceDetailsPage = () => {
     // hooks
     const { sourceIdParam } = useParams<string>();
     const sourceId = parseInt(sourceIdParam);
+    const navigate = useNavigate();
+    
     console.debug(sourceId);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +50,13 @@ export const SourceDetailsPage = () => {
                 setIsLoading(false);
             });
     }, [currentSource]);
+
+    useEffect(() => {
+        // Listen for the event
+        window.electronAPI.dbLocationChanged((event, value) => {
+            navigate('/edit/sources/');
+        })
+    }, []);
 
     const createResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);

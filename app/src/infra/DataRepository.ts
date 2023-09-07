@@ -16,6 +16,22 @@ export default class DataRepository implements IDataRepository {
         this.createTablesIfNotExist();
     }
 
+    setDbLocation(dbLocation: string): boolean {
+        let currentDbLocation = this.dbLocation;
+        try {
+            this.close();
+            this.db = new Database(dbLocation);
+            this.createTablesIfNotExist();
+            this.dbLocation = dbLocation;
+            return true;
+        }
+        catch (e) {
+            console.error(e)
+            this.db = new Database(currentDbLocation);
+            return false;
+        }
+    }
+
     getSource(sourceId: number): Source {
         const entity = this._getSource(sourceId);
         return SourceEntityToModel(entity);
@@ -186,8 +202,7 @@ export default class DataRepository implements IDataRepository {
 
     private createTablesIfNotExist() {
         console.debug('Creating tables...');
-        try {
-            const createSourcesTableStmt = `
+        const createSourcesTableStmt = `
             CREATE TABLE IF NOT EXISTS Sources (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 type TEXT,
@@ -204,7 +219,7 @@ export default class DataRepository implements IDataRepository {
                 stimulation_pulse_width_ms INTEGER, 
                 stimulation_pulse_freq_Hz INTEGER, 
                 stimulation_train_duration_s INTEGER);`;
-            const createResultsTableStmt = `
+        const createResultsTableStmt = `
             CREATE TABLE IF NOT EXISTS Results (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 source_id INTEGER NOT NULL, 
@@ -218,9 +233,7 @@ export default class DataRepository implements IDataRepository {
                 effect_post_discharge INTEGER NOT NULL, 
                 comments TEXT NOT NULL);`;
 
-            this.db.prepare(createSourcesTableStmt).run();
-            this.db.prepare(createResultsTableStmt).run();
-        }
-        catch (e) { console.log(e) }
+        this.db.prepare(createSourcesTableStmt).run();
+        this.db.prepare(createResultsTableStmt).run();
     }
 }

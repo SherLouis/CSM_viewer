@@ -2,6 +2,8 @@ import { Result } from "../core/models/Result";
 import { SourceSummary, Source } from "../core/models/Source";
 
 export default interface IDataRepository {
+    setDbLocation(dbLocation: string): boolean
+
     getSource(sourceId: number): Source
 
     getSources(): SourceSummary[]

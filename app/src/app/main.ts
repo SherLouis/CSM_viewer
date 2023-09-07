@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, MenuItem } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, MenuItemConstructorOptions, dialog } from 'electron';
 import { IpcChannelInterface } from '../IPC/IpcChannelInterface';
 import { GetSourcesChannel } from '../IPC/IpcChannels/Source/GetSourcesChannel';
 import { SourceService } from '../core/services/SourceService';
@@ -26,28 +26,88 @@ if (require('electron-squirrel-startup')) {
 }
 
 class Main {
-  //private systemInfoService: SystemInfoService = new SystemInfoService(); 
-  private dataRepository: IDataRepository = new DataRepository(":memory:");
+
+  private dbLocation = ":memory:"
+  private dataRepository: IDataRepository = new DataRepository(this.dbLocation);
   private sourceService: SourceService = new SourceService(this.dataRepository);
   private resultService: ResultService = new ResultService(this.dataRepository);
+
+  private mainWindow: BrowserWindow;
+
   private createWindow = (): void => {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    this.mainWindow = new BrowserWindow({
       webPreferences: {
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
       },
     });
-    mainWindow.maximize();
+    this.mainWindow.maximize();
 
     // and load the index.html of the app.
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
     // Open the DevTools.
-    //mainWindow.webContents.openDevTools();
+    this.mainWindow.webContents.openDevTools();
   };
 
+  private openDb = () => {
+    dialog.showOpenDialog(this.mainWindow, {
+      title: "Open existing database",
+      filters: [{ "name": "SQL database files", "extensions": ["sql", "sqlite"] }],
+      properties: ["openFile"]
+    })
+      .then((value) => {
+        if (!value.canceled && value.filePaths.length > 0) {
+          let dbLocation = value.filePaths[0];
+          let okChangedDb = this.dataRepository.setDbLocation(dbLocation);
+          if (okChangedDb) {
+            this.dbLocation = dbLocation;
+            this.mainWindow.webContents.send('dbLocation', dbLocation);
+            console.log(`Loaded file ${this.dbLocation}`)
+          }
+          else {
+            console.error('Error changing Db location')
+          }
+        }
+      })
+      .catch((reason) => console.error(reason));
+  }
+
+  private newDb = () => {
+    dialog.showSaveDialog(this.mainWindow, { title: "New database", filters: [{ "name": "SQL database files", "extensions": ["sql", "sqlite"] }] })
+      .then((value) => {
+        if (!value.canceled) {
+          let dbLocation = value.filePath;
+          let okChangedDb = this.dataRepository.setDbLocation(dbLocation);
+          if (okChangedDb) {
+            this.dbLocation = dbLocation;
+            console.log(`Created new db at ${this.dbLocation}`)
+            this.mainWindow.webContents.send('dbLocation', dbLocation);
+          }
+          else {
+            console.error('Error creating Db')
+          }
+        }
+      })
+      .catch((reason) => console.error(reason));
+  }
+
   private setupApplicationMenu = () => {
-    Menu.getApplicationMenu().append(new MenuItem({ label: 'Custom', submenu: [{ label: 'Test', click: () => console.log('Test clicked') }] }));
+    const menuTemplate = [{
+      label: "File",
+      submenu: [
+        {
+          label: "Open",
+          click: () => this.openDb()
+        },
+        {
+          label: "New",
+          click: () => this.newDb()
+        }
+      ]
+    }] as MenuItemConstructorOptions[]
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
+    //Menu.getApplicationMenu().append(new MenuItem({ label: 'Custom', submenu: [{ label: 'Test', click: () => console.log('Test clicked') }] }));
   }
 
   private setupHandlers = () => {
@@ -75,6 +135,7 @@ class Main {
     this.setupHandlers();
     this.setupApplicationMenu();
     this.createWindow();
+    this.mainWindow.webContents.send('dbLocation', this.dbLocation);
   }
 
 
@@ -102,7 +163,8 @@ class Main {
       }
     });
   }
+
 }
 
-var main = new Main();
+export var main = new Main();
 main.init();

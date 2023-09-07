@@ -29,6 +29,13 @@ export function SourcesPage() {
       });
   }, []);
 
+  useEffect(() => {
+    // Listen for the event
+    window.electronAPI.dbLocationChanged((event, value) => {
+      refreshSources();
+    })
+  }, []);
+
   const refreshSources = useCallback(() => {
     setIsLoading(true);
     SourceUIService.getAllSourcesSummary()
