@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, MenuItem } from 'electron';
 import { IpcChannelInterface } from '../IPC/IpcChannelInterface';
 import { GetSourcesChannel } from '../IPC/IpcChannels/Source/GetSourcesChannel';
 import { SourceService } from '../core/services/SourceService';
@@ -46,6 +46,10 @@ class Main {
     //mainWindow.webContents.openDevTools();
   };
 
+  private setupApplicationMenu = () => {
+    Menu.getApplicationMenu().append(new MenuItem({ label: 'Custom', submenu: [{ label: 'Test', click: () => console.log('Test clicked') }] }));
+  }
+
   private setupHandlers = () => {
     // TODO: import handlers from other file or setup here. This is the interaction between the window and the main process.
     this.registerIpcChannels([
@@ -69,6 +73,7 @@ class Main {
 
   private start = () => {
     this.setupHandlers();
+    this.setupApplicationMenu();
     this.createWindow();
   }
 
