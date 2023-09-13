@@ -1,3 +1,4 @@
+// TODO: Change to new model
 export type Result = {
     id: number,
     source_id: number,

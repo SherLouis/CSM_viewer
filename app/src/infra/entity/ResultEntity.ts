@@ -1,5 +1,6 @@
 import { Result } from "../../core/models/Result"
 
+// TODO: new model
 export type ResultEntity = {
     id: number,
     source_id: number,
