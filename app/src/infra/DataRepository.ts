@@ -4,7 +4,7 @@ import IDataRepository from "./IDataRepository";
 import { SourceEntity, SourceEntityToModel, SourceToEntity } from "./entity/SourceEntity";
 import { SourceSummaryEntity, SourceSummaryEntityToModel } from "./entity/SourceSummaryEntity";
 import Database from "better-sqlite3";
-import { ResultEntity, ResultEntityToModel, ResultToEntity } from "./entity/ResultEntity";
+import { ReadResultEntity, ReadResultEntityToModel } from "./entity/ResultEntity";
 import { EffectArborescence } from "../core/models/EffectArborescence";
 import { ROIArborescence } from "../core/models/ROIArborescence";
 
@@ -79,16 +79,16 @@ export default class DataRepository implements IDataRepository {
     // Results
     getResults(sourceId: number): Result[] {
         const results = this._getResultsForSourceId(sourceId);
-        return results.map((r) => ResultEntityToModel(r));
+        return results.map((r) => ReadResultEntityToModel(r));
     }
     createResult(result: Result): void {
-        this._insertNewResult(ResultToEntity(result));
+        this._insertNewResult(result);
     }
     deleteResult(resultId: number): void {
         this._deleteResult(resultId);
     }
     editResult(resultId: number, newValue: Result): void {
-        this._editResult(resultId, ResultToEntity(newValue));
+        this._editResult(resultId, newValue);
     }
 
 
@@ -151,8 +151,8 @@ export default class DataRepository implements IDataRepository {
             location=@location,
             doi=@doi,
             title=@title
-        WHERE id=@sourceDoiToEdit`
-        const result = this.db.prepare(stmt).run({ ...source, sourceDoiToEdit: sourceId });
+        WHERE id=@sourceId`
+        const result = this.db.prepare(stmt).run({ ...source, sourceId: sourceId });
     }
     private _deleteSource(sourceId: number): void {
         const stmt = 'DELETE FROM Sources WHERE id = ?';
@@ -160,39 +160,101 @@ export default class DataRepository implements IDataRepository {
     }
 
     // Results
-    private _getResultsForSourceId(sourceId: number): ResultEntity[] {
-        const stmt = 'SELECT * FROM Results WHERE source_id = ?';
-        const results = this.db.prepare(stmt).all(sourceId) as ResultEntity[];
+    // TODO to test and fix
+    private _getResultsForSourceId(sourceId: number): ReadResultEntity[] {
+        const stmt = `SELECT Results.id,
+                             Results.source_id,
+                             ROIs.lobe,
+                             ROIs.gyrus,
+                             ROIs.sub,
+                             ROIs.precision,
+                             Results.stim_amp_ma,
+                             Results.stim_freq,
+                             Results.stim_electrode_separation,
+                             Results.stim_duration_ms,
+                             Effects.category,
+                             Effects.semiology,
+                             Effects.characteristic,
+                             Effects.precision,
+                             Results.effect_post_discharge,
+                             Results.occurrences,
+                             Results.comments
+                        FROM Results WHERE source_id = ?
+                        JOIN ROIs ON Results.roi_id = ROIs.id
+                        JOIN Effects ON Results.effect_id = Effects.id`;
+        const results = this.db.prepare(stmt).all(sourceId) as ReadResultEntity[];
         return results;
     }
 
-    // TODO: ajust for new model
-    private _insertNewResult(newResult: ResultEntity): void {
+    // TODO: to test
+    private _insertNewResult(newResult: Result): void {
         console.debug("Inserting new result: ");
         console.debug(newResult);
+        let newRoiId: number = null;
+        if (newResult.roi.lobe != null) {
+            const getRoiId_stmt = 'SELECT id FROM ROIs WHERE lobe = @lobe AND gyrus = @gyrus AND sub = @sub AND precision = @precision';
+            newRoiId = this.db.prepare(getRoiId_stmt).get(newResult.roi) as number;
+        }
+        let newEffectId: number = null;
+        if (newResult.effect.category != null) {
+            const getEffectId_stmt = 'SELECT id FROM Effects WHERE category = @category AND semiology = @semiology AND characteristic = @characteristic AND precision = @precision';
+            newEffectId = this.db.prepare(getEffectId_stmt).get(newResult.effect) as number;
+        }
         const stmt = `INSERT INTO Results 
-        (source_id, location_side, location_lobe, location_gyrus, location_broadmann, effect_category, effect_semiology, effect_characteristic, effect_post_discharge, comments) 
-        Values (@source_id, @location_side, @location_lobe, @location_gyrus, @location_broadmann, @effect_category, @effect_semiology, @effect_characteristic, @effect_post_discharge, @comments);`
-        this.db.prepare(stmt).run(newResult)
+        (source_id, roi_id, stim_amp_ma, stim_freq, stim_electrode_separation, stim_duration_ms, effect_id, effect_post_discharge, occurrences, comments) 
+        Values (@roi_id,@stim_amp_ma,@stim_freq,@stim_electrode_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrences,@comments);`
+        this.db.prepare(stmt).run({
+            roi_id: newRoiId,
+            stim_amp_ma: newResult.stimulation_parameters.amplitude_ma,
+            stim_freq: newResult.stimulation_parameters.frequency_hz,
+            stim_electrode_separation: newResult.stimulation_parameters.electrode_separation_mm,
+            stim_duration_ms: newResult.stimulation_parameters.duration_s,
+            effect_id: newEffectId,
+            effect_post_discharge: newResult.effect.post_discharge,
+            occurrences: newResult.occurrences,
+            comments: newResult.comments
+        })
     }
-    // TODO:  adjust for new model
-    private _editResult(resultId: number, newResult: ResultEntity): void {
+    // TODO:  to test
+    private _editResult(resultId: number, newResult: Result): void {
         console.debug("Editing result: ");
         console.debug(resultId);
         console.debug(newResult);
+        let newRoiId: number = null;
+        if (newResult.roi.lobe != null) {
+            const getRoiId_stmt = 'SELECT id FROM ROIs WHERE lobe = @lobe AND gyrus = @gyrus AND sub = @sub AND precision = @precision';
+            newRoiId = this.db.prepare(getRoiId_stmt).get(newResult.roi) as number;
+        }
+        let newEffectId: number = null;
+        if (newResult.effect.category != null) {
+            const getEffectId_stmt = 'SELECT id FROM Effects WHERE category = @category AND semiology = @semiology AND characteristic = @characteristic AND precision = @precision';
+            newEffectId = this.db.prepare(getEffectId_stmt).get(newResult.effect) as number;
+        }
+
         const stmt = `
         UPDATE Results SET 
-            location_side = @location_side,
-            location_lobe = @location_lobe,
-            location_gyrus = @location_gyrus,
-            location_broadmann = @location_broadmann,
-            effect_category = @effect_category,
-            effect_semiology = @effect_semiology,
-            effect_characteristic = @effect_characteristic,
+            roi_id = @newRoiId,
+            stim_amp_ma = @stim_amp_ma,
+            stim_freq = @stim_freq,
+            stim_electrode_separation = @stim_electrode_separation,
+            stim_duration_ms = @stim_duration_ms,
+            effect_id = @newEffectId,
             effect_post_discharge = @effect_post_discharge,
+            occurrences,
             comments = @comments
         WHERE id=@resultIdToEdit`
-        this.db.prepare(stmt).run({ ...newResult, resultIdToEdit: resultId });
+        this.db.prepare(stmt).run({
+            roi_id: newRoiId,
+            stim_amp_ma: newResult.stimulation_parameters.amplitude_ma,
+            stim_freq: newResult.stimulation_parameters.frequency_hz,
+            stim_electrode_separation: newResult.stimulation_parameters.electrode_separation_mm,
+            stim_duration_ms: newResult.stimulation_parameters.duration_s,
+            effect_id: newEffectId,
+            effect_post_discharge: newResult.effect.post_discharge,
+            occurrences: newResult.occurrences,
+            comments: newResult.comments,
+            resultIdToEdit: resultId
+        });
     }
     private _deleteResult(resultId: number): void {
         const stmt = 'DELETE FROM Results WHERE id = ?';
@@ -205,20 +267,6 @@ export default class DataRepository implements IDataRepository {
         this._createResultsTableIfNotExist();
         this._setupROITable();
         this._setupEffectsTable();
-        const createResultsTableStmt = `
-            CREATE TABLE IF NOT EXISTS Results (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                source_id INTEGER NOT NULL, 
-                location_side TEXT NOT NULL, 
-                location_lobe TEXT NOT NULL, 
-                location_gyrus TEXT NOT NULL, 
-                location_broadmann TEXT NOT NULL, 
-                effect_category TEXT NOT NULL, 
-                effect_semiology TEXT NOT NULL, 
-                effect_characteristic TEXT NOT NULL, 
-                effect_post_discharge INTEGER NOT NULL, 
-                comments TEXT NOT NULL);`;
-        this.db.prepare(createResultsTableStmt).run();
     }
 
     private _createSourcesTableIfNotExist() {
@@ -241,12 +289,14 @@ export default class DataRepository implements IDataRepository {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 source_id INTEGER NOT NULL,
                 roi_id INTEGER,
-                stim_amp_mA INTEGER,
+                stim_amp_ma INTEGER,
                 stim_freq INTEGER,
                 stim_electrode_separation INTEGER,
                 stim_duration_ms INTEGER,
                 effect_id INTEGER,
-                occurrences INTEGER
+                effect_post_discharge INTEGER,
+                occurrences INTEGER,
+                comments TEXT
             );`;
         this.db.prepare(createStmt).run();
     }
@@ -258,8 +308,11 @@ export default class DataRepository implements IDataRepository {
         const createStmt = `
             CREATE TABLE IF NOT EXISTS ROIs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
                 level TEXT NOT NULL,
+                lobe TEXT NOT NULL,
+                gyrus TEXT,
+                sub TEXT,
+                precision TEXT,
                 parent_id INTEGER,
                 is_manual NUMBER
             );`;
@@ -273,8 +326,11 @@ export default class DataRepository implements IDataRepository {
         const createStmt = `
             CREATE TABLE IF NOT EXISTS Effects (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
                 level TEXT NOT NULL,
+                category TEXT NOT NULL,
+                semiology TEXT,
+                characteristic TEXT,
+                precision TEXT,
                 parent_id INTEGER,
                 is_manual NUMBER
             );`;
