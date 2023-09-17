@@ -164,24 +164,25 @@ export default class DataRepository implements IDataRepository {
     private _getResultsForSourceId(sourceId: number): ReadResultEntity[] {
         const stmt = `SELECT Results.id,
                              Results.source_id,
-                             ROIs.lobe,
-                             ROIs.gyrus,
-                             ROIs.sub,
-                             ROIs.precision,
+                             ROIs.lobe AS roi_lobe,
+                             ROIs.gyrus AS roi_gyrus,
+                             ROIs.sub AS roi_sub,
+                             ROIs.precision AS roi_precision,
                              Results.stim_amp_ma,
                              Results.stim_freq,
                              Results.stim_electrode_separation,
                              Results.stim_duration_ms,
-                             Effects.category,
-                             Effects.semiology,
-                             Effects.characteristic,
-                             Effects.precision,
+                             Effects.category AS effect_category,
+                             Effects.semiology AS effect_semiology,
+                             Effects.characteristic AS effect_characteristic,
+                             Effects.precision AS effect_precision,
                              Results.effect_post_discharge,
                              Results.occurrences,
                              Results.comments
-                        FROM Results WHERE source_id = ?
+                        FROM Results 
                         JOIN ROIs ON Results.roi_id = ROIs.id
-                        JOIN Effects ON Results.effect_id = Effects.id`;
+                        JOIN Effects ON Results.effect_id = Effects.id
+                        WHERE source_id = ?`;
         const results = this.db.prepare(stmt).all(sourceId) as ReadResultEntity[];
         return results;
     }
