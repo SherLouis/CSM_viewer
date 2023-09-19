@@ -16,7 +16,7 @@ export const SourceDetailsPage = () => {
     const { sourceIdParam } = useParams<string>();
     const sourceId = parseInt(sourceIdParam);
     const navigate = useNavigate();
-    
+
     console.debug(sourceId);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -72,6 +72,7 @@ export const SourceDetailsPage = () => {
             });
     }, [currentSource]);
 
+    /*
     const editResult = useCallback((values: CreateEditResultFormValues) => {
         setIsLoading(true);
         const result = { id: selectedResult.id, ...values } as ResultDdo;
@@ -88,6 +89,7 @@ export const SourceDetailsPage = () => {
                 setIsLoading(false);
             });
     }, [selectedResult])
+    */
 
     // Functions
     const viewResult = (result: ResultDdo) => {
@@ -116,11 +118,13 @@ export const SourceDetailsPage = () => {
             })
     }
 
+    /*
     const onCreateResult = (values: CreateEditResultFormValues) => {
         const result = { location: values.location, effect: values.effect, comments: values.comments } as ResultDdo;
         createResult(result);
         createEditModalHandlers.close();
     }
+    */
 
     const onCreateButton = () => {
         setMode("create");
@@ -155,6 +159,7 @@ export const SourceDetailsPage = () => {
                     </Box>
                 </Stack>
             }
+            {/*
             <Modal opened={createEditOpened}
                 onClose={() => { createEditModalHandlers.close(); setMode("create") }}
                 title={mode === "create" ? "New Result" : "Edit Result"}
@@ -165,6 +170,7 @@ export const SourceDetailsPage = () => {
                     edit_result={(mode === "edit" || mode === "view") ? selectedResult : null}
                 />
             </Modal>
+        */}
         </Container>
     )
 }
