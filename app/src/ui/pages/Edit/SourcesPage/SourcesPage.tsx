@@ -70,7 +70,7 @@ export function SourcesPage() {
       location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
-      methodology: { stimulation_parameters: values.stimulation_params }
+      cohort: values.reference.cohort
     } as SourceDdo;
     SourceUIService.editSource(currentSource.id, SourceDtoFromDdo(source))
       .then((res: EditResponseDto) => {
@@ -139,7 +139,7 @@ export function SourcesPage() {
       location: values.reference.location, 
       doi: values.reference.doi, 
       title: values.reference.title, 
-      methodology: { stimulation_parameters: values.stimulation_params }
+      cohort: values.reference.cohort
     } as SourceDdo;
     createSource(source);
     createEditModalHandlers.close();

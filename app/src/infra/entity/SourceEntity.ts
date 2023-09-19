@@ -9,7 +9,8 @@ export type SourceEntity = {
     publisher: string,
     location: string,
     doi: string,
-    title: string
+    title: string,
+    cohort: number
 }
 
 export const SourceToEntity = (model: Source): SourceEntity => {
@@ -22,6 +23,7 @@ export const SourceToEntity = (model: Source): SourceEntity => {
         location: model.location,
         doi: model.doi,
         title: model.title,
+        cohort: model.cohort
     }
 }
 
@@ -35,5 +37,6 @@ export const SourceEntityToModel = (entity: SourceEntity): Source => {
         location: entity.location,
         doi: entity.doi,
         title: entity.title,
+        cohort: entity.cohort
     }
 }

@@ -13,4 +13,5 @@ export type Source = {
     location: string,
     doi: string,
     title: string,
+    cohort: number
 }

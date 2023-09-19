@@ -127,7 +127,8 @@ export default class DataRepository implements IDataRepository {
             publisher,
             location,
             doi, 
-            title
+            title,
+            cohort
             ) VALUES (
                 @type,
                 @author,
@@ -135,7 +136,8 @@ export default class DataRepository implements IDataRepository {
                 @publisher,
                 @location,
                 @doi, 
-                @title
+                @title,
+                @cohort
             )`;
         this.db.prepare(insetStmt).run(newSource);
     }
@@ -150,7 +152,8 @@ export default class DataRepository implements IDataRepository {
             publisher=@publisher,
             location=@location,
             doi=@doi,
-            title=@title
+            title=@title,
+            cohort=@cohort
         WHERE id=@sourceId`
         const result = this.db.prepare(stmt).run({ ...source, sourceId: sourceId });
     }
@@ -280,7 +283,8 @@ export default class DataRepository implements IDataRepository {
                 publisher TEXT,
                 location TEXT,
                 doi TEXT, 
-                title TEXT
+                title TEXT,
+                cohort INTEGER
             );`;
         this.db.prepare(createSourcesTableStmt).run();
     }

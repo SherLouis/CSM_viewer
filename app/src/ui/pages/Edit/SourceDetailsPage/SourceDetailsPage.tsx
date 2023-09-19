@@ -141,33 +141,6 @@ export const SourceDetailsPage = () => {
             {!isLoading &&
                 <Stack>
                     <Title order={3}>{currentSource.title}</Title>
-
-                    <Title order={3}>Stimulation parameters</Title>
-                    <Table>
-                        <thead>
-                            <tr>
-                                <th>type</th>
-                                <th>electrode separation</th>
-                                <th>polarity</th>
-                                <th>current</th>
-                                <th>pulse width</th>
-                                <th>pulse frequency</th>
-                                <th>train duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{currentSource.methodology.stimulation_parameters.type}</td>
-                                <td>{currentSource.methodology.stimulation_parameters.electrode_separation} mm</td>
-                                <td>{currentSource.methodology.stimulation_parameters.polarity}</td>
-                                <td>{currentSource.methodology.stimulation_parameters.current_mA} mA</td>
-                                <td>{currentSource.methodology.stimulation_parameters.pulse_width_ms} ms</td>
-                                <td>{currentSource.methodology.stimulation_parameters.pulse_freq_Hz} Hz</td>
-                                <td>{currentSource.methodology.stimulation_parameters.train_duration_s} s</td>
-                            </tr>
-                        </tbody>
-                    </Table>
-
                     <Group>
                         <Button leftIcon={<IconPlus />} variant="filled" onClick={onCreateButton}>New</Button>
                         <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>

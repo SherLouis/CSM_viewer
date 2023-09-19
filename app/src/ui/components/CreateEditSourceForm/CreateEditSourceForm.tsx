@@ -15,16 +15,8 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
         publisher: edit_source != null ? edit_source.publisher : '',
         location: edit_source != null ? edit_source.location : '',
         doi: edit_source != null ? edit_source.doi : '',
-        title: edit_source != null ? edit_source.title : ''
-      },
-      stimulation_params: {
-        type: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.type : 'grid',
-        electrode_separation: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.electrode_separation : 0,
-        polarity: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.polarity : 'unknown',
-        current_mA: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.current_mA : 0,
-        pulse_width_ms: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.pulse_width_ms : 0,
-        pulse_freq_Hz: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.pulse_freq_Hz : 0,
-        train_duration_s: (mode == "edit" && edit_source != null) ? edit_source.methodology.stimulation_parameters.train_duration_s : 0
+        title: edit_source != null ? edit_source.title : '',
+        cohort: edit_source != null ? edit_source.cohort : 0
       }
     } as CreateFormValues,
     validate: {
@@ -45,7 +37,7 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
           const location = cite.data[0]['publisher-place'];
           const title = cite.data[0].title;
           const _date = cite.data[0].issued['date-parts'][0]
-          const date = String(_date[0]) + '/' + String(_date[1]).padStart(2,'0') + '/' + String(_date[2]).padStart(2,'0')
+          const date = String(_date[0]) + '/' + String(_date[1]).padStart(2, '0') + '/' + String(_date[2]).padStart(2, '0')
           form.setFieldValue('reference.doi', doi);
           form.setFieldValue('reference.author', author.family + ',' + author.given);
           form.setFieldValue('reference.location', location);
@@ -117,69 +109,19 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
                 placeholder="YYYY/MM/DD"
               />
               <TextInput
+                label="Publisher"
+                {...form.getInputProps('reference.publisher')}
+                placeholder="Enter publisher"
+              />
+              <TextInput
                 label="Location"
                 {...form.getInputProps('reference.location')}
                 placeholder="Enter location"
               />
-            </Accordion.Panel>
-          </Accordion.Item>
-
-          <Accordion.Item value="methodology">
-            <Accordion.Control>Methodology - Stimulation Parameters</Accordion.Control>
-            <Accordion.Panel>
-              <NativeSelect
-                required
-                label="Type"
-                data={[
-                  { value: 'grid', label: 'Grid' },
-                  { value: 'depth', label: 'Depth' },
-                  { value: 'HTFS', label: 'HFTS' },
-                ]}
-                placeholder="Pick one"
-                {...form.getInputProps('stimulation_params.type')}
-              />
               <NumberInput
-                label="Electrodes separation"
-                description="In mm"
-                required
+                label="Cohort"
                 hideControls
-                {...form.getInputProps('stimulation_params.electrode_separation')}
-              />
-              <NativeSelect
-                required
-                label="Polarity"
-                data={[
-                  { value: 'unknown', label: 'Unknown' },
-                  { value: 'unipolar', label: 'Unipolar' },
-                  { value: 'bipolar', label: 'Bipolar' },
-                ]}
-                placeholder="Pick one"
-                {...form.getInputProps('stimulation_params.polarity')}
-              />
-              <NumberInput
-                required
-                label="Current"
-                description="In mA"
-                hideControls
-                {...form.getInputProps('stimulation_params.current_mA')}
-              />
-              <NumberInput
-                label="Pulse Width"
-                description="In ms"
-                hideControls
-                {...form.getInputProps('stimulation_params.pulse_width_ms')}
-              />
-              <NumberInput
-                label="Pulse Frequency"
-                description="In Hz"
-                hideControls
-                {...form.getInputProps('stimulation_params.pulse_freq_Hz')}
-              />
-              <NumberInput
-                label="Train Duration"
-                description="In s"
-                hideControls
-                {...form.getInputProps('stimulation_params.train_duration_s')}
+                {...form.getInputProps('reference.cohort')}
               />
             </Accordion.Panel>
           </Accordion.Item>
@@ -201,16 +143,8 @@ export interface CreateFormValues {
     publisher: string
     location: string
     doi: string
-    title?: string
-  }
-  stimulation_params: {
-    type: StimulationTypeDdo | ''
-    electrode_separation: number
-    polarity?: StimulationPolarityDdo
-    current_mA: number
-    pulse_width_ms?: number
-    pulse_freq_Hz?: number
-    train_duration_s?: number
+    title: string
+    cohort: number
   }
 }
 
