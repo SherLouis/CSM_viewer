@@ -22,9 +22,6 @@ export const SourceDetailsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [currentSource, setCurrentSource] = useState<SourceDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
-    const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
-    const [mode, setMode] = useState<"create" | "edit" | "view">("view");
-    const [selectedResult, setSelectedResult] = useState<ResultDdo>();
 
     // Load current source and results
     useEffect(() => {
@@ -51,14 +48,15 @@ export const SourceDetailsPage = () => {
             });
     }, [currentSource]);
 
+    // Listen for the event db location changed
     useEffect(() => {
-        // Listen for the event
         window.electronAPI.dbLocationChanged((event, value) => {
             navigate('/edit/sources/');
         })
     }, []);
 
     const createResult = useCallback((result: ResultDdo) => {
+        /* TODO: create
         setIsLoading(true);
         ResultUIService.createResult(sourceId, result)
             .then((res: CreateResponseDto) => {
@@ -69,11 +67,11 @@ export const SourceDetailsPage = () => {
                 console.log(res.message)
                 // TODO: display if success or not in notistack
                 setIsLoading(false)
-            });
+            });*/
     }, [currentSource]);
 
-    /*
-    const editResult = useCallback((values: CreateEditResultFormValues) => {
+    const editResult = useCallback((result: ResultDdo) => {
+        /* TODO : edit
         setIsLoading(true);
         const result = { id: selectedResult.id, ...values } as ResultDdo;
         ResultUIService.editResult(selectedResult.id, result)
@@ -87,23 +85,10 @@ export const SourceDetailsPage = () => {
                 }
                 console.log(res.message);
                 setIsLoading(false);
-            });
-    }, [selectedResult])
-    */
+            });*/
+    }, [currentSource])
 
     // Functions
-    const viewResult = (result: ResultDdo) => {
-        setMode("view");
-        setSelectedResult(result);
-        createEditModalHandlers.open();
-    }
-
-    const onEditResult = (result: ResultDdo) => {
-        setMode("edit");
-        setSelectedResult(result);
-        createEditModalHandlers.open();
-    }
-
     const onDeleteResult = (resultId: number) => {
         setIsLoading(true);
         ResultUIService.deleteResult(resultId)
@@ -118,17 +103,9 @@ export const SourceDetailsPage = () => {
             })
     }
 
-    /*
-    const onCreateResult = (values: CreateEditResultFormValues) => {
-        const result = { location: values.location, effect: values.effect, comments: values.comments } as ResultDdo;
-        createResult(result);
-        createEditModalHandlers.close();
-    }
-    */
 
     const onCreateButton = () => {
-        setMode("create");
-        createEditModalHandlers.open();
+        // TODO: Display create form row
     }
 
     console.debug(results);
@@ -153,24 +130,11 @@ export const SourceDetailsPage = () => {
                     <Box h={"50vh"}>
                         <ResultsTable
                             data={results}
-                            onRowClick={(result) => viewResult(result)}
-                            onEdit={(result) => onEditResult(result)}
+                            onEdit={(result) => editResult(result)}
                             onDelete={(resultId) => onDeleteResult(resultId)} />
                     </Box>
                 </Stack>
             }
-            {/*
-            <Modal opened={createEditOpened}
-                onClose={() => { createEditModalHandlers.close(); setMode("create") }}
-                title={mode === "create" ? "New Result" : "Edit Result"}
-                centered size="70%">
-                <CreateEditResultForm
-                    onSubmit={(values) => { mode === "create" ? onCreateResult(values) : mode === "edit" ? editResult(values) : createEditModalHandlers.close() }}
-                    mode={mode}
-                    edit_result={(mode === "edit" || mode === "view") ? selectedResult : null}
-                />
-            </Modal>
-        */}
         </Container>
     )
 }

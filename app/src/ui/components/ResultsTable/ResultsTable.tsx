@@ -1,17 +1,12 @@
 import { MouseEvent } from 'react';
 import { ActionIcon, Group, Text } from '@mantine/core';
-import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { ResultDdo } from '../../models/ResultDdo';
 
 const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add sorting and filtering
     // [ ] add pagination
-
-    const handleView = (event: MouseEvent, result: ResultDdo) => {
-        event.stopPropagation();
-        props.onRowClick(result);
-    }
 
     const handleEdit = (event: MouseEvent, result: ResultDdo) => {
         event.stopPropagation();
@@ -32,56 +27,63 @@ const ResultsTable = (props: ResultsTableProps) => {
             highlightOnHover
             idAccessor={(record) => String(record.id)}
             records={props.data}
-            groups={[
+            columns={[
                 {
-                    id: "location",
-                    columns: [
-                        { accessor: "location.side", title: "Side" },
-                        { accessor: "location.lobe", title: "Lobe" },
-                        { accessor: "location.gyrus", title: "Gyrus" }
-                    ]
+                    accessor: 'roi',
+                    title: 'ROI',
+                    render: ({ roi }) => (roi.lobe +
+                        (roi.gyrus ? ('/' + roi.gyrus +
+                            (roi.sub ? ('/' + roi.sub +
+                                (roi.precision ? ('/' + roi.precision) : '')) : '')) : ''))
                 },
                 {
-                    id: "effect",
-                    columns: [
-                        { accessor: "effect.category", title: "Category" },
-                        { accessor: "effect.semiology", title: "Semiology" },
-                        { accessor: "effect.characteristic", title: "Characteristic" }
-                    ]
+                    accessor: 'stimulation_parameters',
+                    title: 'Stimulation',
+                    render: ({ stimulation_parameters }) => {
+                        return (
+                            (stimulation_parameters.amplitude_ma ? stimulation_parameters.amplitude_ma : '-') + ' mA '
+                            + '| ' + (stimulation_parameters.duration_s ? stimulation_parameters.duration_s : '-') + ' s '
+                            + '| ' + (stimulation_parameters.electrode_separation_mm ? stimulation_parameters.electrode_separation_mm : '-') + ' mm '
+                            + '| ' + (stimulation_parameters.frequency_hz ? stimulation_parameters.frequency_hz : '-') + ' Hz')
+                    }
                 },
                 {
-                    id: "actions",
-                    title: "",
-                    columns: [
-                        {
-                            accessor: 'actions',
-                            title: <Text mr="xs">Actions</Text>,
-                            textAlignment: 'right',
-                            width: "10%",
-                            render: (result) => (
-                                <Group spacing={4} position="right" noWrap>
-                                    <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, result)}>
-                                        <IconEye size={16} />
-                                    </ActionIcon>
-                                    <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, result)}>
-                                        <IconEdit size={16} />
-                                    </ActionIcon>
-                                    <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, result.id)}>
-                                        <IconTrash size={16} />
-                                    </ActionIcon>
-                                </Group>
-                            ),
-                        }]
+                    accessor: 'effect',
+                    title: 'Effect',
+                    render: ({ effect }) => {
+                        return (effect.category +
+                            (effect.semiology ? ('/' + effect.semiology
+                                + (effect.characteristic ? ('/' + effect.characteristic) : ''
+                                    + effect.precision ? '/' + effect.precision : '')) : ''))
+                    }
+                },
+                {
+                    accessor: 'occurrences',
+                    title: 'Occurrences',
+                },
+                {
+                    accessor: 'actions',
+                    title: <Text mr="xs">Actions</Text>,
+                    textAlignment: 'right',
+                    width: "10%",
+                    render: (result) => (
+                        <Group spacing={4} position="right" noWrap>
+                            <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, result)}>
+                                <IconEdit size={16} />
+                            </ActionIcon>
+                            <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, result.id)}>
+                                <IconTrash size={16} />
+                            </ActionIcon>
+                        </Group>
+                    ),
                 }
             ]}
-            onRowClick={(result) => { props.onRowClick(result) }}
         />
     );
 }
 
 type ResultsTableProps = {
     data: ResultDdo[],
-    onRowClick: (result: ResultDdo) => void,
     onEdit: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void
 }
