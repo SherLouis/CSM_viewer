@@ -25,7 +25,7 @@ function App() {
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-        <BasePage title='CSM viewer'>
+        <BasePage title='CSM data'>
           <Routes>
             <Route path='*' element={<SourcesPage/>} /> {/* This is the default Route */}
             <Route path='/edit/sources' element={<SourcesPage/>} />

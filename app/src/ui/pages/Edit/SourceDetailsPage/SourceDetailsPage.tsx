@@ -17,9 +17,8 @@ export const SourceDetailsPage = () => {
     const sourceId = parseInt(sourceIdParam);
     const navigate = useNavigate();
 
-    console.debug(sourceId);
-
     const [isLoading, setIsLoading] = useState(true);
+    const [showCreateForm, setShowCreateForm] = useState(false);
     const [currentSource, setCurrentSource] = useState<SourceDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
 
@@ -105,7 +104,7 @@ export const SourceDetailsPage = () => {
 
 
     const onCreateButton = () => {
-        // TODO: Display create form row
+        setShowCreateForm(true);
     }
 
     console.debug(results);
@@ -128,6 +127,10 @@ export const SourceDetailsPage = () => {
                     </Group>
 
                     <Box h={"50vh"}>
+                        {showCreateForm && (
+                            <CreateEditResultForm
+                            onSubmit={(values) => {setShowCreateForm(false); console.debug(values)}} />
+                        )}
                         <ResultsTable
                             data={results}
                             onEdit={(result) => editResult(result)}
