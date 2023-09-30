@@ -1,6 +1,8 @@
 import { ResultsDtoMapper } from "../../IPC/dtos/ResultDto";
+import { ROIDtoMapper } from "../../IPC/dtos/ROIDto";
 import { CreateResponseDto, EditResponseDto } from "../../IPC/dtos/CreateEditResponseDto";
 import { ResultDdo } from "../models/ResultDdo";
+import { ROIDdo } from "../models/ROIDdo";
 
 export default class ResultUIService {
     public static getAllResultsForSource = async (sourceId: number): Promise<ResultDdo[]> => {
@@ -27,5 +29,11 @@ export default class ResultUIService {
         console.debug(result)
         let response = await window.electronAPI.createResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
+    }
+
+    public static getROIs = async () : Promise<ROIDdo[]> => {
+        console.debug('Getting ROIs');
+        let response = await window.electronAPI.getROIs();
+        return response.map((dto) => ROIDtoMapper.DtoToDdo(dto))
     }
 }

@@ -7,9 +7,11 @@ import SourceUIService from "../../../services/SourceUIService";
 import ResultUIService from "../../../services/ResultUIService";
 import { useDisclosure, useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
+import { ROIDdo } from "../../../models/ROIDdo";
 import ResultsTable from "../../../components/ResultsTable/ResultsTable";
 import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
 import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
+
 
 export const SourceDetailsPage = () => {
     // hooks
@@ -22,7 +24,9 @@ export const SourceDetailsPage = () => {
     const [currentSource, setCurrentSource] = useState<SourceDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
 
-    // Load current source and results
+    const [rois, roisHandlers] = useListState<ROIDdo>([]);
+
+    // Load current source, results and rois
     useEffect(() => {
         console.debug("getting current source");
         SourceUIService.getSource(sourceId)
@@ -32,7 +36,12 @@ export const SourceDetailsPage = () => {
                 ResultUIService.getAllResultsForSource(sourceId)
                     .then((res) => {
                         resultsHandlers.setState(res);
-                        setIsLoading(false)
+                        console.debug("getting ROIs");
+                        ResultUIService.getROIs()
+                            .then((rois) => {
+                                roisHandlers.setState(rois);
+                                setIsLoading(false);
+                            })
                     });
             });
     }, []);
@@ -55,7 +64,6 @@ export const SourceDetailsPage = () => {
     }, []);
 
     const createResult = useCallback((result: ResultDdo) => {
-        /* TODO: create
         setIsLoading(true);
         ResultUIService.createResult(sourceId, result)
             .then((res: CreateResponseDto) => {
@@ -66,7 +74,7 @@ export const SourceDetailsPage = () => {
                 console.log(res.message)
                 // TODO: display if success or not in notistack
                 setIsLoading(false)
-            });*/
+            });
     }, [currentSource]);
 
     const editResult = useCallback((result: ResultDdo) => {
@@ -102,6 +110,33 @@ export const SourceDetailsPage = () => {
             })
     }
 
+    const onCreateResult = (values: CreateEditResultFormValues) => {
+        const result = {
+            roi: {
+                lobe: values.roi.lobe,
+                gyrus: values.roi.gyrus,
+                sub: values.roi.sub,
+                precision: values.roi.precision
+            },
+            stimulation_parameters: {
+                amplitude_ma: values.stimulation_parameters.amplitude_ma,
+                frequency_hz: values.stimulation_parameters.frequency_hz,
+                electrode_separation_mm: values.stimulation_parameters.electrode_separation_mm,
+                duration_s: values.stimulation_parameters.duration_s
+            },
+            effect: {
+                category: values.effect.category,
+                semiology: values.effect.semiology,
+                characteristic: values.effect.characteristic,
+                precision: values.effect.precision,
+                post_discharge: values.effect.post_discharge
+            },
+            occurrences: values.occurrences,
+            comments: values.comments
+        } as ResultDdo
+        setShowCreateForm(false);
+        createResult(result);
+    }
 
     const onCreateButton = () => {
         setShowCreateForm(true);
@@ -129,10 +164,13 @@ export const SourceDetailsPage = () => {
                     <Box h={"50vh"}>
                         {showCreateForm && (
                             <CreateEditResultForm
-                            onSubmit={(values) => {setShowCreateForm(false); console.debug(values)}} />
+                                onSubmit={(values) => onCreateResult(values)}
+                                rois={rois}
+                            />
                         )}
                         <ResultsTable
                             data={results}
+                            rois={rois}
                             onEdit={(result) => editResult(result)}
                             onDelete={(resultId) => onDeleteResult(resultId)} />
                     </Box>

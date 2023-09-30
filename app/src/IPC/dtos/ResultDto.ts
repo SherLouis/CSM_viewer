@@ -28,7 +28,7 @@ export type ResultDto = {
 }
 
 export class ResultsDtoMapper {
-    public static DdotoDto = (source_id: number, ddo: ResultDdo) : ResultDto=> {
+    public static DdotoDto = (source_id: number, ddo: ResultDdo): ResultDto => {
         return {
             id: ddo.id,
             source_id: source_id,
@@ -39,7 +39,7 @@ export class ResultsDtoMapper {
             comments: ddo.comments
         };
     }
-    
+
     public static DtoToDdo = (dto: ResultDto) => {
         return dto as ResultDdo;
     }
@@ -49,6 +49,14 @@ export class ResultsDtoMapper {
     }
 
     public static DtoToModel = (dto: ResultDto) => {
-        return dto as Result;
+        return {
+            ...dto,
+            roi: {
+                lobe: dto.roi.lobe != '' ? dto.roi.lobe : null,
+                gyrus: dto.roi.gyrus != '' ? dto.roi.gyrus : null,
+                sub: dto.roi.sub != '' ? dto.roi.sub : null,
+                precision: dto.roi.precision != '' ? dto.roi.precision : null,
+            }
+        } as Result;
     }
 }

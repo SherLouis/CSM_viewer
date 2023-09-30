@@ -3,14 +3,38 @@ import { ActionIcon, Group, Text } from '@mantine/core';
 import { IconCopy, IconEdit, IconTrash } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { ResultDdo } from '../../models/ResultDdo';
-import { CreateEditResultForm } from '../CreateEditResultForm/CreateEditResultForm';
+import { CreateEditResultForm, CreateEditResultFormValues } from '../CreateEditResultForm/CreateEditResultForm';
+import { ROIDdo } from '../../models/ROIDdo';
 
 const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add sorting and filtering
     // [ ] add pagination
 
-    const handleEdit = (event: MouseEvent, result: ResultDdo) => {
-        event.stopPropagation();
+    const handleEdit = (values: CreateEditResultFormValues, resultId: number) => {
+        const result = {
+            id: resultId,
+            roi: {
+                lobe: values.roi.lobe,
+                gyrus: values.roi.gyrus,
+                sub: values.roi.sub,
+                precision: values.roi.precision
+            },
+            stimulation_parameters: {
+                amplitude_ma: values.stimulation_parameters.amplitude_ma,
+                frequency_hz: values.stimulation_parameters.frequency_hz,
+                electrode_separation_mm: values.stimulation_parameters.electrode_separation_mm,
+                duration_s: values.stimulation_parameters.duration_s
+            },
+            effect: {
+                category: values.effect.category,
+                semiology: values.effect.semiology,
+                characteristic: values.effect.characteristic,
+                precision: values.effect.precision,
+                post_discharge: values.effect.post_discharge
+            },
+            occurrences: values.occurrences,
+            comments: values.comments
+        } as ResultDdo
         props.onEdit(result);
     }
 
@@ -125,7 +149,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                 content: ({ record }) => (
                     <CreateEditResultForm
                         edit_result={record}
-                        onSubmit={(values) => console.debug(values)} />
+                        rois={props.rois}
+                        onSubmit={(values) => handleEdit(values, record.id)} />
                 ),
             }}
 
@@ -135,6 +160,7 @@ const ResultsTable = (props: ResultsTableProps) => {
 
 type ResultsTableProps = {
     data: ResultDdo[],
+    rois: ROIDdo[],
     onEdit: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void
 }

@@ -1,4 +1,5 @@
 import IDataRepository from "../../infra/IDataRepository";
+import { ROI } from "../models/ROI";
 import { Result } from "../models/Result";
 
 
@@ -42,5 +43,9 @@ export class ResultService {
             console.log(e);
             return false;
         }
+    }
+
+    public getROIs() : ROI[] {
+        return this.dataRepository.getROIs();
     }
 }

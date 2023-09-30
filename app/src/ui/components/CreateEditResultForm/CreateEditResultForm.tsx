@@ -2,32 +2,33 @@ import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Au
 import { useForm } from '@mantine/form';
 import { ResultDdo, effectCategorisationMap } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie } from "@tabler/icons-react";
+import { ROIDdo } from "../../models/ROIDdo";
 
-export const CreateEditResultForm = ({ onSubmit, edit_result }: CreateEditResultFormProps) => {
+export const CreateEditResultForm = ({ onSubmit, edit_result, rois }: CreateEditResultFormProps) => {
     // TODO: Ajouter validations
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
             roi: {
-                lobe: edit_result&&edit_result.roi.lobe != null ? edit_result.roi.lobe : "",
-                gyrus: edit_result&&edit_result.roi.gyrus != null ? edit_result.roi.gyrus : "",
-                sub: edit_result&&edit_result.roi.sub != null ? edit_result.roi.sub : "",
-                precision: edit_result&&edit_result.roi.precision != null ? edit_result.roi.precision : ""
+                lobe: edit_result && edit_result.roi.lobe != null ? edit_result.roi.lobe : "",
+                gyrus: edit_result && edit_result.roi.gyrus != null ? edit_result.roi.gyrus : "",
+                sub: edit_result && edit_result.roi.sub != null ? edit_result.roi.sub : "",
+                precision: edit_result && edit_result.roi.precision != null ? edit_result.roi.precision : ""
             },
             stimulation_parameters: {
-                amplitude_ma: edit_result&&edit_result.stimulation_parameters.amplitude_ma != null ? edit_result.stimulation_parameters.amplitude_ma : 0,
-                frequency_hz: edit_result&&edit_result.stimulation_parameters.frequency_hz != null ? edit_result.stimulation_parameters.frequency_hz : 0,
-                electrode_separation_mm: edit_result&&edit_result.stimulation_parameters.electrode_separation_mm != null ? edit_result.stimulation_parameters.electrode_separation_mm : 0,
-                duration_s: edit_result&&edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0
+                amplitude_ma: edit_result && edit_result.stimulation_parameters.amplitude_ma != null ? edit_result.stimulation_parameters.amplitude_ma : 0,
+                frequency_hz: edit_result && edit_result.stimulation_parameters.frequency_hz != null ? edit_result.stimulation_parameters.frequency_hz : 0,
+                electrode_separation_mm: edit_result && edit_result.stimulation_parameters.electrode_separation_mm != null ? edit_result.stimulation_parameters.electrode_separation_mm : 0,
+                duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0
             },
             effect: {
-                category: edit_result&&edit_result.effect.category != null ? edit_result.effect.category : "",
-                semiology: edit_result&&edit_result.effect.semiology != null ? edit_result.effect.semiology : "",
-                characteristic: edit_result&&edit_result.effect.characteristic != null ? edit_result.effect.characteristic : "",
-                precision: edit_result&&edit_result.effect.precision != null ? edit_result.effect.precision : "",
-                post_discharge: edit_result&&edit_result.effect.post_discharge != null ? edit_result.effect.post_discharge : false
+                category: edit_result && edit_result.effect.category != null ? edit_result.effect.category : "",
+                semiology: edit_result && edit_result.effect.semiology != null ? edit_result.effect.semiology : "",
+                characteristic: edit_result && edit_result.effect.characteristic != null ? edit_result.effect.characteristic : "",
+                precision: edit_result && edit_result.effect.precision != null ? edit_result.effect.precision : "",
+                post_discharge: edit_result && edit_result.effect.post_discharge != null ? edit_result.effect.post_discharge : false
             },
-            occurrences: edit_result&&edit_result.occurrences != null ? edit_result.occurrences : 0,
-            comments: edit_result&&edit_result.comments != null ? edit_result.comments : ""
+            occurrences: edit_result && edit_result.occurrences != null ? edit_result.occurrences : 0,
+            comments: edit_result && edit_result.comments != null ? edit_result.comments : ""
         } as CreateEditResultFormValues,
     });
 
@@ -47,6 +48,19 @@ export const CreateEditResultForm = ({ onSubmit, edit_result }: CreateEditResult
         "Fusiform gyrus",
         "Parahippocampal gyrus",
     ]
+
+    const getRoiOptions = (level: 'lobe'|'gyrus'|'sub'|'precision') => {
+        switch (level) {
+            case 'lobe':
+                return rois.filter((roi)=> roi.level==level).map((roi)=>roi.lobe);
+            case 'gyrus':
+                return rois.filter((roi)=>roi.level==level&&roi.lobe==form.getInputProps('roi.lobe').value).map((roi)=>roi.gyrus);
+            case 'sub':
+                return rois.filter((roi)=>roi.level==level&&roi.gyrus==form.getInputProps('roi.gyrus').value).map((roi)=>roi.sub);
+            case 'precision':
+                return rois.filter((roi)=>roi.level==level&&roi.sub==form.getInputProps('roi.sub').value).map((roi)=>roi.precision);
+        }
+    }
 
     const getSemiologyOptions = () => {
         let category = form.getInputProps('effect.category').value;
@@ -75,6 +89,8 @@ export const CreateEditResultForm = ({ onSubmit, edit_result }: CreateEditResult
             effectCategorisationMap[category][semiology].length > 0)
     }
 
+    console.debug(rois);
+
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>
@@ -96,28 +112,45 @@ export const CreateEditResultForm = ({ onSubmit, edit_result }: CreateEditResult
                     </Tabs.List>
 
                     <Tabs.Panel value="roi">
-                        <Autocomplete
+                        <NativeSelect
                             required
                             label="Lobe"
-                            data={[
-                                { value: 'frontal', label: 'Frontal' },
-                                { value: 'parietal', label: 'Parietal' },
-                                { value: 'occipital', label: 'Occipital' },
-                                { value: 'temporal', label: 'Temporal' },
-                                { value: 'limbic', label: 'Limbic' },
-                                { value: 'insular', label: 'Insular' },
-                            ]}
-                            placeholder="Pick one"
+                            data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('lobe')]}
                             {...form.getInputProps('roi.lobe')}
                         />
-                        <Autocomplete
+                        <NativeSelect
                             label="Gyrus"
-                            data={GYRUS_LIST}
+                            data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('gyrus')]}
                             {...form.getInputProps('roi.gyrus')}
+                        />
+                        <NativeSelect
+                            label="Subregion"
+                            data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('sub')]}
+                            {...form.getInputProps('roi.sub')}
+                        />
+                        <NativeSelect
+                            label="Precision"
+                            data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('precision')]}
+                            {...form.getInputProps('roi.precision')}
                         />
                     </Tabs.Panel>
                     <Tabs.Panel value="stimulation">
-                        stimulation tab content
+                        <NumberInput
+                            label="Amplitude (mA)"
+                            {...form.getInputProps('stimulation_parameters.amplitude_ma')}
+                        />
+                        <NumberInput
+                            label="Frequency (Hz)"
+                            {...form.getInputProps('stimulation_parameters.frequency_hz')}
+                        />
+                        <NumberInput
+                            label="Electrode separation (mm)"
+                            {...form.getInputProps('stimulation_parameters.electrode_separation_mm')}
+                        />
+                        <NumberInput
+                            label="Duration (s)"
+                            {...form.getInputProps('stimulation_parameters.duration_s')}
+                        />
                     </Tabs.Panel>
                     <Tabs.Panel value="effect">
                         <NativeSelect
@@ -192,7 +225,7 @@ export interface CreateEditResultFormValues {
 interface CreateEditResultFormProps {
     onSubmit: (values: CreateEditResultFormValues) => void;
     edit_result?: ResultDdo;
-    //TODO: roi_arborescence
+    rois: ROIDdo[];
     //TODO: effects_arborescence
     //TODO: on_add_roi
     //TODO: on_add_effect

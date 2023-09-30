@@ -1,5 +1,5 @@
 import { EffectArborescence } from "../core/models/EffectArborescence";
-import { ROIArborescence } from "../core/models/ROIArborescence";
+import { ROI } from "../core/models/ROI";
 import { Result } from "../core/models/Result";
 import { SourceSummary, Source } from "../core/models/Source";
 
@@ -30,7 +30,7 @@ export default interface IDataRepository {
 
     // ROI
 
-    getROIArborescence(): ROIArborescence
+    getROIs(): ROI[]
 
     addManualROI(name: string, parentName: string) : void
 

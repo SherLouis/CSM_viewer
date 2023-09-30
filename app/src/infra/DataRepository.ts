@@ -5,8 +5,9 @@ import { SourceEntity, SourceEntityToModel, SourceToEntity } from "./entity/Sour
 import { SourceSummaryEntity, SourceSummaryEntityToModel } from "./entity/SourceSummaryEntity";
 import Database from "better-sqlite3";
 import { ReadResultEntity, ReadResultEntityToModel } from "./entity/ResultEntity";
+import { ROI } from "../core/models/ROI";
 import { EffectArborescence } from "../core/models/EffectArborescence";
-import { ROIArborescence } from "../core/models/ROIArborescence";
+import { ROIEntity, ROIEntityToModel } from "./entity/ROIEntity";
 
 export default class DataRepository implements IDataRepository {
     private dbLocation: string;
@@ -39,8 +40,9 @@ export default class DataRepository implements IDataRepository {
 
     // ROIs
     // TODO: implement
-    getROIArborescence(): ROIArborescence {
-        throw new Error("Method not implemented.");
+    getROIs(): ROI[] {
+        const entities = this._getROIs();
+        return entities.map((e) => ROIEntityToModel(e));
     }
     // TODO: implement
     addManualROI(name: string, parentName: string): void {
@@ -195,26 +197,30 @@ export default class DataRepository implements IDataRepository {
         console.debug("Inserting new result: ");
         console.debug(newResult);
         let newRoiId: number = null;
-        if (newResult.roi.lobe != null) {
-            const getRoiId_stmt = 'SELECT id FROM ROIs WHERE lobe = @lobe AND gyrus = @gyrus AND sub = @sub AND precision = @precision';
-            newRoiId = this.db.prepare(getRoiId_stmt).get(newResult.roi) as number;
+        if (newResult.roi.lobe != '') {
+            const getRoiId_stmt = 'SELECT * FROM ROIs WHERE lobe IS @lobe AND gyrus IS @gyrus AND sub IS @sub AND precision IS @precision';
+            const roi = this.db.prepare(getRoiId_stmt).get(newResult.roi) as ROIEntity;
+            newRoiId = roi.id;
         }
         let newEffectId: number = null;
-        if (newResult.effect.category != null) {
-            const getEffectId_stmt = 'SELECT id FROM Effects WHERE category = @category AND semiology = @semiology AND characteristic = @characteristic AND precision = @precision';
+        if (newResult.effect.category != '') {
+            const getEffectId_stmt = 'SELECT id FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
             newEffectId = this.db.prepare(getEffectId_stmt).get(newResult.effect) as number;
         }
+        console.debug(newEffectId);
+        console.debug(newRoiId);
         const stmt = `INSERT INTO Results 
         (source_id, roi_id, stim_amp_ma, stim_freq, stim_electrode_separation, stim_duration_ms, effect_id, effect_post_discharge, occurrences, comments) 
-        Values (@roi_id,@stim_amp_ma,@stim_freq,@stim_electrode_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrences,@comments);`
+        Values (@source_id,@roi_id,@stim_amp_ma,@stim_freq,@stim_electrode_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrences,@comments);`
         this.db.prepare(stmt).run({
+            source_id: newResult.source_id,
             roi_id: newRoiId,
             stim_amp_ma: newResult.stimulation_parameters.amplitude_ma,
             stim_freq: newResult.stimulation_parameters.frequency_hz,
             stim_electrode_separation: newResult.stimulation_parameters.electrode_separation_mm,
             stim_duration_ms: newResult.stimulation_parameters.duration_s,
             effect_id: newEffectId,
-            effect_post_discharge: newResult.effect.post_discharge,
+            effect_post_discharge: newResult.effect.post_discharge ? 1 : 0,
             occurrences: newResult.occurrences,
             comments: newResult.comments
         })
@@ -263,6 +269,14 @@ export default class DataRepository implements IDataRepository {
     private _deleteResult(resultId: number): void {
         const stmt = 'DELETE FROM Results WHERE id = ?';
         this.db.prepare(stmt).run(resultId);
+    }
+
+
+    // ROIs
+    private _getROIs(): ROIEntity[] {
+        const stmt = `SELECT id, level, lobe, gyrus, sub, precision, parent_id, is_manual FROM ROIs`;
+        const rois = this.db.prepare(stmt).all() as ROIEntity[];
+        return rois;
     }
 
     private createTablesIfNotExist() {
