@@ -89,8 +89,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois }: CreateEdit
             effectCategorisationMap[category][semiology].length > 0)
     }
 
-    console.debug(rois);
-
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>

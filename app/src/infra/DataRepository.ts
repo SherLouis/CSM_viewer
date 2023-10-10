@@ -8,6 +8,9 @@ import { ReadResultEntity, ReadResultEntityToModel } from "./entity/ResultEntity
 import { ROI } from "../core/models/ROI";
 import { EffectArborescence } from "../core/models/EffectArborescence";
 import { ROIEntity, ROIEntityToModel } from "./entity/ROIEntity";
+import path = require('path')
+import * as fs from 'fs'
+import { app } from "electron";
 
 export default class DataRepository implements IDataRepository {
     private dbLocation: string;
@@ -165,7 +168,6 @@ export default class DataRepository implements IDataRepository {
     }
 
     // Results
-    // TODO to test and fix
     private _getResultsForSourceId(sourceId: number): ReadResultEntity[] {
         const stmt = `SELECT Results.id,
                              Results.source_id,
@@ -185,8 +187,8 @@ export default class DataRepository implements IDataRepository {
                              Results.occurrences,
                              Results.comments
                         FROM Results 
-                        JOIN ROIs ON Results.roi_id = ROIs.id
-                        JOIN Effects ON Results.effect_id = Effects.id
+                        LEFT JOIN ROIs ON Results.roi_id = ROIs.id
+                        LEFT JOIN Effects ON Results.effect_id = Effects.id
                         WHERE source_id = ?`;
         const results = this.db.prepare(stmt).all(sourceId) as ReadResultEntity[];
         return results;
@@ -207,8 +209,6 @@ export default class DataRepository implements IDataRepository {
             const getEffectId_stmt = 'SELECT id FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
             newEffectId = this.db.prepare(getEffectId_stmt).get(newResult.effect) as number;
         }
-        console.debug(newEffectId);
-        console.debug(newRoiId);
         const stmt = `INSERT INTO Results 
         (source_id, roi_id, stim_amp_ma, stim_freq, stim_electrode_separation, stim_duration_ms, effect_id, effect_post_discharge, occurrences, comments) 
         Values (@source_id,@roi_id,@stim_amp_ma,@stim_freq,@stim_electrode_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrences,@comments);`
@@ -225,7 +225,7 @@ export default class DataRepository implements IDataRepository {
             comments: newResult.comments
         })
     }
-    // TODO:  to test
+    // TODO:  to fix and test
     private _editResult(resultId: number, newResult: Result): void {
         console.debug("Editing result: ");
         console.debug(resultId);
@@ -287,6 +287,12 @@ export default class DataRepository implements IDataRepository {
         this._setupEffectsTable();
     }
 
+    private _tableExists(table: string) {
+        const stmt = `SELECT count(*) AS count FROM sqlite_master WHERE type='table' AND name=?;`
+        const result = this.db.prepare(stmt).get(table) as {count:number};
+        return (result.count > 0)
+    }
+
     private _createSourcesTableIfNotExist() {
         const createSourcesTableStmt = `
             CREATE TABLE IF NOT EXISTS Sources (
@@ -319,10 +325,37 @@ export default class DataRepository implements IDataRepository {
             );`;
         this.db.prepare(createStmt).run();
     }
-    private _setupROITable() {
-        this._createROITableIfNotExist();
-        // TODO: load base ROI arborescence in table
+
+    private _insertROI(level: string, lobe: string, gyrus: string, sub: string, precision: string, parent_id: number, is_manual: boolean) : number {
+        const stmt = `INSERT INTO ROIs 
+        (level, lobe, gyrus, sub, precision, parent_id, is_manual) 
+        Values (@level, @lobe, @gyrus, @sub, @precision, @parent_id, @is_manual)`;
+        const info = this.db.prepare(stmt).run({level:level, lobe:lobe, gyrus:gyrus, sub:sub, precision:precision, parent_id:parent_id, is_manual:is_manual?1:0});
+        return info.lastInsertRowid as number;
     }
+    private _setupROITable() {
+        if (!this._tableExists('ROIs')) {
+            this._createROITableIfNotExist();
+
+            const file = path.join(app.getAppPath(), 'resources', 'base_rois.json');
+            const jsonstring = fs.readFileSync(file, 'utf-8');
+            const base_rois = JSON.parse(jsonstring) as DataItem[];
+
+            for (let lobe of base_rois) {
+                let lobe_id = this._insertROI('lobe', lobe.name, null, null, null, null, false);
+                for (let gyrus of lobe.children) {
+                    let gyrus_id = this._insertROI('gyrus', lobe.name, gyrus.name, null, null, lobe_id, false);
+                    for (let sub of gyrus.children) {
+                        let sub_id = this._insertROI('sub', lobe.name, gyrus.name, sub.name, null, gyrus_id, false);
+                        for (let precision of sub.children) {
+                            let precision_id = this._insertROI('precision', lobe.name, gyrus.name, sub.name, precision.name, sub_id, false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private _createROITableIfNotExist() {
         const createStmt = `
             CREATE TABLE IF NOT EXISTS ROIs (
@@ -337,9 +370,35 @@ export default class DataRepository implements IDataRepository {
             );`;
         this.db.prepare(createStmt).run();
     }
+
+    private _insertEffect(level: string, category: string, semiology: string, characteristic: string, precision: string, parent_id: number, is_manual: boolean) : number {
+        const stmt = `INSERT INTO Effects 
+        (level, category, semiology, characteristic, precision, parent_id, is_manual) 
+        Values (@level, @category, @semiology, @characteristic, @precision, @parent_id, @is_manual)`;
+        const info = this.db.prepare(stmt).run({level:level, category:category, semiology:semiology, characteristic:characteristic, precision:precision, parent_id:parent_id, is_manual:is_manual?1:0});
+        return info.lastInsertRowid as number;
+    }
     private _setupEffectsTable() {
-        this._createEffectsTableIfNotExist();
-        // TODO: load base Effects arborescence in table
+        if (!this._tableExists('Effects')) {
+            this._createEffectsTableIfNotExist();
+            
+            const file = path.join(app.getAppPath(), 'resources', 'base_effects.json');
+            const jsonstring = fs.readFileSync(file, 'utf-8');
+            const base_effects = JSON.parse(jsonstring) as DataItem[];
+
+            for (let category of base_effects) {
+                let category_id = this._insertEffect('category', category.name, null, null, null, null, false);
+                for (let semiology of category.children) {
+                    let semiology_id = this._insertEffect('semiology', category.name, semiology.name, null, null, category_id, false);
+                    for (let characteristic of semiology.children) {
+                        let characteristic_id = this._insertEffect('characteristic', category.name, semiology.name, characteristic.name, null, semiology_id, false);
+                        for (let precision of characteristic.children) {
+                            let precision_id = this._insertEffect('precision', category.name, semiology.name, characteristic.name, precision.name, characteristic_id, false);
+                        }
+                    }
+                }
+            }
+        }
     }
     private _createEffectsTableIfNotExist() {
         const createStmt = `
@@ -355,4 +414,6 @@ export default class DataRepository implements IDataRepository {
             );`;
         this.db.prepare(createStmt).run();
     }
+
+
 }

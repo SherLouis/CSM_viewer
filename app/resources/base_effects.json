@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Consciousness",
+        "level": "category",
+        "children": [
+            {
+                "name": "Awareness",
+                "level": "semiology",
+                "children": []
+            },
+            {
+                "name": "Responsiveness",
+                "level": "semiology",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "Sensory",
+        "level": "category",
+        "children": [
+            {
+                "name": "Somatosensory",
+                "level": "semiology",
+                "children": [
+                    {
+                        "name": "Non painful",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Painful",
+                        "level": "characteristic",
+                        "children": [
+                            {
+                                "name": "Thermal",
+                                "level": "precision",
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
