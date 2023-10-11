@@ -8,6 +8,7 @@ import ResultUIService from "../../../services/ResultUIService";
 import { useDisclosure, useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
 import { ROIDdo } from "../../../models/ROIDdo";
+import { EffectDdo } from "../../../models/EffectDdo";
 import ResultsTable from "../../../components/ResultsTable/ResultsTable";
 import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
 import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
@@ -25,6 +26,7 @@ export const SourceDetailsPage = () => {
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
 
     const [rois, roisHandlers] = useListState<ROIDdo>([]);
+    const [effects, effectsHandlers] = useListState<EffectDdo>([]);
 
     // Load current source, results and rois
     useEffect(() => {
@@ -40,7 +42,12 @@ export const SourceDetailsPage = () => {
                         ResultUIService.getROIs()
                             .then((rois) => {
                                 roisHandlers.setState(rois);
-                                setIsLoading(false);
+                                console.debug("getting Effects");
+                                ResultUIService.getEffects()
+                                    .then((res_effects) => {
+                                        effectsHandlers.setState(res_effects)
+                                        setIsLoading(false);
+                                    })
                             })
                     });
             });
@@ -166,11 +173,13 @@ export const SourceDetailsPage = () => {
                             <CreateEditResultForm
                                 onSubmit={(values) => onCreateResult(values)}
                                 rois={rois}
+                                effects={effects}
                             />
                         )}
                         <ResultsTable
                             data={results}
                             rois={rois}
+                            effects={effects}
                             onEdit={(result) => editResult(result)}
                             onDelete={(resultId) => onDeleteResult(resultId)} />
                     </Box>

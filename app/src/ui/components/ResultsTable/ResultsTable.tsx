@@ -5,6 +5,7 @@ import { DataTable } from 'mantine-datatable';
 import { ResultDdo } from '../../models/ResultDdo';
 import { CreateEditResultForm, CreateEditResultFormValues } from '../CreateEditResultForm/CreateEditResultForm';
 import { ROIDdo } from '../../models/ROIDdo';
+import { EffectDdo } from '../../models/EffectDdo';
 
 const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add sorting and filtering
@@ -150,6 +151,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <CreateEditResultForm
                         edit_result={record}
                         rois={props.rois}
+                        effects={props.effects}
                         onSubmit={(values) => handleEdit(values, record.id)} />
                 ),
             }}
@@ -161,6 +163,7 @@ const ResultsTable = (props: ResultsTableProps) => {
 type ResultsTableProps = {
     data: ResultDdo[],
     rois: ROIDdo[],
+    effects: EffectDdo[];
     onEdit: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void
 }

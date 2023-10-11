@@ -1,4 +1,5 @@
 import IDataRepository from "../../infra/IDataRepository";
+import { Effect } from "../models/Effect";
 import { ROI } from "../models/ROI";
 import { Result } from "../models/Result";
 
@@ -47,5 +48,9 @@ export class ResultService {
 
     public getROIs() : ROI[] {
         return this.dataRepository.getROIs();
+    }
+
+    public getEffects(): Effect[] {
+        return this.dataRepository.getEffects();
     }
 }

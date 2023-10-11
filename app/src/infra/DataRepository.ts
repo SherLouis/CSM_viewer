@@ -6,11 +6,12 @@ import { SourceSummaryEntity, SourceSummaryEntityToModel } from "./entity/Source
 import Database from "better-sqlite3";
 import { ReadResultEntity, ReadResultEntityToModel } from "./entity/ResultEntity";
 import { ROI } from "../core/models/ROI";
-import { EffectArborescence } from "../core/models/EffectArborescence";
 import { ROIEntity, ROIEntityToModel } from "./entity/ROIEntity";
+import { Effect } from "../core/models/Effect";
 import path = require('path')
 import * as fs from 'fs'
 import { app } from "electron";
+import { EffectEntity, EffectEntityToModel } from "./entity/EffectEntity";
 
 export default class DataRepository implements IDataRepository {
     private dbLocation: string;
@@ -42,7 +43,6 @@ export default class DataRepository implements IDataRepository {
     }
 
     // ROIs
-    // TODO: implement
     getROIs(): ROI[] {
         const entities = this._getROIs();
         return entities.map((e) => ROIEntityToModel(e));
@@ -53,9 +53,9 @@ export default class DataRepository implements IDataRepository {
     }
 
     // Effects
-    // TODO: implement
-    getEffectArborescence(): EffectArborescence {
-        throw new Error("Method not implemented.");
+    getEffects(): Effect[] {
+        const entities = this._getEffects();
+        return entities.map((e) => EffectEntityToModel(e));
     }
     // TODO: implement
     addManualEffect(name: string, parentName: string): void {
@@ -206,9 +206,11 @@ export default class DataRepository implements IDataRepository {
         }
         let newEffectId: number = null;
         if (newResult.effect.category != '') {
-            const getEffectId_stmt = 'SELECT id FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
-            newEffectId = this.db.prepare(getEffectId_stmt).get(newResult.effect) as number;
+            const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
+            const effect = this.db.prepare(getEffectId_stmt).get(newResult.effect) as EffectEntity;
+            newEffectId = effect.id;
         }
+        
         const stmt = `INSERT INTO Results 
         (source_id, roi_id, stim_amp_ma, stim_freq, stim_electrode_separation, stim_duration_ms, effect_id, effect_post_discharge, occurrences, comments) 
         Values (@source_id,@roi_id,@stim_amp_ma,@stim_freq,@stim_electrode_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrences,@comments);`
@@ -278,59 +280,11 @@ export default class DataRepository implements IDataRepository {
         const rois = this.db.prepare(stmt).all() as ROIEntity[];
         return rois;
     }
-
-    private createTablesIfNotExist() {
-        console.debug('Creating tables...');
-        this._createSourcesTableIfNotExist();
-        this._createResultsTableIfNotExist();
-        this._setupROITable();
-        this._setupEffectsTable();
-    }
-
-    private _tableExists(table: string) {
-        const stmt = `SELECT count(*) AS count FROM sqlite_master WHERE type='table' AND name=?;`
-        const result = this.db.prepare(stmt).get(table) as {count:number};
-        return (result.count > 0)
-    }
-
-    private _createSourcesTableIfNotExist() {
-        const createSourcesTableStmt = `
-            CREATE TABLE IF NOT EXISTS Sources (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                type TEXT,
-                author TEXT,
-                date TEXT,
-                publisher TEXT,
-                location TEXT,
-                doi TEXT, 
-                title TEXT,
-                cohort INTEGER
-            );`;
-        this.db.prepare(createSourcesTableStmt).run();
-    }
-    private _createResultsTableIfNotExist() {
-        const createStmt = `
-            CREATE TABLE IF NOT EXISTS Results (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                source_id INTEGER NOT NULL,
-                roi_id INTEGER,
-                stim_amp_ma INTEGER,
-                stim_freq INTEGER,
-                stim_electrode_separation INTEGER,
-                stim_duration_ms INTEGER,
-                effect_id INTEGER,
-                effect_post_discharge INTEGER,
-                occurrences INTEGER,
-                comments TEXT
-            );`;
-        this.db.prepare(createStmt).run();
-    }
-
-    private _insertROI(level: string, lobe: string, gyrus: string, sub: string, precision: string, parent_id: number, is_manual: boolean) : number {
+    private _insertROI(level: string, lobe: string, gyrus: string, sub: string, precision: string, parent_id: number, is_manual: boolean): number {
         const stmt = `INSERT INTO ROIs 
         (level, lobe, gyrus, sub, precision, parent_id, is_manual) 
         Values (@level, @lobe, @gyrus, @sub, @precision, @parent_id, @is_manual)`;
-        const info = this.db.prepare(stmt).run({level:level, lobe:lobe, gyrus:gyrus, sub:sub, precision:precision, parent_id:parent_id, is_manual:is_manual?1:0});
+        const info = this.db.prepare(stmt).run({ level: level, lobe: lobe, gyrus: gyrus, sub: sub, precision: precision, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
         return info.lastInsertRowid as number;
     }
     private _setupROITable() {
@@ -356,32 +310,24 @@ export default class DataRepository implements IDataRepository {
         }
     }
 
-    private _createROITableIfNotExist() {
-        const createStmt = `
-            CREATE TABLE IF NOT EXISTS ROIs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                level TEXT NOT NULL,
-                lobe TEXT NOT NULL,
-                gyrus TEXT,
-                sub TEXT,
-                precision TEXT,
-                parent_id INTEGER,
-                is_manual NUMBER
-            );`;
-        this.db.prepare(createStmt).run();
-    }
 
-    private _insertEffect(level: string, category: string, semiology: string, characteristic: string, precision: string, parent_id: number, is_manual: boolean) : number {
+    // Effects
+    private _getEffects(): EffectEntity[] {
+        const stmt = `SELECT id, level, category, semiology, characteristic, precision, parent_id, is_manual FROM Effects`;
+        const effects = this.db.prepare(stmt).all() as EffectEntity[];
+        return effects;
+    }
+    private _insertEffect(level: string, category: string, semiology: string, characteristic: string, precision: string, parent_id: number, is_manual: boolean): number {
         const stmt = `INSERT INTO Effects 
         (level, category, semiology, characteristic, precision, parent_id, is_manual) 
         Values (@level, @category, @semiology, @characteristic, @precision, @parent_id, @is_manual)`;
-        const info = this.db.prepare(stmt).run({level:level, category:category, semiology:semiology, characteristic:characteristic, precision:precision, parent_id:parent_id, is_manual:is_manual?1:0});
+        const info = this.db.prepare(stmt).run({ level: level, category: category, semiology: semiology, characteristic: characteristic, precision: precision, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
         return info.lastInsertRowid as number;
     }
     private _setupEffectsTable() {
         if (!this._tableExists('Effects')) {
             this._createEffectsTableIfNotExist();
-            
+
             const file = path.join(app.getAppPath(), 'resources', 'base_effects.json');
             const jsonstring = fs.readFileSync(file, 'utf-8');
             const base_effects = JSON.parse(jsonstring) as DataItem[];
@@ -416,4 +362,63 @@ export default class DataRepository implements IDataRepository {
     }
 
 
+    // Misc
+    private createTablesIfNotExist() {
+        console.debug('Creating tables...');
+        this._createSourcesTableIfNotExist();
+        this._createResultsTableIfNotExist();
+        this._setupROITable();
+        this._setupEffectsTable();
+    }
+    private _tableExists(table: string) {
+        const stmt = `SELECT count(*) AS count FROM sqlite_master WHERE type='table' AND name=?;`
+        const result = this.db.prepare(stmt).get(table) as { count: number };
+        return (result.count > 0)
+    }
+    private _createSourcesTableIfNotExist() {
+        const createSourcesTableStmt = `
+            CREATE TABLE IF NOT EXISTS Sources (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                type TEXT,
+                author TEXT,
+                date TEXT,
+                publisher TEXT,
+                location TEXT,
+                doi TEXT, 
+                title TEXT,
+                cohort INTEGER
+            );`;
+        this.db.prepare(createSourcesTableStmt).run();
+    }
+    private _createResultsTableIfNotExist() {
+        const createStmt = `
+            CREATE TABLE IF NOT EXISTS Results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_id INTEGER NOT NULL,
+                roi_id INTEGER,
+                stim_amp_ma INTEGER,
+                stim_freq INTEGER,
+                stim_electrode_separation INTEGER,
+                stim_duration_ms INTEGER,
+                effect_id INTEGER,
+                effect_post_discharge INTEGER,
+                occurrences INTEGER,
+                comments TEXT
+            );`;
+        this.db.prepare(createStmt).run();
+    }
+    private _createROITableIfNotExist() {
+        const createStmt = `
+            CREATE TABLE IF NOT EXISTS ROIs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                level TEXT NOT NULL,
+                lobe TEXT NOT NULL,
+                gyrus TEXT,
+                sub TEXT,
+                precision TEXT,
+                parent_id INTEGER,
+                is_manual NUMBER
+            );`;
+        this.db.prepare(createStmt).run();
+    }
 }

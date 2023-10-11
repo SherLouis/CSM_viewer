@@ -4,6 +4,7 @@ import { EditResponseDto, CreateResponseDto } from "src/IPC/dtos/CreateEditRespo
 import { ResultDto } from "src/IPC/dtos/ResultDto";
 import { systemInfoDto } from "src/IPC/dtos/systemInfoDto";
 import { ROIDto } from "src/IPC/dtos/ROIDto";
+import { EffectDdo } from "src/ui/models/EffectDdo";
 
 export interface IElectronAPI {
   dbLocationChanged: (callback: (event: Event, value: string) => void) => void,
@@ -20,6 +21,7 @@ export interface IElectronAPI {
   createResult: (result: ResultDto) => Promise<CreateResponseDto>
 
   getROIs: () => Promise<ROIDto[]>
+  getEffects: () => Promise<EffectDdo[]>
 }
 
 declare global {

@@ -1,4 +1,4 @@
-import { EffectArborescence } from "../core/models/EffectArborescence";
+import { Effect } from "../core/models/Effect";
 import { ROI } from "../core/models/ROI";
 import { Result } from "../core/models/Result";
 import { SourceSummary, Source } from "../core/models/Source";
@@ -36,7 +36,7 @@ export default interface IDataRepository {
 
     // Effect
 
-    getEffectArborescence(): EffectArborescence
+    getEffects(): Effect[]
 
     addManualEffect(name: string, parentName: string) : void
 

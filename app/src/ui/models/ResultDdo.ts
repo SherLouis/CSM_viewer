@@ -23,15 +23,3 @@ export type ResultDdo = {
     occurrences: number,
     comments?: string
 }
-
-type EffectCategorisationMap = Record<string, Record<string, string[]>>
-
-export const effectCategorisationMap: EffectCategorisationMap = {
-    "Consciousness": {
-        "Awareness": [],
-        "Responsiveness": []
-    },
-    "Sensory": {
-        "Somatosensory": ["Non painful", "Painful & thermal"]
-    }
-}

@@ -56,6 +56,12 @@ export class ResultsDtoMapper {
                 gyrus: dto.roi.gyrus != '' ? dto.roi.gyrus : null,
                 sub: dto.roi.sub != '' ? dto.roi.sub : null,
                 precision: dto.roi.precision != '' ? dto.roi.precision : null,
+            },
+            effect: {
+                category: dto.effect.category != '' ? dto.effect.category : null,
+                semiology: dto.effect.semiology != '' ? dto.effect.semiology : null,
+                characteristic: dto.effect.characteristic != '' ? dto.effect.characteristic : null,
+                precision: dto.effect.precision != '' ? dto.effect.precision : null,
             }
         } as Result;
     }
