@@ -72,7 +72,17 @@ export const SourceDetailsPage = () => {
                 roisHandlers.setState(rois);
                 setIsLoading(false);
             })
-    }, [currentSource]);
+    }, []);
+
+    const refreshEffects = useCallback(() => {
+        setIsLoading(true);
+        console.debug("getting Effects");
+        ResultUIService.getEffects()
+            .then((effects) => {
+                effectsHandlers.setState(effects);
+                setIsLoading(false);
+            })
+    }, []);
 
     // Listen for the event db location changed
     useEffect(() => {
@@ -93,6 +103,9 @@ export const SourceDetailsPage = () => {
                     if (shouldCreateNewRoi(result)) {
                         refreshRois();
                     }
+                    if (shouldCreateNewEffect(result)) {
+                        refreshEffects();
+                    }
                 }
                 console.log(res.message)
                 // TODO: display if success or not in notistack
@@ -111,6 +124,9 @@ export const SourceDetailsPage = () => {
                     );
                     if (shouldCreateNewRoi(result)) {
                         refreshRois();
+                    }
+                    if (shouldCreateNewEffect(result)) {
+                        refreshEffects();
                     }
                 }
                 console.log(res.message);
@@ -177,6 +193,21 @@ export const SourceDetailsPage = () => {
         return isNewRoi;
     }
 
+    const shouldCreateNewEffect = (result: ResultDdo): boolean => {
+        const effect = {
+            category: result.effect.category != '' ? result.effect.category : null,
+            semiology: result.effect.semiology != '' ? result.effect.semiology : null,
+            characteristic: result.effect.characteristic != '' ? result.effect.characteristic : null,
+            precision: result.effect.precision != '' ? result.effect.precision : null,
+        }
+        const isNewEffect = effects.filter((e) =>
+            e.category === effect.category &&
+            e.semiology === effect.semiology &&
+            e.characteristic === effect.characteristic &&
+            e.precision === effect.precision).length === 0;
+        return isNewEffect;
+    }
+
     console.debug(results);
 
     return (
@@ -209,6 +240,7 @@ export const SourceDetailsPage = () => {
                             rois={rois}
                             effects={effects}
                             onEdit={(result) => editResult(result)}
+                            onCreate={(result) => createResult(result)}
                             onDelete={(resultId) => onDeleteResult(resultId)} />
                     </Box>
                 </Stack>

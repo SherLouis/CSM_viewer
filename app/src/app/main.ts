@@ -109,13 +109,11 @@ class Main {
       ]
     }] as MenuItemConstructorOptions[]
     Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
-    //Menu.getApplicationMenu().append(new MenuItem({ label: 'Custom', submenu: [{ label: 'Test', click: () => console.log('Test clicked') }] }));
   }
 
   private setupHandlers = () => {
-    // TODO: import handlers from other file or setup here. This is the interaction between the window and the main process.
+    // This is the interaction between the window and the main process.
     this.registerIpcChannels([
-      //new SystemInfoChannel(this.systemInfoService)
       new GetSourcesChannel(this.sourceService),
       new CreateSourceChannel(this.sourceService),
       new GetSourceChannel(this.sourceService),

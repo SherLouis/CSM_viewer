@@ -1,6 +1,5 @@
 import { Source } from "../../core/models/Source";
 
-// TODO
 export type SourceEntity = {
     id: number,
     type: "article" | "experimental" | "other",

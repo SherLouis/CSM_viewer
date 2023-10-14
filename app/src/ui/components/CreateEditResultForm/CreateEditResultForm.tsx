@@ -327,6 +327,4 @@ interface CreateEditResultFormProps {
     edit_result?: ResultDdo;
     rois: ROIDdo[];
     effects: EffectDdo[];
-    //TODO: on_add_roi
-    //TODO: on_add_effect
 }

@@ -48,19 +48,11 @@ export default class DataRepository implements IDataRepository {
         const entities = this._getROIs();
         return entities.map((e) => ROIEntityToModel(e));
     }
-    // TODO: implement
-    addManualROI(name: string, parentName: string): void {
-        throw new Error("Method not implemented.");
-    }
 
     // Effects
     getEffects(): Effect[] {
         const entities = this._getEffects();
         return entities.map((e) => EffectEntityToModel(e));
-    }
-    // TODO: implement
-    addManualEffect(name: string, parentName: string): void {
-        throw new Error("Method not implemented.");
     }
 
     // Sources

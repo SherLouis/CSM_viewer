@@ -46,27 +46,49 @@ const ResultsTable = (props: ResultsTableProps) => {
 
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "roi" | "stim" | "effect" | "all") => {
         event.stopPropagation();
-        // TODO: create a new with keeping only desired sections
+        let newResult = {
+            id: undefined,
+            roi: { lobe: '', gyrus: '', sub: '', precision: '' },
+            stimulation_parameters: {
+                amplitude_ma: 0,
+                frequency_hz: 0,
+                electrode_separation_mm: 0,
+                duration_s: 0
+            },
+            effect: {
+                category: '',
+                semiology: '',
+                characteristic: '',
+                precision: '',
+                post_discharge: false
+            },
+            occurrences: 0,
+            comments: '',
+        } as ResultDdo;
         switch (level) {
             case "roi":
-                console.debug(`Should duplicate result with id ${result.id} only keeping the ROI info`)
+                newResult.roi = result.roi;
+                props.onCreate(newResult);
                 break;
             case "stim":
-                console.debug(`Should duplicate result with id ${result.id} only keeping the ROI and stim info`)
+                newResult.roi = result.roi;
+                newResult.stimulation_parameters = result.stimulation_parameters;
+                props.onCreate(newResult);
                 break;
             case "effect":
-                console.debug(`Should duplicate result with id ${result.id} only keeping the ROI, stim and effect info`)
+                newResult.roi = result.roi;
+                newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.effect = result.effect;
+                props.onCreate(newResult);
                 break;
             case "all":
-                console.debug(`Should duplicate entire result`)
+                props.onCreate({ id: undefined, ...result } as ResultDdo);
                 break;
             default:
                 console.warn('Invalid level of copy. Won\'t duplicate')
                 break;
         }
     }
-
-    console.debug(props.data);
 
     return (
         <DataTable
@@ -165,6 +187,7 @@ type ResultsTableProps = {
     rois: ROIDdo[],
     effects: EffectDdo[];
     onEdit: (result: ResultDdo) => void,
+    onCreate: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void
 }
 
