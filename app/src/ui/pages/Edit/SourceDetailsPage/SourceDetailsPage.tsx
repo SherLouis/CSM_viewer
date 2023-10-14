@@ -42,6 +42,7 @@ export const SourceDetailsPage = () => {
                         ResultUIService.getROIs()
                             .then((rois) => {
                                 roisHandlers.setState(rois);
+                                console.debug(rois);
                                 console.debug("getting Effects");
                                 ResultUIService.getEffects()
                                     .then((res_effects) => {
@@ -63,6 +64,16 @@ export const SourceDetailsPage = () => {
             });
     }, [currentSource]);
 
+    const refreshRois = useCallback(() => {
+        setIsLoading(true);
+        console.debug("getting ROIs");
+        ResultUIService.getROIs()
+            .then((rois) => {
+                roisHandlers.setState(rois);
+                setIsLoading(false);
+            })
+    }, [currentSource]);
+
     // Listen for the event db location changed
     useEffect(() => {
         window.electronAPI.dbLocationChanged((event, value) => {
@@ -70,7 +81,7 @@ export const SourceDetailsPage = () => {
         })
     }, []);
 
-    
+
     const createResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);
         ResultUIService.createResult(sourceId, result)
@@ -78,6 +89,9 @@ export const SourceDetailsPage = () => {
                 console.debug(res);
                 if (res.successful) {
                     resultsHandlers.append(result)
+                    if (shouldCreateNewRoi(result)) {
+                        refreshRois();
+                    }
                 }
                 console.log(res.message)
                 // TODO: display if success or not in notistack
@@ -94,6 +108,9 @@ export const SourceDetailsPage = () => {
                         (r) => (r.id === result.id),
                         (r) => result
                     );
+                    if (shouldCreateNewRoi(result)) {
+                        refreshRois();
+                    }
                 }
                 console.log(res.message);
                 // TODO: display if success or not in notistack
@@ -146,6 +163,17 @@ export const SourceDetailsPage = () => {
 
     const onCreateButton = () => {
         setShowCreateForm(true);
+    }
+
+    const shouldCreateNewRoi = (result: ResultDdo): boolean => {
+        const roi = {
+            lobe: result.roi.lobe != '' ? result.roi.lobe : null,
+            gyrus: result.roi.gyrus != '' ? result.roi.gyrus : null,
+            sub: result.roi.sub != '' ? result.roi.sub : null,
+            precision: result.roi.precision != '' ? result.roi.precision : null,
+        }
+        const isNewRoi = rois.filter((r) => r.lobe === roi.lobe && r.gyrus === roi.gyrus && r.sub === roi.sub && r.precision === roi.precision).length === 0;
+        return isNewRoi;
     }
 
     console.debug(results);

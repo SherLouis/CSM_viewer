@@ -29,16 +29,11 @@ export default interface IDataRepository {
     editResult(resultId: number, newValue: Result): void
 
     // ROI
-
     getROIs(): ROI[]
-
-    addManualROI(name: string, parentName: string) : void
 
     // Effect
 
     getEffects(): Effect[]
-
-    addManualEffect(name: string, parentName: string) : void
 
     close(): void
 }

@@ -199,18 +199,16 @@ export default class DataRepository implements IDataRepository {
         console.debug("Inserting new result: ");
         console.debug(newResult);
         let newRoiId: number = null;
-        if (newResult.roi.lobe != '') {
-            const getRoiId_stmt = 'SELECT * FROM ROIs WHERE lobe IS @lobe AND gyrus IS @gyrus AND sub IS @sub AND precision IS @precision';
-            const roi = this.db.prepare(getRoiId_stmt).get(newResult.roi) as ROIEntity;
-            newRoiId = roi.id;
+        if (newResult.roi.lobe != null) {
+            newRoiId = this._getROIIdOrInsertNewManual(newResult);
         }
         let newEffectId: number = null;
-        if (newResult.effect.category != '') {
+        if (newResult.effect.category != null) {
             const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
             const effect = this.db.prepare(getEffectId_stmt).get(newResult.effect) as EffectEntity;
             newEffectId = effect.id;
         }
-        
+
         const stmt = `INSERT INTO Results 
         (source_id, roi_id, stim_amp_ma, stim_freq, stim_electrode_separation, stim_duration_ms, effect_id, effect_post_discharge, occurrences, comments) 
         Values (@source_id,@roi_id,@stim_amp_ma,@stim_freq,@stim_electrode_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrences,@comments);`
@@ -230,13 +228,11 @@ export default class DataRepository implements IDataRepository {
     private _editResult(resultId: number, newResult: Result): void {
         console.debug("Editing result: ");
         let newRoiId: number = null;
-        if (newResult.roi.lobe != '') {
-            const getRoiId_stmt = 'SELECT * FROM ROIs WHERE lobe IS @lobe AND gyrus IS @gyrus AND sub IS @sub AND precision IS @precision';
-            const roi = this.db.prepare(getRoiId_stmt).get(newResult.roi) as ROIEntity;
-            newRoiId = roi.id;
+        if (newResult.roi.lobe != null) {
+            newRoiId = newRoiId = this._getROIIdOrInsertNewManual(newResult);
         }
         let newEffectId: number = null;
-        if (newResult.effect.category != '') {
+        if (newResult.effect.category != null) {
             const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
             const effect = this.db.prepare(getEffectId_stmt).get(newResult.effect) as EffectEntity;
             newEffectId = effect.id;
@@ -285,6 +281,19 @@ export default class DataRepository implements IDataRepository {
         Values (@level, @lobe, @gyrus, @sub, @precision, @parent_id, @is_manual)`;
         const info = this.db.prepare(stmt).run({ level: level, lobe: lobe, gyrus: gyrus, sub: sub, precision: precision, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
         return info.lastInsertRowid as number;
+    }
+    private _getROIIdOrInsertNewManual(result: Result): number {
+        const getRoiId_stmt = 'SELECT * FROM ROIs WHERE lobe IS @lobe AND gyrus IS @gyrus AND sub IS @sub AND precision IS @precision';
+        const roi = this.db.prepare(getRoiId_stmt).get(result.roi) as ROIEntity;
+        if (!roi) {
+            const level = result.roi.precision != null ? 'precision' : (result.roi.sub != null ? 'sub' : (result.roi.gyrus != null ? 'gyrus' : 'lobe'));
+            const parent_level = result.roi.precision != null ? 'sub' : (result.roi.sub != null ? 'gyrus' : 'lobe');
+            const parent_value = level === 'precision' ? result.roi.sub : (level === 'sub' ? result.roi.gyrus : (level === 'gyrus' ? result.roi.lobe : null));
+            console.debug(`level: ${level} | parent_level: ${parent_level} | parent_value: ${parent_value}`);
+            const parent_id = (this.db.prepare(`SELECT * FROM ROIs WHERE level=@level AND ${parent_level}=@value`).get({ level: parent_level, value: parent_value }) as ROIEntity).id;
+            return this._insertROI(level, result.roi.lobe, result.roi.gyrus, result.roi.sub, result.roi.precision, parent_id, true);
+        }
+        return roi.id
     }
     private _setupROITable() {
         if (!this._tableExists('ROIs')) {

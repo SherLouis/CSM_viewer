@@ -76,6 +76,21 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
         }
     }
 
+    const canAddNewRoiManual = (level: 'lobe' | 'gyrus' | 'sub' | 'precision'): boolean => {
+        switch (level) {
+            case 'lobe':
+                return false;
+            case 'gyrus':
+                return false;
+            case 'sub':
+                return getRoiOptions('gyrus').includes(form.getInputProps('roi.gyrus').value)
+                    && !rois.find((r) => r.level == 'gyrus' && r.gyrus == form.getInputProps('roi.gyrus').value).is_manual
+            case 'precision':
+                return getRoiOptions('sub').includes(form.getInputProps('roi.sub').value)
+                    && !rois.find((r) => r.level == 'sub' && r.sub == form.getInputProps('roi.sub').value).is_manual
+        }
+    }
+
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>
@@ -121,7 +136,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
                                 {...form.getInputProps('roi.gyrus')}
                             />
                         }
-                        {getRoiOptions('sub').length > 0 &&
+                        {getRoiOptions('sub').length > 0 && !canAddNewRoiManual("sub") &&
                             <NativeSelect
                                 label="Subregion"
                                 data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('sub')]}
@@ -132,10 +147,30 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
                                 {...form.getInputProps('roi.sub')}
                             />
                         }
-                        {getRoiOptions('precision').length > 0 &&
+                        {canAddNewRoiManual("sub") &&
+                            <Autocomplete
+                                label="Subregion"
+                                data={[...getRoiOptions('sub')]}
+                                placeholder="Select from the list or type a new value"
+                                onChange={(event) => {
+                                    form.setFieldValue('roi.precision', '');
+                                    form.getInputProps('roi.sub').onChange(event)
+                                }}
+                                {...form.getInputProps('roi.sub')}
+                            />
+                        }
+                        {getRoiOptions('precision').length > 0 && !canAddNewRoiManual("precision") &&
                             <NativeSelect
                                 label="Precision"
                                 data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('precision')]}
+                                {...form.getInputProps('roi.precision')}
+                            />
+                        }
+                        {canAddNewRoiManual("precision") &&
+                            <Autocomplete
+                                label="Precision"
+                                data={...getRoiOptions('precision')}
+                                placeholder="Select from the list or type a new value"
                                 {...form.getInputProps('roi.precision')}
                             />
                         }
