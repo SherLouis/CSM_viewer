@@ -88,7 +88,8 @@ export const SourceDetailsPage = () => {
             .then((res: CreateResponseDto) => {
                 console.debug(res);
                 if (res.successful) {
-                    resultsHandlers.append(result)
+                    // TODO: add new id in response and append to list instead of refreshing all
+                    refreshResults();
                     if (shouldCreateNewRoi(result)) {
                         refreshRois();
                     }
@@ -195,7 +196,7 @@ export const SourceDetailsPage = () => {
                         <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>
                     </Group>
 
-                    <Box h={"50vh"}>
+                    <Box h={"80vh"}>
                         {showCreateForm && (
                             <CreateEditResultForm
                                 onSubmit={(values) => onCreateResult(values)}

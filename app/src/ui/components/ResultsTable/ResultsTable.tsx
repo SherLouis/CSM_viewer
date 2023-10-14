@@ -116,8 +116,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                             <Text>
                                 {result.effect.category +
                                     (result.effect.semiology ? ('/' + result.effect.semiology
-                                        + (result.effect.characteristic ? ('/' + result.effect.characteristic) : ''
-                                            + result.effect.precision ? '/' + result.effect.precision : '')) : '')}
+                                        + (result.effect.characteristic ? ('/' + result.effect.characteristic + (
+                                            result.effect.precision ? ('/' + result.effect.precision) : '')) : '')) : '')}
                             </Text>
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
                                 <IconCopy size={16} />

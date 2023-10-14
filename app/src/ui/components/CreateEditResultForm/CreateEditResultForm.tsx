@@ -91,6 +91,21 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
         }
     }
 
+    const canAddNewEffectManual = (level: 'category' | 'semiology' | 'characteristic' | 'precision'): boolean => {
+        switch (level) {
+            case 'category':
+                return false;
+            case 'semiology':
+                return false;
+            case 'characteristic':
+                return getEffectOptions('semiology').includes(form.getInputProps('effect.semiology').value)
+                    && !effects.find((e) => e.level == 'semiology' && e.semiology == form.getInputProps('effect.semiology').value).is_manual
+            case 'precision':
+                return getEffectOptions('characteristic').includes(form.getInputProps('effect.characteristic').value)
+                    && !effects.find((e) => e.level == 'characteristic' && e.characteristic == form.getInputProps('effect.characteristic').value).is_manual
+        }
+    }
+
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>
@@ -218,7 +233,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
                                 }}
                             />
                         }
-                        {getEffectOptions('characteristic').length > 0 &&
+                        {getEffectOptions('characteristic').length > 0 && !canAddNewEffectManual('characteristic') &&
                             <NativeSelect
                                 label="characteristic"
                                 data={[{ value: '', label: 'Pick One' }, ...getEffectOptions('characteristic')]}
@@ -229,10 +244,30 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
                                 }}
                             />
                         }
-                        {getEffectOptions('precision').length > 0 &&
+                        {canAddNewEffectManual('characteristic') &&
+                            <Autocomplete
+                                label="characteristic"
+                                data={...getEffectOptions('characteristic')}
+                                placeholder="Select from the list or type a new value"
+                                {...form.getInputProps('effect.characteristic')}
+                                onChange={(event) => {
+                                    form.setFieldValue('effect.precision', '');
+                                    form.getInputProps('effect.characteristic').onChange(event);
+                                }}
+                            />
+                        }
+                        {getEffectOptions('precision').length > 0 && !canAddNewEffectManual('precision') &&
                             <NativeSelect
                                 label="precision"
                                 data={[{ value: '', label: 'Pick One' }, ...getEffectOptions('precision')]}
+                                {...form.getInputProps('effect.precision')}
+                            />
+                        }
+                        {canAddNewEffectManual('precision') &&
+                            <Autocomplete
+                                label="precision"
+                                data={...getEffectOptions('precision')}
+                                placeholder="Select from the list or type a new value"
                                 {...form.getInputProps('effect.precision')}
                             />
                         }

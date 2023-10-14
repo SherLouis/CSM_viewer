@@ -204,9 +204,7 @@ export default class DataRepository implements IDataRepository {
         }
         let newEffectId: number = null;
         if (newResult.effect.category != null) {
-            const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
-            const effect = this.db.prepare(getEffectId_stmt).get(newResult.effect) as EffectEntity;
-            newEffectId = effect.id;
+            newEffectId = this._getEffectIdOrInsertNewManual(newResult);
         }
 
         const stmt = `INSERT INTO Results 
@@ -233,9 +231,7 @@ export default class DataRepository implements IDataRepository {
         }
         let newEffectId: number = null;
         if (newResult.effect.category != null) {
-            const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
-            const effect = this.db.prepare(getEffectId_stmt).get(newResult.effect) as EffectEntity;
-            newEffectId = effect.id;
+            newEffectId = this._getEffectIdOrInsertNewManual(newResult);
         }
 
         const stmt = `
@@ -289,7 +285,6 @@ export default class DataRepository implements IDataRepository {
             const level = result.roi.precision != null ? 'precision' : (result.roi.sub != null ? 'sub' : (result.roi.gyrus != null ? 'gyrus' : 'lobe'));
             const parent_level = result.roi.precision != null ? 'sub' : (result.roi.sub != null ? 'gyrus' : 'lobe');
             const parent_value = level === 'precision' ? result.roi.sub : (level === 'sub' ? result.roi.gyrus : (level === 'gyrus' ? result.roi.lobe : null));
-            console.debug(`level: ${level} | parent_level: ${parent_level} | parent_value: ${parent_value}`);
             const parent_id = (this.db.prepare(`SELECT * FROM ROIs WHERE level=@level AND ${parent_level}=@value`).get({ level: parent_level, value: parent_value }) as ROIEntity).id;
             return this._insertROI(level, result.roi.lobe, result.roi.gyrus, result.roi.sub, result.roi.precision, parent_id, true);
         }
@@ -331,6 +326,18 @@ export default class DataRepository implements IDataRepository {
         Values (@level, @category, @semiology, @characteristic, @precision, @parent_id, @is_manual)`;
         const info = this.db.prepare(stmt).run({ level: level, category: category, semiology: semiology, characteristic: characteristic, precision: precision, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
         return info.lastInsertRowid as number;
+    }
+    private _getEffectIdOrInsertNewManual(result: Result): number {
+        const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
+        const effect = this.db.prepare(getEffectId_stmt).get(result.effect) as EffectEntity;
+        if (!effect) {
+            const level = result.effect.precision != null ? 'precision' : (result.effect.characteristic != null ? 'characteristic' : (result.effect.semiology != null ? 'semiology' : 'category'));
+            const parent_level = result.effect.precision != null ? 'characteristic' : (result.effect.characteristic != null ? 'semiology' : 'category');
+            const parent_value = level === 'precision' ? result.effect.characteristic : (level === 'characteristic' ? result.effect.semiology : (level === 'semiology' ? result.effect.category : null));
+            const parent_id = (this.db.prepare(`SELECT * FROM Effects WHERE level=@level AND ${parent_level}=@value`).get({ level: parent_level, value: parent_value }) as EffectEntity).id;
+            return this._insertEffect(level, result.effect.category, result.effect.semiology, result.effect.characteristic, result.effect.precision, parent_id, true);
+        }
+        return effect.id
     }
     private _setupEffectsTable() {
         if (!this._tableExists('Effects')) {
