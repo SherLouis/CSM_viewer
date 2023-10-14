@@ -16,7 +16,7 @@ export interface IElectronAPI {
   deleteSource: (sourceId: number) => Promise<EditResponseDto>
   // Results
   getAllResultsForSource: (sourceId: number) => Promise<ResultDto[]>
-  editResult: (resultId: number, result: ResultDto) => Promise<EditResponseDto>
+  editResult: (result: ResultDto) => Promise<EditResponseDto>
   deleteResult: (resultId: number) => Promise<EditResponseDto>
   createResult: (result: ResultDto) => Promise<CreateResponseDto>
 

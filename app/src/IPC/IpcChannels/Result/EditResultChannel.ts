@@ -16,9 +16,7 @@ export class EditResultChannel implements IpcChannelInterface {
 
   handle(_event: IpcMainEvent, request: EditResultRequest): EditResponseDto {
     console.log('Handling request on channel %s', this.getName());
-    console.debug(request.params.dto);
-    console.debug(request.params.resultId);
-    const success = this.service.editResult(request.params.resultId, ResultsDtoMapper.DtoToModel(request.params.dto));
+    const success = this.service.editResult(ResultsDtoMapper.DtoToModel(request.params.dto));
     const response = {successful: success, message: success?"Successfully edited result":"Failed to edit result"} as EditResponseDto;
     return response;
   }
@@ -26,7 +24,6 @@ export class EditResultChannel implements IpcChannelInterface {
 
 class EditResultRequest implements IpcRequest {
     params: {
-      resultId: number
       dto: ResultDto
     }
   }

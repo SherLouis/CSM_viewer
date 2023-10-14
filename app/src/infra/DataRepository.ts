@@ -23,6 +23,7 @@ export default class DataRepository implements IDataRepository {
         this.createTablesIfNotExist();
     }
 
+    // DB management
     setDbLocation(dbLocation: string): boolean {
         let currentDbLocation = this.dbLocation;
         try {
@@ -194,7 +195,6 @@ export default class DataRepository implements IDataRepository {
         return results;
     }
 
-    // TODO: to test
     private _insertNewResult(newResult: Result): void {
         console.debug("Inserting new result: ");
         console.debug(newResult);
@@ -227,32 +227,31 @@ export default class DataRepository implements IDataRepository {
             comments: newResult.comments
         })
     }
-    // TODO:  to fix and test
     private _editResult(resultId: number, newResult: Result): void {
         console.debug("Editing result: ");
-        console.debug(resultId);
-        console.debug(newResult);
         let newRoiId: number = null;
-        if (newResult.roi.lobe != null) {
-            const getRoiId_stmt = 'SELECT id FROM ROIs WHERE lobe = @lobe AND gyrus = @gyrus AND sub = @sub AND precision = @precision';
-            newRoiId = this.db.prepare(getRoiId_stmt).get(newResult.roi) as number;
+        if (newResult.roi.lobe != '') {
+            const getRoiId_stmt = 'SELECT * FROM ROIs WHERE lobe IS @lobe AND gyrus IS @gyrus AND sub IS @sub AND precision IS @precision';
+            const roi = this.db.prepare(getRoiId_stmt).get(newResult.roi) as ROIEntity;
+            newRoiId = roi.id;
         }
         let newEffectId: number = null;
-        if (newResult.effect.category != null) {
-            const getEffectId_stmt = 'SELECT id FROM Effects WHERE category = @category AND semiology = @semiology AND characteristic = @characteristic AND precision = @precision';
-            newEffectId = this.db.prepare(getEffectId_stmt).get(newResult.effect) as number;
+        if (newResult.effect.category != '') {
+            const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic AND precision IS @precision';
+            const effect = this.db.prepare(getEffectId_stmt).get(newResult.effect) as EffectEntity;
+            newEffectId = effect.id;
         }
 
         const stmt = `
         UPDATE Results SET 
-            roi_id = @newRoiId,
+            roi_id = @roi_id,
             stim_amp_ma = @stim_amp_ma,
             stim_freq = @stim_freq,
             stim_electrode_separation = @stim_electrode_separation,
             stim_duration_ms = @stim_duration_ms,
-            effect_id = @newEffectId,
+            effect_id = @effect_id,
             effect_post_discharge = @effect_post_discharge,
-            occurrences,
+            occurrences=@occurrences,
             comments = @comments
         WHERE id=@resultIdToEdit`
         this.db.prepare(stmt).run({

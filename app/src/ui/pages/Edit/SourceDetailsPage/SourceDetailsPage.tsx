@@ -70,6 +70,7 @@ export const SourceDetailsPage = () => {
         })
     }, []);
 
+    
     const createResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);
         ResultUIService.createResult(sourceId, result)
@@ -85,21 +86,19 @@ export const SourceDetailsPage = () => {
     }, [currentSource]);
 
     const editResult = useCallback((result: ResultDdo) => {
-        /* TODO : edit
         setIsLoading(true);
-        const result = { id: selectedResult.id, ...values } as ResultDdo;
-        ResultUIService.editResult(selectedResult.id, result)
+        ResultUIService.editResult(sourceId, result)
             .then((res: EditResponseDto) => {
-                createEditModalHandlers.close();
                 if (res.successful) {
                     resultsHandlers.applyWhere(
-                        (r) => (r.id === selectedResult.id),
+                        (r) => (r.id === result.id),
                         (r) => result
                     );
                 }
                 console.log(res.message);
+                // TODO: display if success or not in notistack
                 setIsLoading(false);
-            });*/
+            });
     }, [currentSource])
 
     // Functions

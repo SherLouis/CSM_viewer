@@ -34,7 +34,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
     });
 
     const handleSubmit = (values: CreateEditResultFormValues) => {
-        //form.validate();
+        // TODO: form.validate();
         onSubmit(values);
     }
 

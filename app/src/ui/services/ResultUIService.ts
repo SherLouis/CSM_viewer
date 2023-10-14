@@ -13,10 +13,9 @@ export default class ResultUIService {
         return response.map((dto) => ResultsDtoMapper.DtoToDdo(dto));
     }
 
-    public static editResult = async (resultId:number, newValue: ResultDdo): Promise<EditResponseDto> => {
-        console.debug(`Editing result ${resultId} with new value: `);
-        console.debug(newValue);
-        let response = await window.electronAPI.editResult(resultId, newValue);
+    public static editResult = async (sourceId:number, result: ResultDdo): Promise<EditResponseDto> => {
+        console.debug(`Editing result ${result.id} with new value: `);
+        let response = await window.electronAPI.editResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
     }
 
