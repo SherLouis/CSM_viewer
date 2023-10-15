@@ -1,6 +1,6 @@
-import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
+import { Box, Burger, Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
-import { IconPlus, IconRefresh } from "@tabler/icons-react";
+import { IconPlus, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, Link, Navigate, useNavigate } from 'react-router-dom'
 import SourceUIService from "../../../services/SourceUIService";
@@ -24,6 +24,8 @@ export const SourceDetailsPage = () => {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [currentSource, setCurrentSource] = useState<SourceDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
+    const [toDeleteResultId, setToDeleteResultId] = useState(undefined);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
     const [rois, roisHandlers] = useListState<ROIDdo>([]);
     const [effects, effectsHandlers] = useListState<EffectDdo>([]);
@@ -137,16 +139,23 @@ export const SourceDetailsPage = () => {
 
     // Functions
     const onDeleteResult = (resultId: number) => {
+        setToDeleteResultId(resultId);
+        setShowConfirmDelete(true);
+    }
+
+    const onConfirmDeleteResult = () => {
+        setShowConfirmDelete(false);
         setIsLoading(true);
-        ResultUIService.deleteResult(resultId)
+        ResultUIService.deleteResult(toDeleteResultId)
             .then((res: EditResponseDto) => {
                 console.debug(res);
                 if (res.successful) {
-                    resultsHandlers.filter((a) => a.id != resultId);
+                    resultsHandlers.filter((a) => a.id != toDeleteResultId);
                 }
                 console.log(res.message)
                 // TODO: display if success or not in notistack
-                setIsLoading(false)
+                setIsLoading(false);
+                setToDeleteResultId(undefined);
             })
     }
 
@@ -218,6 +227,14 @@ export const SourceDetailsPage = () => {
                 <Anchor component={Link} title="Sources" to="/edit/sources">Sources</Anchor>
                 <Text>{sourceId}</Text>
             </Breadcrumbs>
+
+            <Modal opened={showConfirmDelete} onClose={() => setShowConfirmDelete(false)} title="Confirm Delete Result ?">
+                <Text>Are you sure you want to delete result with id {toDeleteResultId} ?</Text>
+                <Group>
+                    <Button onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
+                    <Button leftIcon={<IconTrash color="white"/>} variant="filled" color="red" onClick={onConfirmDeleteResult}></Button>
+                </Group>
+            </Modal>
 
             {!isLoading &&
                 <Stack>
