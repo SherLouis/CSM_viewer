@@ -12,7 +12,10 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     prune: true,
-
+    extraResource: [
+      "./resources/base_effects.json",
+      "./resources/base_rois.json"
+    ]
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({})],
@@ -37,7 +40,7 @@ const config: ForgeConfig = {
     }),
   ],
   publishers: [
-    new PublisherGithub({repository: {name:'CSM_viewer', owner: 'SherLouis'}, draft: true})
+    new PublisherGithub({ repository: { name: 'CSM_viewer', owner: 'SherLouis' }, draft: true })
   ]
 };
 

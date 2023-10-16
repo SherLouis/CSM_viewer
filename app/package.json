@@ -1,8 +1,8 @@
 {
   "name": "my-new-app",
-  "productName": "my-new-app",
+  "productName": "CSM-data",
   "version": "0.2.0",
-  "description": "CSM viewer app",
+  "description": "CSM data app",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -63,8 +63,9 @@
     "react-router-dom": "^6.15.0"
   },
   "build": {
-    "extraResources": [
-      "./resources/**"
+    "files": [
+      "./resources/base_effects.json",
+      "./resources/base_rois.json"
     ]
   }
 }
