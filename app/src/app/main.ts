@@ -49,7 +49,7 @@ class Main {
     this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
     // Open the DevTools.
-    this.mainWindow.webContents.openDevTools();
+    // this.mainWindow.webContents.openDevTools();
   };
 
   private openDb = () => {
