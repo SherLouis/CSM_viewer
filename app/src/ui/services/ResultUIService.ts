@@ -1,6 +1,10 @@
 import { ResultsDtoMapper } from "../../IPC/dtos/ResultDto";
+import { ROIDtoMapper } from "../../IPC/dtos/ROIDto";
+import { EffectDtoMapper } from "../../IPC/dtos/EffectDto";
 import { CreateResponseDto, EditResponseDto } from "../../IPC/dtos/CreateEditResponseDto";
 import { ResultDdo } from "../models/ResultDdo";
+import { ROIDdo } from "../models/ROIDdo";
+import { EffectDdo } from "../models/EffectDdo";
 
 export default class ResultUIService {
     public static getAllResultsForSource = async (sourceId: number): Promise<ResultDdo[]> => {
@@ -9,10 +13,9 @@ export default class ResultUIService {
         return response.map((dto) => ResultsDtoMapper.DtoToDdo(dto));
     }
 
-    public static editResult = async (resultId:number, newValue: ResultDdo): Promise<EditResponseDto> => {
-        console.debug(`Editing result ${resultId} with new value: `);
-        console.debug(newValue);
-        let response = await window.electronAPI.editResult(resultId, newValue);
+    public static editResult = async (sourceId:number, result: ResultDdo): Promise<EditResponseDto> => {
+        console.debug(`Editing result ${result.id} with new value: `);
+        let response = await window.electronAPI.editResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
     }
 
@@ -27,5 +30,17 @@ export default class ResultUIService {
         console.debug(result)
         let response = await window.electronAPI.createResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
+    }
+
+    public static getROIs = async () : Promise<ROIDdo[]> => {
+        console.debug('Getting ROIs');
+        let response = await window.electronAPI.getROIs();
+        return response.map((dto) => ROIDtoMapper.DtoToDdo(dto))
+    }
+
+    public static getEffects = async () : Promise<EffectDdo[]> => {
+        console.debug('Getting ROIs');
+        let response = await window.electronAPI.getEffects();
+        return response.map((dto) => EffectDtoMapper.DtoToDdo(dto))
     }
 }

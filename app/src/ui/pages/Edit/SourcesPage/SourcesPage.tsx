@@ -1,7 +1,8 @@
-import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack } from "@mantine/core"
+import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Text } from "@mantine/core"
+import { notifications } from '@mantine/notifications';
 import { useNavigate } from "react-router-dom"
 import SourcesTable from "../../../components/SourcesTable/SourcesTable";
-import { IconPlus, IconRefresh } from "@tabler/icons-react";
+import { IconCheck, IconCircleX, IconPlus, IconRefresh, IconTrash, IconX} from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { CreateEditSourceForm, CreateFormValues } from "../../../components/CreateEditSourceForm/CreateEditSourceForm";
 import SourceUIService from "../../../services/SourceUIService";
@@ -18,6 +19,8 @@ export function SourcesPage() {
   const [mode, setMode] = useState<"create" | "edit">("create");
   const navigate = useNavigate();
   const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
+  const [toDeleteSourceId, setToDeleteSourceId] = useState(undefined);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   useEffect(() => {
     console.debug("using effect");
@@ -47,20 +50,39 @@ export function SourcesPage() {
 
   const createSource = useCallback((source: SourceDdo) => {
     setIsLoading(true);
+    notifications.show({
+      id: 'creatingSource',
+      title: "Creating new source...",
+      message: "Please wait while the data is being saved.",
+      loading: true,
+    });
     SourceUIService.createSource(source)
       .then((res: CreateResponseDto) => {
         console.debug(res);
         if (res.successful) {
           refreshSources();
         }
-        console.log(res.message)
-        // TODO: display if success or not in notistack
+        notifications.update({
+          id: 'creatingSource',
+          autoClose: 2000,
+          title: res.successful ? "Created" : "Error",
+          message: res.message,
+          color: res.successful ? 'teal' : 'red',
+          icon: res.successful ? <IconCheck /> : <IconX/>,
+          loading: false,
+        });
         setIsLoading(false)
       });
   }, [sources]);
 
   const editSource = useCallback((values: CreateFormValues) => {
     setIsLoading(true);
+    notifications.show({
+      id: 'editingSource',
+      title: "Editing source...",
+      message: "Please wait while the data is being saved.",
+      loading: true,
+    });
     const source = {
       id: currentSource.id,
       type: values.reference.type,
@@ -70,7 +92,7 @@ export function SourcesPage() {
       location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
-      methodology: { stimulation_parameters: values.stimulation_params }
+      cohort: values.reference.cohort
     } as SourceDdo;
     SourceUIService.editSource(currentSource.id, SourceDtoFromDdo(source))
       .then((res: EditResponseDto) => {
@@ -85,7 +107,15 @@ export function SourcesPage() {
             }
           }));
         }
-        console.log(res.message);
+        notifications.update({
+          id: 'editingSource',
+          autoClose: 2000,
+          title: res.successful ? "Saved" : "Error",
+          message: res.message,
+          color: res.successful ? 'teal' : 'red',
+          icon: res.successful ? <IconCheck /> : <IconX/>,
+          loading: false,
+        });
         setIsLoading(false);
       });
   }, [currentSource])
@@ -97,21 +127,31 @@ export function SourcesPage() {
 
   const deleteSource = useCallback((sourceId: number) => {
     setIsLoading(true);
+    notifications.show({
+      id: 'deletingSource',
+      title: "Deleting source...",
+      message: "Please wait while the data is being saved.",
+      loading: true,
+    });
     SourceUIService.deleteSource(sourceId)
       .then((res: EditResponseDto) => {
-        console.debug(res);
         if (res.successful) {
           setSources(sources.filter(a => a.id != sourceId));
         }
-        console.log(res.message)
-        // TODO: display if success or not in notistack
+        notifications.update({
+          id: 'deletingSource',
+          autoClose: 2000,
+          title: res.successful ? "Deleted" : "Error",
+          message: res.message,
+          color: res.successful ? 'teal' : 'red',
+          icon: res.successful ? <IconCheck /> : <IconX/>,
+          loading: false,
+        });
         setIsLoading(false)
       })
   }, [sources])
 
-  console.debug(sources);
 
-  
   // Functions
   const viewSource = (sourceId: number) => {
     navigate(`/edit/sources/${sourceId}`);
@@ -126,8 +166,14 @@ export function SourcesPage() {
   }
 
   const onDeleteSource = (sourceId: number) => {
-    // TODO: add a confirmation
-    deleteSource(sourceId);
+    setToDeleteSourceId(sourceId);
+    setShowConfirmDelete(true);
+  }
+
+  const onConfirmDeleteSource = () => {
+    setShowConfirmDelete(false);
+    deleteSource(toDeleteSourceId);
+    setToDeleteSourceId(undefined);
   }
 
   const createNewSource = (values: CreateFormValues) => {
@@ -136,10 +182,10 @@ export function SourcesPage() {
       author: values.reference.author,
       date: values.reference.date,
       publisher: values.reference.publisher,
-      location: values.reference.location, 
-      doi: values.reference.doi, 
-      title: values.reference.title, 
-      methodology: { stimulation_parameters: values.stimulation_params }
+      location: values.reference.location,
+      doi: values.reference.doi,
+      title: values.reference.title,
+      cohort: values.reference.cohort
     } as SourceDdo;
     createSource(source);
     createEditModalHandlers.close();
@@ -153,6 +199,14 @@ export function SourcesPage() {
           <Button leftIcon={<IconPlus />} variant="filled" onClick={() => createEditModalHandlers.open()}>New</Button>
           <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshSources}>Refresh</Button>
         </Group>
+
+        <Modal opened={showConfirmDelete} onClose={() => setShowConfirmDelete(false)} title="Delete Source ?">
+          <Text>Are you sure you want to delete source with id {toDeleteSourceId} ?</Text>
+          <Group position="apart">
+            <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
+            <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={onConfirmDeleteSource}>Delete</Button>
+          </Group>
+        </Modal>
 
         <Box h={"70vh"}>
           <SourcesTable

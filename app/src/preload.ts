@@ -12,9 +12,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteSource: (sourceId: number) => ipcRenderer.invoke('source:delete', { params: { sourceId: sourceId } }),
 
   getAllResultsForSource: (sourceId: string) => ipcRenderer.invoke('results:getForSource', { params: { sourceId: sourceId } }),
-  editResult: (resultId: number, result: ResultDto) => ipcRenderer.invoke('result:edit', { params: { resultId: resultId, dto: result } }),
+  editResult: (result: ResultDto) => ipcRenderer.invoke('result:edit', { params: { dto: result } }),
   deleteResult: (resultId: number) => ipcRenderer.invoke('result:delete', { params: { resultId: resultId } }),
   createResult: (result: ResultDto) => ipcRenderer.invoke('results:create', { params: { dto: result } }),
+
+  getROIs: () => ipcRenderer.invoke('results:getRois'),
+  getEffects: () => ipcRenderer.invoke('results:getEffects'),
 })
 
 // TODO: use typescript to make api respect a type and make validations

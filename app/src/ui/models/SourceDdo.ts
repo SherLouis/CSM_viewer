@@ -8,21 +8,8 @@ type SourceDdo = {
     location: string,
     doi: string,
     title: string,
-    methodology: {
-        stimulation_parameters: {
-            type: StimulationTypeDdo,
-            electrode_separation: number,
-            polarity: StimulationPolarityDdo,
-            current_mA: number,
-            pulse_width_ms: number,
-            pulse_freq_Hz: number,
-            train_duration_s: number
-        }
-    }
+    cohort: number
 }
-
-type StimulationTypeDdo = "grid" | "depth" | "HFTS";
-type StimulationPolarityDdo = "unipolar" | "bipolar" | "unknown"
 
 type SourceSummaryDdo = {
     id: number,

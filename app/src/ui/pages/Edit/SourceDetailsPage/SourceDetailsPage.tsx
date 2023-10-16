@@ -1,32 +1,37 @@
-import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
+import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Title } from "@mantine/core"
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
-import { IconPlus, IconRefresh } from "@tabler/icons-react";
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconCircleX, IconPlus, IconRefresh, IconTrash, IconX } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
-import { useParams, Link, Navigate, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import SourceUIService from "../../../services/SourceUIService";
 import ResultUIService from "../../../services/ResultUIService";
-import { useDisclosure, useListState } from "@mantine/hooks";
+import { useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
+import { ROIDdo } from "../../../models/ROIDdo";
+import { EffectDdo } from "../../../models/EffectDdo";
 import ResultsTable from "../../../components/ResultsTable/ResultsTable";
 import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
 import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
+
 
 export const SourceDetailsPage = () => {
     // hooks
     const { sourceIdParam } = useParams<string>();
     const sourceId = parseInt(sourceIdParam);
     const navigate = useNavigate();
-    
-    console.debug(sourceId);
 
     const [isLoading, setIsLoading] = useState(true);
+    const [showCreateForm, setShowCreateForm] = useState(false);
     const [currentSource, setCurrentSource] = useState<SourceDdo>();
     const [results, resultsHandlers] = useListState<ResultDdo>([]);
-    const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
-    const [mode, setMode] = useState<"create" | "edit" | "view">("view");
-    const [selectedResult, setSelectedResult] = useState<ResultDdo>();
+    const [toDeleteResultId, setToDeleteResultId] = useState(undefined);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
-    // Load current source and results
+    const [rois, roisHandlers] = useListState<ROIDdo>([]);
+    const [effects, effectsHandlers] = useListState<EffectDdo>([]);
+
+    // Load current source, results and rois
     useEffect(() => {
         console.debug("getting current source");
         SourceUIService.getSource(sourceId)
@@ -36,7 +41,18 @@ export const SourceDetailsPage = () => {
                 ResultUIService.getAllResultsForSource(sourceId)
                     .then((res) => {
                         resultsHandlers.setState(res);
-                        setIsLoading(false)
+                        console.debug("getting ROIs");
+                        ResultUIService.getROIs()
+                            .then((rois) => {
+                                roisHandlers.setState(rois);
+                                console.debug(rois);
+                                console.debug("getting Effects");
+                                ResultUIService.getEffects()
+                                    .then((res_effects) => {
+                                        effectsHandlers.setState(res_effects)
+                                        setIsLoading(false);
+                                    })
+                            })
                     });
             });
     }, []);
@@ -51,83 +67,195 @@ export const SourceDetailsPage = () => {
             });
     }, [currentSource]);
 
+    const refreshRois = useCallback(() => {
+        setIsLoading(true);
+        console.debug("getting ROIs");
+        ResultUIService.getROIs()
+            .then((rois) => {
+                roisHandlers.setState(rois);
+                setIsLoading(false);
+            })
+    }, []);
+
+    const refreshEffects = useCallback(() => {
+        setIsLoading(true);
+        console.debug("getting Effects");
+        ResultUIService.getEffects()
+            .then((effects) => {
+                effectsHandlers.setState(effects);
+                setIsLoading(false);
+            })
+    }, []);
+
+    // Listen for the event db location changed
     useEffect(() => {
-        // Listen for the event
         window.electronAPI.dbLocationChanged((event, value) => {
             navigate('/edit/sources/');
         })
     }, []);
 
+
     const createResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);
+        notifications.show({
+            id: 'creatingResult',
+            title: "Creating new result...",
+            message: "Please wait while the data is being saved.",
+            loading: true,
+        });
         ResultUIService.createResult(sourceId, result)
             .then((res: CreateResponseDto) => {
                 console.debug(res);
                 if (res.successful) {
-                    resultsHandlers.append(result)
+                    // TODO: add new id in response and append to list instead of refreshing all
+                    refreshResults();
+                    if (shouldCreateNewRoi(result)) {
+                        refreshRois();
+                    }
+                    if (shouldCreateNewEffect(result)) {
+                        refreshEffects();
+                    }
                 }
-                console.log(res.message)
-                // TODO: display if success or not in notistack
+                notifications.update({
+                    id: 'creatingResult',
+                    autoClose: 2000,
+                    title: res.successful ? "Created" : "Error",
+                    message: res.message,
+                    color: res.successful ? 'teal' : 'red',
+                    icon: res.successful ? <IconCheck /> : <IconX />,
+                    loading: false,
+                });
                 setIsLoading(false)
             });
     }, [currentSource]);
 
-    const editResult = useCallback((values: CreateEditResultFormValues) => {
+    const editResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);
-        const result = { id: selectedResult.id, ...values } as ResultDdo;
-        ResultUIService.editResult(selectedResult.id, result)
+        notifications.show({
+            id: 'editingResult',
+            title: "Creating new result...",
+            message: "Please wait while the data is being saved.",
+            loading: true,
+        });
+        ResultUIService.editResult(sourceId, result)
             .then((res: EditResponseDto) => {
-                createEditModalHandlers.close();
                 if (res.successful) {
                     resultsHandlers.applyWhere(
-                        (r) => (r.id === selectedResult.id),
+                        (r) => (r.id === result.id),
                         (r) => result
                     );
+                    if (shouldCreateNewRoi(result)) {
+                        refreshRois();
+                    }
+                    if (shouldCreateNewEffect(result)) {
+                        refreshEffects();
+                    }
                 }
-                console.log(res.message);
+                notifications.update({
+                    id: 'editingResult',
+                    autoClose: 2000,
+                    title: res.successful ? "Saved" : "Error",
+                    message: res.message,
+                    color: res.successful ? 'teal' : 'red',
+                    icon: res.successful ? <IconCheck /> : <IconX />,
+                    loading: false,
+                });
                 setIsLoading(false);
             });
-    }, [selectedResult])
+    }, [currentSource])
 
     // Functions
-    const viewResult = (result: ResultDdo) => {
-        setMode("view");
-        setSelectedResult(result);
-        createEditModalHandlers.open();
-    }
-
-    const onEditResult = (result: ResultDdo) => {
-        setMode("edit");
-        setSelectedResult(result);
-        createEditModalHandlers.open();
-    }
-
     const onDeleteResult = (resultId: number) => {
+        setToDeleteResultId(resultId);
+        setShowConfirmDelete(true);
+    }
+
+    const onConfirmDeleteResult = () => {
+        setShowConfirmDelete(false);
         setIsLoading(true);
-        ResultUIService.deleteResult(resultId)
+        notifications.show({
+            id: 'deletingResult',
+            title: "Deleting result...",
+            message: "Please wait while the data is being saved.",
+            loading: true,
+          });
+        ResultUIService.deleteResult(toDeleteResultId)
             .then((res: EditResponseDto) => {
                 console.debug(res);
                 if (res.successful) {
-                    resultsHandlers.filter((a) => a.id != resultId);
+                    resultsHandlers.filter((a) => a.id != toDeleteResultId);
                 }
-                console.log(res.message)
-                // TODO: display if success or not in notistack
-                setIsLoading(false)
+                notifications.update({
+                    id: 'deletingResult',
+                    autoClose: 2000,
+                    title: res.successful ? "Deleted" : "Error",
+                    message: res.message,
+                    color: res.successful ? 'teal' : 'red',
+                    icon: res.successful ? <IconCheck /> : <IconX/>,
+                    loading: false,
+                  });
+                setIsLoading(false);
+                setToDeleteResultId(undefined);
             })
     }
 
     const onCreateResult = (values: CreateEditResultFormValues) => {
-        const result = { location: values.location, effect: values.effect, comments: values.comments } as ResultDdo;
+        const result = {
+            roi: {
+                lobe: values.roi.lobe,
+                gyrus: values.roi.gyrus,
+                sub: values.roi.sub,
+                precision: values.roi.precision
+            },
+            stimulation_parameters: {
+                amplitude_ma: values.stimulation_parameters.amplitude_ma,
+                frequency_hz: values.stimulation_parameters.frequency_hz,
+                electrode_separation_mm: values.stimulation_parameters.electrode_separation_mm,
+                duration_s: values.stimulation_parameters.duration_s
+            },
+            effect: {
+                category: values.effect.category,
+                semiology: values.effect.semiology,
+                characteristic: values.effect.characteristic,
+                precision: values.effect.precision,
+                post_discharge: values.effect.post_discharge
+            },
+            occurrences: values.occurrences,
+            comments: values.comments
+        } as ResultDdo
+        setShowCreateForm(false);
         createResult(result);
-        createEditModalHandlers.close();
     }
 
     const onCreateButton = () => {
-        setMode("create");
-        createEditModalHandlers.open();
+        setShowCreateForm(true);
     }
 
-    console.debug(results);
+    const shouldCreateNewRoi = (result: ResultDdo): boolean => {
+        const roi = {
+            lobe: result.roi.lobe != '' ? result.roi.lobe : null,
+            gyrus: result.roi.gyrus != '' ? result.roi.gyrus : null,
+            sub: result.roi.sub != '' ? result.roi.sub : null,
+            precision: result.roi.precision != '' ? result.roi.precision : null,
+        }
+        const isNewRoi = rois.filter((r) => r.lobe === roi.lobe && r.gyrus === roi.gyrus && r.sub === roi.sub && r.precision === roi.precision).length === 0;
+        return isNewRoi;
+    }
+
+    const shouldCreateNewEffect = (result: ResultDdo): boolean => {
+        const effect = {
+            category: result.effect.category != '' ? result.effect.category : null,
+            semiology: result.effect.semiology != '' ? result.effect.semiology : null,
+            characteristic: result.effect.characteristic != '' ? result.effect.characteristic : null,
+            precision: result.effect.precision != '' ? result.effect.precision : null,
+        }
+        const isNewEffect = effects.filter((e) =>
+            e.category === effect.category &&
+            e.semiology === effect.semiology &&
+            e.characteristic === effect.characteristic &&
+            e.precision === effect.precision).length === 0;
+        return isNewEffect;
+    }
 
     return (
         <Container size={"80%"}>
@@ -138,60 +266,40 @@ export const SourceDetailsPage = () => {
                 <Text>{sourceId}</Text>
             </Breadcrumbs>
 
+            <Modal opened={showConfirmDelete} onClose={() => setShowConfirmDelete(false)} title="Delete Result ?">
+                <Text>Are you sure you want to delete result with id {toDeleteResultId} ?</Text>
+                <Group position="apart">
+                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
+                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={onConfirmDeleteResult}>Delete</Button>
+                </Group>
+            </Modal>
+
             {!isLoading &&
                 <Stack>
                     <Title order={3}>{currentSource.title}</Title>
-
-                    <Title order={3}>Stimulation parameters</Title>
-                    <Table>
-                        <thead>
-                            <tr>
-                                <th>type</th>
-                                <th>electrode separation</th>
-                                <th>polarity</th>
-                                <th>current</th>
-                                <th>pulse width</th>
-                                <th>pulse frequency</th>
-                                <th>train duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{currentSource.methodology.stimulation_parameters.type}</td>
-                                <td>{currentSource.methodology.stimulation_parameters.electrode_separation} mm</td>
-                                <td>{currentSource.methodology.stimulation_parameters.polarity}</td>
-                                <td>{currentSource.methodology.stimulation_parameters.current_mA} mA</td>
-                                <td>{currentSource.methodology.stimulation_parameters.pulse_width_ms} ms</td>
-                                <td>{currentSource.methodology.stimulation_parameters.pulse_freq_Hz} Hz</td>
-                                <td>{currentSource.methodology.stimulation_parameters.train_duration_s} s</td>
-                            </tr>
-                        </tbody>
-                    </Table>
-
                     <Group>
                         <Button leftIcon={<IconPlus />} variant="filled" onClick={onCreateButton}>New</Button>
                         <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshResults}>Refresh</Button>
                     </Group>
 
-                    <Box h={"50vh"}>
+                    <Box h={"80vh"}>
+                        {showCreateForm && (
+                            <CreateEditResultForm
+                                onSubmit={(values) => onCreateResult(values)}
+                                rois={rois}
+                                effects={effects}
+                            />
+                        )}
                         <ResultsTable
                             data={results}
-                            onRowClick={(result) => viewResult(result)}
-                            onEdit={(result) => onEditResult(result)}
+                            rois={rois}
+                            effects={effects}
+                            onEdit={(result) => editResult(result)}
+                            onCreate={(result) => createResult(result)}
                             onDelete={(resultId) => onDeleteResult(resultId)} />
                     </Box>
                 </Stack>
             }
-            <Modal opened={createEditOpened}
-                onClose={() => { createEditModalHandlers.close(); setMode("create") }}
-                title={mode === "create" ? "New Result" : "Edit Result"}
-                centered size="70%">
-                <CreateEditResultForm
-                    onSubmit={(values) => { mode === "create" ? onCreateResult(values) : mode === "edit" ? editResult(values) : createEditModalHandlers.close() }}
-                    mode={mode}
-                    edit_result={(mode === "edit" || mode === "view") ? selectedResult : null}
-                />
-            </Modal>
         </Container>
     )
 }

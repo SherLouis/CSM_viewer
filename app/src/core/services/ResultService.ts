@@ -1,4 +1,6 @@
 import IDataRepository from "../../infra/IDataRepository";
+import { Effect } from "../models/Effect";
+import { ROI } from "../models/ROI";
 import { Result } from "../models/Result";
 
 
@@ -22,9 +24,9 @@ export class ResultService {
         }
     }
 
-    public editResult(resultId: number, result: Result): boolean {
+    public editResult(result: Result): boolean {
         try {
-            this.dataRepository.editResult(resultId, result);
+            this.dataRepository.editResult(result.id, result);
             return true;
         }
         catch (e) {
@@ -42,5 +44,13 @@ export class ResultService {
             console.log(e);
             return false;
         }
+    }
+
+    public getROIs() : ROI[] {
+        return this.dataRepository.getROIs();
+    }
+
+    public getEffects(): Effect[] {
+        return this.dataRepository.getEffects();
     }
 }

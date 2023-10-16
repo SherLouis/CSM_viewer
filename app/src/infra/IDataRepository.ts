@@ -1,8 +1,12 @@
+import { Effect } from "../core/models/Effect";
+import { ROI } from "../core/models/ROI";
 import { Result } from "../core/models/Result";
 import { SourceSummary, Source } from "../core/models/Source";
 
 export default interface IDataRepository {
     setDbLocation(dbLocation: string): boolean
+
+    // Source
 
     getSource(sourceId: number): Source
 
@@ -14,6 +18,8 @@ export default interface IDataRepository {
 
     editSource(sourceId: number, newValue: Source): void
 
+    // Result
+
     getResults(sourceId: number): Result[]
 
     createResult(result: Result): void
@@ -21,6 +27,13 @@ export default interface IDataRepository {
     deleteResult(resultId: number): void
 
     editResult(resultId: number, newValue: Result): void
+
+    // ROI
+    getROIs(): ROI[]
+
+    // Effect
+
+    getEffects(): Effect[]
 
     close(): void
 }

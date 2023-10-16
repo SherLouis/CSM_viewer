@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import BasePage from './BasePage';
@@ -25,7 +26,8 @@ function App() {
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-        <BasePage title='CSM viewer'>
+        <Notifications position="top-right"/>
+        <BasePage title='CSM data'>
           <Routes>
             <Route path='*' element={<SourcesPage/>} /> {/* This is the default Route */}
             <Route path='/edit/sources' element={<SourcesPage/>} />
