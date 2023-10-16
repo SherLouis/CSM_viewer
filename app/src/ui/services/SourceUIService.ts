@@ -1,6 +1,7 @@
 import { CreateResponseDto, EditResponseDto } from "../../IPC/dtos/CreateEditResponseDto";
 import { SourceDto, SourceDtoFromDdo } from "../../IPC/dtos/SourceDto";
 import { SourceSummaryDto } from "../../IPC/dtos/SourcesSummaryDto";
+import { SourceDdo, SourceSummaryDdo } from "../models/SourceDdo";
 
 export default class SourceUIService {
     public static getAllSourcesSummary = async () => {

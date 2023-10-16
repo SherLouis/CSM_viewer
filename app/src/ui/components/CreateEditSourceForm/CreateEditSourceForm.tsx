@@ -3,6 +3,7 @@ import { useForm } from '@mantine/form';
 const citejs = require('@citation-js/core')
 require('@citation-js/plugin-pubmed')
 import { useCallback, useState } from "react";
+import { SourceDdo, SourceSummaryDdo } from "../../models/SourceDdo";
 
 export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSourceFormProps) => {
   // TODO: Ajouter validations

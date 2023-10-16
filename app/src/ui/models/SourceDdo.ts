@@ -1,5 +1,5 @@
 // ddo = data display object
-type SourceDdo = {
+export type SourceDdo = {
     id: number,
     type: "article" | "experimental" | "other",
     author: string,
@@ -11,7 +11,7 @@ type SourceDdo = {
     cohort: number
 }
 
-type SourceSummaryDdo = {
+export type SourceSummaryDdo = {
     id: number,
     title: string,
     nb_results: number

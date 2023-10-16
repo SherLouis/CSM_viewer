@@ -9,6 +9,7 @@ import SourceUIService from "../../../services/SourceUIService";
 import { useCallback, useEffect, useState } from "react";
 import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
 import { SourceDtoFromDdo } from "../../../../IPC/dtos/SourceDto";
+import { SourceDdo, SourceSummaryDdo } from "../../../models/SourceDdo";
 
 
 export function SourcesPage() {

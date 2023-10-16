@@ -2,6 +2,7 @@ import { MouseEvent } from 'react';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
+import { SourceDdo, SourceSummaryDdo } from "../../models/SourceDdo";
 
 const SourcesTable = (props: SourcesTableProps) => {
   // [ ] add sorting and filtering

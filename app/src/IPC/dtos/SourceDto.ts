@@ -1,4 +1,5 @@
 import { Source } from "../../core/models/Source"
+import { SourceDdo, SourceSummaryDdo } from "../../ui/models/SourceDdo";
 
 export type SourceDto = {
     id: number,
