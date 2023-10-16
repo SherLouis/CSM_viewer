@@ -1,18 +1,21 @@
 import { ResultsDtoMapper } from "../../IPC/dtos/ResultDto";
+import { ROIDtoMapper } from "../../IPC/dtos/ROIDto";
+import { EffectDtoMapper } from "../../IPC/dtos/EffectDto";
 import { CreateResponseDto, EditResponseDto } from "../../IPC/dtos/CreateEditResponseDto";
 import { ResultDdo } from "../models/ResultDdo";
+import { ROIDdo } from "../models/ROIDdo";
+import { EffectDdo } from "../models/EffectDdo";
 
 export default class ResultUIService {
-    public static getAllResultsForArticle = async (articleId: string): Promise<ResultDdo[]> => {
-        console.debug(`Getting Results for article ${articleId}`);
-        let response = await window.electronAPI.getAllResultsForArticle(articleId);
+    public static getAllResultsForSource = async (sourceId: number): Promise<ResultDdo[]> => {
+        console.debug(`Getting Results for source ${sourceId}`);
+        let response = await window.electronAPI.getAllResultsForSource(sourceId);
         return response.map((dto) => ResultsDtoMapper.DtoToDdo(dto));
     }
 
-    public static editResult = async (resultId:number, newValue: ResultDdo): Promise<EditResponseDto> => {
-        console.debug(`Editing result ${resultId} with new value: `);
-        console.debug(newValue);
-        let response = await window.electronAPI.editResult(resultId, newValue);
+    public static editResult = async (sourceId:number, result: ResultDdo): Promise<EditResponseDto> => {
+        console.debug(`Editing result ${result.id} with new value: `);
+        let response = await window.electronAPI.editResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
     }
 
@@ -22,10 +25,22 @@ export default class ResultUIService {
         return response;
     }
 
-    public static createResult = async (articleId: string, result: ResultDdo): Promise<CreateResponseDto> => {
+    public static createResult = async (sourceId: number, result: ResultDdo): Promise<CreateResponseDto> => {
         console.debug('Creating result');
         console.debug(result)
-        let response = await window.electronAPI.createResult(ResultsDtoMapper.DdotoDto(articleId, result));
+        let response = await window.electronAPI.createResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
+    }
+
+    public static getROIs = async () : Promise<ROIDdo[]> => {
+        console.debug('Getting ROIs');
+        let response = await window.electronAPI.getROIs();
+        return response.map((dto) => ROIDtoMapper.DtoToDdo(dto))
+    }
+
+    public static getEffects = async () : Promise<EffectDdo[]> => {
+        console.debug('Getting ROIs');
+        let response = await window.electronAPI.getEffects();
+        return response.map((dto) => EffectDtoMapper.DtoToDdo(dto))
     }
 }

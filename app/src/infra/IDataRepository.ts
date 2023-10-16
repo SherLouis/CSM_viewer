@@ -1,24 +1,39 @@
+import { Effect } from "../core/models/Effect";
+import { ROI } from "../core/models/ROI";
 import { Result } from "../core/models/Result";
-import { ArticleSummary, Article } from "../core/models/Article";
+import { SourceSummary, Source } from "../core/models/Source";
 
 export default interface IDataRepository {
-    getArticle(articleId: string): Article
+    setDbLocation(dbLocation: string): boolean
 
-    getArticles(): ArticleSummary[]
+    // Source
 
-    createArticle(newArticle: Article): void
+    getSource(sourceId: number): Source
 
-    deleteArticle(articleId: string): void
+    getSources(): SourceSummary[]
 
-    editArticle(articleId: string, newValue: Article): void
+    createSource(newSource: Source): void
 
-    getResults(articleId: string): Result[]
+    deleteSource(sourceId: number): void
+
+    editSource(sourceId: number, newValue: Source): void
+
+    // Result
+
+    getResults(sourceId: number): Result[]
 
     createResult(result: Result): void
 
     deleteResult(resultId: number): void
 
     editResult(resultId: number, newValue: Result): void
+
+    // ROI
+    getROIs(): ROI[]
+
+    // Effect
+
+    getEffects(): Effect[]
 
     close(): void
 }

@@ -1,19 +1,23 @@
-import { contextBridge, ipcRenderer } from 'electron'
-import { ArticleDto } from './IPC/dtos/ArticleDto'
+import { Event, contextBridge, ipcRenderer } from 'electron'
+import { SourceDto } from './IPC/dtos/SourceDto'
 import { ResultDto } from './IPC/dtos/ResultDto'
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  // getSystemInfo: (arg1: string) => ipcRenderer.invoke('system:getInfo', {params: {param1: arg1}})
-  getArticlesSummary: () => ipcRenderer.invoke('article:getAll'),
-  getArticle: (articleId: string) => ipcRenderer.invoke('article:get', { params: { articleId: articleId } }),
-  createArticle: (article: ArticleDto) => ipcRenderer.invoke('article:create', { params: { dto: article } }),
-  editArticle: (articleId: string, dto: ArticleDto) => ipcRenderer.invoke('article:edit', { params: { articleId: articleId, dto: dto } }),
-  deleteArticle: (articleId: string) => ipcRenderer.invoke('article:delete', { params: { articleId: articleId } }),
+  dbLocationChanged: (callback: (event:Event, value:string)=>void) => ipcRenderer.on('dbLocation', callback),
 
-  getAllResultsForArticle: (articleId: string) => ipcRenderer.invoke('results:getForArticle', { params: { articleId: articleId } }),
-  editResult: (resultId: number, result: ResultDto) => ipcRenderer.invoke('result:edit', { params: { resultId: resultId, dto: result } }),
+  getSourcesSummary: () => ipcRenderer.invoke('source:getAll'),
+  getSource: (sourceId: number) => ipcRenderer.invoke('source:get', { params: { sourceId: sourceId } }),
+  createSource: (source: SourceDto) => ipcRenderer.invoke('source:create', { params: { dto: source } }),
+  editSource: (sourceId: number, dto: SourceDto) => ipcRenderer.invoke('source:edit', { params: { sourceId: sourceId, dto: dto } }),
+  deleteSource: (sourceId: number) => ipcRenderer.invoke('source:delete', { params: { sourceId: sourceId } }),
+
+  getAllResultsForSource: (sourceId: string) => ipcRenderer.invoke('results:getForSource', { params: { sourceId: sourceId } }),
+  editResult: (result: ResultDto) => ipcRenderer.invoke('result:edit', { params: { dto: result } }),
   deleteResult: (resultId: number) => ipcRenderer.invoke('result:delete', { params: { resultId: resultId } }),
   createResult: (result: ResultDto) => ipcRenderer.invoke('results:create', { params: { dto: result } }),
+
+  getROIs: () => ipcRenderer.invoke('results:getRois'),
+  getEffects: () => ipcRenderer.invoke('results:getEffects'),
 })
 
 // TODO: use typescript to make api respect a type and make validations

@@ -1,21 +1,27 @@
-import { ArticleDto } from "src/IPC/dtos/ArticleDto";
-import { ArticleSummaryDto } from "src/IPC/dtos/ArticlesSummaryDto";
+import { SourceDto } from "src/IPC/dtos/SourceDto";
+import { SourceSummaryDto } from "src/IPC/dtos/SourcesSummaryDto";
 import { EditResponseDto, CreateResponseDto } from "src/IPC/dtos/CreateEditResponseDto";
 import { ResultDto } from "src/IPC/dtos/ResultDto";
 import { systemInfoDto } from "src/IPC/dtos/systemInfoDto";
+import { ROIDto } from "src/IPC/dtos/ROIDto";
+import { EffectDdo } from "src/ui/models/EffectDdo";
 
 export interface IElectronAPI {
-  // Articles
-  getArticlesSummary: () => Promise<ArticleSummaryDto[]>
-  createArticle: (article: ArticleDto) => CreateResponseDto
-  editArticle: (articleId: string, dto: ArticleDto) => EditResponseDto
-  getArticle: (articleId: string) => Promise<ArticleDto>
-  deleteArticle: (articleId: string) => Promise<EditResponseDto>
+  dbLocationChanged: (callback: (event: Event, value: string) => void) => void,
+  // Sources
+  getSourcesSummary: () => Promise<SourceSummaryDto[]>
+  createSource: (source: SourceDto) => CreateResponseDto
+  editSource: (sourceId: number, dto: SourceDto) => EditResponseDto
+  getSource: (sourceId: number) => Promise<SourceDto>
+  deleteSource: (sourceId: number) => Promise<EditResponseDto>
   // Results
-  getAllResultsForArticle: (articleId: string) => Promise<ResultDto[]>
-  editResult: (resultId: number, result: ResultDto) => Promise<EditResponseDto>
+  getAllResultsForSource: (sourceId: number) => Promise<ResultDto[]>
+  editResult: (result: ResultDto) => Promise<EditResponseDto>
   deleteResult: (resultId: number) => Promise<EditResponseDto>
   createResult: (result: ResultDto) => Promise<CreateResponseDto>
+
+  getROIs: () => Promise<ROIDto[]>
+  getEffects: () => Promise<EffectDdo[]>
 }
 
 declare global {

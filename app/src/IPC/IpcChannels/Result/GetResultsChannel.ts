@@ -10,19 +10,19 @@ export class GetResultsChannel implements IpcChannelInterface {
   ) {}
 
   getName(): string {
-    return 'results:getForArticle';
+    return 'results:getForSource';
   }
 
-  handle(_event: IpcMainEvent, request: GetResultsForArticleRequest): ResultDto[] {
+  handle(_event: IpcMainEvent, request: GetResultsForSourceRequest): ResultDto[] {
     console.log('Handling request on channel %s', this.getName())
-    var results = this.service.getForArticleId(request.params.articleId);
+    var results = this.service.getForSourceId(request.params.sourceId);
     var resultsDtos = results.map((result) => ResultsDtoMapper.ModelToDto(result));
     return resultsDtos;
   }
 }
 
-class GetResultsForArticleRequest implements IpcRequest {
+class GetResultsForSourceRequest implements IpcRequest {
   params: {
-    articleId: string
+    sourceId: number
   }
 }

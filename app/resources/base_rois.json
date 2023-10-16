@@ -1,0 +1,29 @@
+[
+    {
+        "name": "frontal",
+        "level": "lobe",
+        "children": [
+            {
+                "name": "inferior frontal gyrus",
+                "level": "gyrus",
+                "children": [
+                    {
+                        "name": "Pars opercularis",
+                        "level": "sub",
+                        "children": []
+                    },
+                    {
+                        "name": "Pars triangularis",
+                        "level": "sub",
+                        "children": []
+                    },
+                    {
+                        "name": "Pars orbitalis",
+                        "level": "sub",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    }
+]

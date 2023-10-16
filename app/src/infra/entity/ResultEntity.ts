@@ -2,50 +2,62 @@ import { Result } from "../../core/models/Result"
 
 export type ResultEntity = {
     id: number,
-    article_id: string,
-    location_side: string,
-    location_lobe: string,
-    location_gyrus: string,
-    location_broadmann: string,
-    effect_category: string,
-    effect_semiology: string,
-    effect_characteristic: string,
+    source_id: number,
+    roi_id: number,
+    stim_amp_ma: number,
+    stim_freq: number,
+    stim_electrode_separation: number,
+    stim_duration_ms: number,
+    effect_id: number,
     effect_post_discharge: number,
+    occurrences: number,
     comments: string
 }
 
-export const ResultToEntity = (model: Result): ResultEntity => {
-    return {
-        id: model.id,
-        article_id: model.article_id,
-        location_side: model.location.side,
-        location_lobe: model.location.lobe,
-        location_gyrus: model.location.gyrus,
-        location_broadmann: model.location.broadmann.join(','),
-        effect_category: model.effect.category,
-        effect_semiology: model.effect.semiology,
-        effect_characteristic: model.effect.characteristic,
-        effect_post_discharge: model.effect.post_discharge ? 1 : 0,
-        comments: model.comments,
-    }
+export type ReadResultEntity = {
+    id: number,
+    source_id: number,
+    roi_lobe: string,
+    roi_gyrus: string,
+    roi_sub: string,
+    roi_precision: string,
+    stim_amp_ma: number,
+    stim_freq: number,
+    stim_electrode_separation: number,
+    stim_duration_ms: number,
+    effect_category: string,
+    effect_semiology: string,
+    effect_characteristic: string,
+    effect_precision: string,
+    effect_post_discharge: number,
+    occurrences: number,
+    comments: string
 }
 
-export const ResultEntityToModel = (entity: ResultEntity): Result => {
+export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result => {
     return {
-        id: entity.id,
-        article_id: entity.article_id,
-        location: {
-            side: entity.location_side,
-            lobe: entity.location_lobe,
-            gyrus: entity.location_gyrus,
-            broadmann: entity.location_broadmann.split(','),
+        id: readEntity.id,
+        source_id: readEntity.source_id,
+        roi: {
+            lobe: readEntity.roi_lobe,
+            gyrus: readEntity.roi_gyrus,
+            sub: readEntity.roi_sub,
+            precision: readEntity.roi_precision
+        },
+        stimulation_parameters: {
+            amplitude_ma: readEntity.stim_amp_ma,
+            frequency_hz: readEntity.stim_freq,
+            electrode_separation_mm: readEntity.stim_electrode_separation,
+            duration_s: readEntity.stim_duration_ms
         },
         effect: {
-            category: entity.effect_category,
-            semiology: entity.effect_semiology,
-            characteristic: entity.effect_characteristic,
-            post_discharge: entity.effect_post_discharge == 1,
+            category: readEntity.effect_category,
+            semiology: readEntity.effect_semiology,
+            characteristic: readEntity.effect_characteristic,
+            precision: readEntity.effect_precision,
+            post_discharge: readEntity.effect_post_discharge > 0
         },
-        comments: entity.comments,
+        occurrences: readEntity.occurrences,
+        comments: readEntity.comments
     }
 }
