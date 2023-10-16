@@ -1,7 +1,7 @@
-import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack } from "@mantine/core"
+import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Text } from "@mantine/core"
 import { useNavigate } from "react-router-dom"
 import SourcesTable from "../../../components/SourcesTable/SourcesTable";
-import { IconPlus, IconRefresh } from "@tabler/icons-react";
+import { IconCircleX, IconPlus, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { CreateEditSourceForm, CreateFormValues } from "../../../components/CreateEditSourceForm/CreateEditSourceForm";
 import SourceUIService from "../../../services/SourceUIService";
@@ -18,6 +18,8 @@ export function SourcesPage() {
   const [mode, setMode] = useState<"create" | "edit">("create");
   const navigate = useNavigate();
   const [createEditOpened, createEditModalHandlers] = useDisclosure(false);
+  const [toDeleteSourceId, setToDeleteSourceId] = useState(undefined);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   useEffect(() => {
     console.debug("using effect");
@@ -111,7 +113,7 @@ export function SourcesPage() {
 
   console.debug(sources);
 
-  
+
   // Functions
   const viewSource = (sourceId: number) => {
     navigate(`/edit/sources/${sourceId}`);
@@ -126,8 +128,14 @@ export function SourcesPage() {
   }
 
   const onDeleteSource = (sourceId: number) => {
-    // TODO: add a confirmation
-    deleteSource(sourceId);
+    setToDeleteSourceId(sourceId);
+    setShowConfirmDelete(true);
+  }
+
+  const onConfirmDeleteSource = () => {
+    setShowConfirmDelete(false);
+    deleteSource(toDeleteSourceId);
+    setToDeleteSourceId(undefined);
   }
 
   const createNewSource = (values: CreateFormValues) => {
@@ -136,9 +144,9 @@ export function SourcesPage() {
       author: values.reference.author,
       date: values.reference.date,
       publisher: values.reference.publisher,
-      location: values.reference.location, 
-      doi: values.reference.doi, 
-      title: values.reference.title, 
+      location: values.reference.location,
+      doi: values.reference.doi,
+      title: values.reference.title,
       cohort: values.reference.cohort
     } as SourceDdo;
     createSource(source);
@@ -153,6 +161,14 @@ export function SourcesPage() {
           <Button leftIcon={<IconPlus />} variant="filled" onClick={() => createEditModalHandlers.open()}>New</Button>
           <Button leftIcon={<IconRefresh />} variant="subtle" onClick={refreshSources}>Refresh</Button>
         </Group>
+
+        <Modal opened={showConfirmDelete} onClose={() => setShowConfirmDelete(false)} title="Delete Source ?">
+          <Text>Are you sure you want to delete source with id {toDeleteSourceId} ?</Text>
+          <Group position="apart">
+            <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
+            <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={onConfirmDeleteSource}>Delete</Button>
+          </Group>
+        </Modal>
 
         <Box h={"70vh"}>
           <SourcesTable

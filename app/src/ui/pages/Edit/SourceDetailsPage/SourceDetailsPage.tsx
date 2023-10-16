@@ -1,11 +1,11 @@
-import { Box, Burger, Button, Container, Group, LoadingOverlay, Modal, Stack, Table, Title } from "@mantine/core"
+import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Title } from "@mantine/core"
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
-import { IconPlus, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconCircleX, IconPlus, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
-import { useParams, Link, Navigate, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import SourceUIService from "../../../services/SourceUIService";
 import ResultUIService from "../../../services/ResultUIService";
-import { useDisclosure, useListState } from "@mantine/hooks";
+import { useListState } from "@mantine/hooks";
 import { ResultDdo } from "../../../models/ResultDdo";
 import { ROIDdo } from "../../../models/ROIDdo";
 import { EffectDdo } from "../../../models/EffectDdo";
@@ -228,11 +228,11 @@ export const SourceDetailsPage = () => {
                 <Text>{sourceId}</Text>
             </Breadcrumbs>
 
-            <Modal opened={showConfirmDelete} onClose={() => setShowConfirmDelete(false)} title="Confirm Delete Result ?">
+            <Modal opened={showConfirmDelete} onClose={() => setShowConfirmDelete(false)} title="Delete Result ?">
                 <Text>Are you sure you want to delete result with id {toDeleteResultId} ?</Text>
-                <Group>
-                    <Button onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
-                    <Button leftIcon={<IconTrash color="white"/>} variant="filled" color="red" onClick={onConfirmDeleteResult}></Button>
+                <Group position="apart">
+                    <Button leftIcon={<IconCircleX color="white"/>} variant="filled" onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
+                    <Button leftIcon={<IconTrash color="white"/>} variant="filled" color="red" onClick={onConfirmDeleteResult}>Delete</Button>
                 </Group>
             </Modal>
 
