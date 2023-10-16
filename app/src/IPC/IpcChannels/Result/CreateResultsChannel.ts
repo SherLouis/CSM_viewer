@@ -17,7 +17,7 @@ export class CreateResultsChannel implements IpcChannelInterface {
   handle(_event: IpcMainEvent, request: CreateResultRequest): CreateResponseDto {
     console.log('Handling request on channel %s', this.getName());
     const success = this.service.createResult(ResultsDtoMapper.DtoToModel(request.params.dto))
-    const response = {successful: success, message: success?"Successfully create result":"Failed to create result"} as CreateResponseDto
+    const response = {successful: success, message: success?"Successfully created result":"Failed to create result"} as CreateResponseDto
     return response;
   }
 }

@@ -1,6 +1,7 @@
 import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Title } from "@mantine/core"
 import { Breadcrumbs, Anchor, Text } from '@mantine/core';
-import { IconCircleX, IconPlus, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconCircleX, IconPlus, IconRefresh, IconTrash, IconX } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import SourceUIService from "../../../services/SourceUIService";
@@ -96,6 +97,12 @@ export const SourceDetailsPage = () => {
 
     const createResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);
+        notifications.show({
+            id: 'creatingResult',
+            title: "Creating new result...",
+            message: "Please wait while the data is being saved.",
+            loading: true,
+        });
         ResultUIService.createResult(sourceId, result)
             .then((res: CreateResponseDto) => {
                 console.debug(res);
@@ -109,14 +116,27 @@ export const SourceDetailsPage = () => {
                         refreshEffects();
                     }
                 }
-                console.log(res.message)
-                // TODO: display if success or not in notistack
+                notifications.update({
+                    id: 'creatingResult',
+                    autoClose: 2000,
+                    title: res.successful ? "Created" : "Error",
+                    message: res.message,
+                    color: res.successful ? 'teal' : 'red',
+                    icon: res.successful ? <IconCheck /> : <IconX />,
+                    loading: false,
+                });
                 setIsLoading(false)
             });
     }, [currentSource]);
 
     const editResult = useCallback((result: ResultDdo) => {
         setIsLoading(true);
+        notifications.show({
+            id: 'editingResult',
+            title: "Creating new result...",
+            message: "Please wait while the data is being saved.",
+            loading: true,
+        });
         ResultUIService.editResult(sourceId, result)
             .then((res: EditResponseDto) => {
                 if (res.successful) {
@@ -131,8 +151,15 @@ export const SourceDetailsPage = () => {
                         refreshEffects();
                     }
                 }
-                console.log(res.message);
-                // TODO: display if success or not in notistack
+                notifications.update({
+                    id: 'editingResult',
+                    autoClose: 2000,
+                    title: res.successful ? "Saved" : "Error",
+                    message: res.message,
+                    color: res.successful ? 'teal' : 'red',
+                    icon: res.successful ? <IconCheck /> : <IconX />,
+                    loading: false,
+                });
                 setIsLoading(false);
             });
     }, [currentSource])
@@ -146,14 +173,27 @@ export const SourceDetailsPage = () => {
     const onConfirmDeleteResult = () => {
         setShowConfirmDelete(false);
         setIsLoading(true);
+        notifications.show({
+            id: 'deletingResult',
+            title: "Deleting result...",
+            message: "Please wait while the data is being saved.",
+            loading: true,
+          });
         ResultUIService.deleteResult(toDeleteResultId)
             .then((res: EditResponseDto) => {
                 console.debug(res);
                 if (res.successful) {
                     resultsHandlers.filter((a) => a.id != toDeleteResultId);
                 }
-                console.log(res.message)
-                // TODO: display if success or not in notistack
+                notifications.update({
+                    id: 'deletingResult',
+                    autoClose: 2000,
+                    title: res.successful ? "Deleted" : "Error",
+                    message: res.message,
+                    color: res.successful ? 'teal' : 'red',
+                    icon: res.successful ? <IconCheck /> : <IconX/>,
+                    loading: false,
+                  });
                 setIsLoading(false);
                 setToDeleteResultId(undefined);
             })
@@ -217,8 +257,6 @@ export const SourceDetailsPage = () => {
         return isNewEffect;
     }
 
-    console.debug(results);
-
     return (
         <Container size={"80%"}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
@@ -231,8 +269,8 @@ export const SourceDetailsPage = () => {
             <Modal opened={showConfirmDelete} onClose={() => setShowConfirmDelete(false)} title="Delete Result ?">
                 <Text>Are you sure you want to delete result with id {toDeleteResultId} ?</Text>
                 <Group position="apart">
-                    <Button leftIcon={<IconCircleX color="white"/>} variant="filled" onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
-                    <Button leftIcon={<IconTrash color="white"/>} variant="filled" color="red" onClick={onConfirmDeleteResult}>Delete</Button>
+                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDelete(false)}>Cancel</Button>
+                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={onConfirmDeleteResult}>Delete</Button>
                 </Group>
             </Modal>
 
