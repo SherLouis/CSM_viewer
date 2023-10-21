@@ -115,8 +115,8 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
                         <Tabs.Tab value="roi" icon={<IconTargetArrow style={iconStyle} />}>
                             ROI
                         </Tabs.Tab>
-                        <Tabs.Tab value="stimulation" icon={<IconSettingsBolt style={iconStyle} />}>
-                            Stimulation
+                        <Tabs.Tab value="parameters" icon={<IconSettingsBolt style={iconStyle} />}>
+                            Parameters
                         </Tabs.Tab>
                         <Tabs.Tab value="effect" icon={<IconReportMedical style={iconStyle} />}>
                             Effect
@@ -190,7 +190,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects }: C
                             />
                         }
                     </Tabs.Panel>
-                    <Tabs.Panel value="stimulation">
+                    <Tabs.Panel value="parameters">
                         <NumberInput
                             label="Amplitude (mA)"
                             {...form.getInputProps('stimulation_parameters.amplitude_ma')}

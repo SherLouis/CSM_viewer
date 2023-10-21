@@ -116,7 +116,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 },
                 {
                     accessor: 'stimulation_parameters',
-                    title: 'Stimulation',
+                    title: 'Parameters',
                     render: (result) => (
                         <Group position='apart'>
                             <Text>

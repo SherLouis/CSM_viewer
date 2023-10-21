@@ -285,8 +285,10 @@ export default class DataRepository implements IDataRepository {
     private _setupROITable() {
         if (!this._tableExists('ROIs')) {
             this._createROITableIfNotExist();
-
-            const file = path.join(app.getAppPath(), '../..', 'resources', 'base_rois.json');
+            let file = path.join(app.getAppPath(), '../..', 'resources', 'base_rois.json');
+            if (!fs.existsSync(file)) {
+                file = path.join(app.getAppPath(), 'resources', 'base_rois.json');
+            }
             const jsonstring = fs.readFileSync(file, 'utf-8');
             const base_rois = JSON.parse(jsonstring) as DataItem[];
 
@@ -335,7 +337,10 @@ export default class DataRepository implements IDataRepository {
         if (!this._tableExists('Effects')) {
             this._createEffectsTableIfNotExist();
 
-            const file = path.join(app.getAppPath(), '../..', 'resources', 'base_effects.json');
+            let file = path.join(app.getAppPath(), '../..', 'resources', 'base_effects.json');
+            if (!fs.existsSync(file)) {
+                file = path.join(app.getAppPath(), 'resources', 'base_effects.json');
+            }
             const jsonstring = fs.readFileSync(file, 'utf-8');
             const base_effects = JSON.parse(jsonstring) as DataItem[];
 
