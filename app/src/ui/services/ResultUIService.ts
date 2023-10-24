@@ -5,6 +5,10 @@ import { CreateResponseDto, EditResponseDto } from "../../IPC/dtos/CreateEditRes
 import { ResultDdo } from "../models/ResultDdo";
 import { ROIDdo } from "../models/ROIDdo";
 import { EffectDdo } from "../models/EffectDdo";
+import { TaskDdo } from "../models/TaskDdo";
+import { TaskDtoMapper } from "../../IPC/dtos/TaskDto";
+import { FunctionDdo } from "../models/FunctionDdo";
+import { FunctionDtoMapper } from "../../IPC/dtos/FunctionDto";
 
 export default class ResultUIService {
     public static getAllResultsForSource = async (sourceId: number): Promise<ResultDdo[]> => {
@@ -42,5 +46,17 @@ export default class ResultUIService {
         console.debug('Getting ROIs');
         let response = await window.electronAPI.getEffects();
         return response.map((dto) => EffectDtoMapper.DtoToDdo(dto))
+    }
+
+    public static getTasks = async () : Promise<TaskDdo[]> => {
+        console.debug('Getting Tasks');
+        let response = await window.electronAPI.getTasks();
+        return response.map((dto) => TaskDtoMapper.DtoToDdo(dto))
+    }
+
+    public static getFunctions = async () : Promise<FunctionDdo[]> => {
+        console.debug('Getting Functions');
+        let response = await window.electronAPI.getFunctions();
+        return response.map((dto) => FunctionDtoMapper.DtoToDdo(dto))
     }
 }

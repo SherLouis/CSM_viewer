@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Cat1",
+        "level": "category",
+        "children": [
+            {
+                "name": "subCat1",
+                "level": "subcategory",
+                "children": []
+            },
+            {
+                "name": "subCat2",
+                "level": "subcategory",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "Cat2",
+        "level": "category",
+        "children": [
+            {
+                "name": "Cat2Sub1",
+                "level": "subcategory",
+                "children": [
+                    {
+                        "name": "Cat2Sub1 characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Cat2Sub1 characteristic 2",
+                        "level": "characteristic",
+                        "children": [
+                            {
+                                "name": "Cat2Sub1 characteristic 2 precision 1",
+                                "level": "precision",
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

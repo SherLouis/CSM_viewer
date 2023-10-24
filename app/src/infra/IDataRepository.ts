@@ -2,6 +2,8 @@ import { Effect } from "../core/models/Effect";
 import { ROI } from "../core/models/ROI";
 import { Result } from "../core/models/Result";
 import { SourceSummary, Source } from "../core/models/Source";
+import {Task} from "../core/models/Task";
+import {Function} from "../core/models/Function";
 
 export default interface IDataRepository {
     setDbLocation(dbLocation: string): boolean
@@ -34,6 +36,12 @@ export default interface IDataRepository {
     // Effect
 
     getEffects(): Effect[]
+
+    // Tasks
+    getTasks(): Task[]
+
+    // Functions
+    getFunctions(): Function[]
 
     close(): void
 }

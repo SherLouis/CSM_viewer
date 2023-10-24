@@ -19,7 +19,19 @@ export type ResultDdo = {
         characteristic: string,
         precision: string,
         post_discharge: boolean
-    }
+    },
+    task: {
+        category: string,
+        subcategory: string,
+        characteristic: string,
+        precision: string,
+    },
+    function: {
+        category: string,
+        subcategory: string,
+        characteristic: string,
+        precision: string,
+    },
     occurrences: number,
     comments?: string
 }
