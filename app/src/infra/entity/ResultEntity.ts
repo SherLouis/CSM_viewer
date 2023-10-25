@@ -30,6 +30,14 @@ export type ReadResultEntity = {
     effect_characteristic: string,
     effect_precision: string,
     effect_post_discharge: number,
+    task_category: string,
+    task_subcategory: string,
+    task_characteristic: string,
+    task_precision: string,
+    function_category: string,
+    function_subcategory: string,
+    function_characteristic: string,
+    function_precision: string,
     occurrences: number,
     comments: string
 }
@@ -56,6 +64,18 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
             characteristic: readEntity.effect_characteristic,
             precision: readEntity.effect_precision,
             post_discharge: readEntity.effect_post_discharge > 0
+        },
+        task: {
+            category: readEntity.task_category,
+            subcategory: readEntity.task_subcategory,
+            characteristic: readEntity.task_characteristic,
+            precision: readEntity.task_precision
+        },
+        function: {
+            category: readEntity.function_category,
+            subcategory: readEntity.function_subcategory,
+            characteristic: readEntity.function_characteristic,
+            precision: readEntity.function_precision
         },
         occurrences: readEntity.occurrences,
         comments: readEntity.comments

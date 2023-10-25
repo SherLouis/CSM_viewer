@@ -18,6 +18,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   getROIs: () => ipcRenderer.invoke('results:getRois'),
   getEffects: () => ipcRenderer.invoke('results:getEffects'),
+  getTasks: () => ipcRenderer.invoke('results:getTasks'),
+  getFunctions: () => ipcRenderer.invoke('results:getFunctions'),
 })
 
 // TODO: use typescript to make api respect a type and make validations

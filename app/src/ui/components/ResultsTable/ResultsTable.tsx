@@ -6,6 +6,8 @@ import { ResultDdo } from '../../models/ResultDdo';
 import { CreateEditResultForm, CreateEditResultFormValues } from '../CreateEditResultForm/CreateEditResultForm';
 import { ROIDdo } from '../../models/ROIDdo';
 import { EffectDdo } from '../../models/EffectDdo';
+import { TaskDdo } from '../../models/TaskDdo';
+import { FunctionDdo } from '../../models/FunctionDdo';
 
 const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add sorting and filtering
@@ -33,6 +35,18 @@ const ResultsTable = (props: ResultsTableProps) => {
                 precision: values.effect.precision,
                 post_discharge: values.effect.post_discharge
             },
+            task: {
+                category: values.task.category,
+                subcategory: values.task.subcategory,
+                characteristic: values.task.characteristic,
+                precision: values.task.precision
+            },
+            function: {
+                category: values.function.category,
+                subcategory: values.function.subcategory,
+                characteristic: values.function.characteristic,
+                precision: values.function.precision
+            },
             occurrences: values.occurrences,
             comments: values.comments
         } as ResultDdo
@@ -44,7 +58,7 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onDelete(resultId);
     }
 
-    const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "roi" | "stim" | "effect" | "all") => {
+    const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "roi" | "stim" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
             id: undefined,
@@ -61,6 +75,18 @@ const ResultsTable = (props: ResultsTableProps) => {
                 characteristic: '',
                 precision: '',
                 post_discharge: false
+            },
+            task: {
+                category: '',
+                subcategory: '',
+                characteristic: '',
+                precision: '',
+            },
+            function: {
+                category: '',
+                subcategory: '',
+                characteristic: '',
+                precision: '',
             },
             occurrences: 0,
             comments: '',
@@ -79,6 +105,21 @@ const ResultsTable = (props: ResultsTableProps) => {
                 newResult.roi = result.roi;
                 newResult.stimulation_parameters = result.stimulation_parameters;
                 newResult.effect = result.effect;
+                props.onCreate(newResult);
+                break;
+            case "task":
+                newResult.roi = result.roi;
+                newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.effect = result.effect;
+                newResult.task = result.task;
+                props.onCreate(newResult);
+                break;
+            case "function":
+                newResult.roi = result.roi;
+                newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.effect = result.effect;
+                newResult.task = result.task;
+                newResult.function = result.function;
                 props.onCreate(newResult);
                 break;
             case "all":
@@ -116,7 +157,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 },
                 {
                     accessor: 'stimulation_parameters',
-                    title: 'Stimulation',
+                    title: 'Parameters',
                     render: (result) => (
                         <Group position='apart'>
                             <Text>
@@ -142,6 +183,38 @@ const ResultsTable = (props: ResultsTableProps) => {
                                             result.effect.precision ? ('/' + result.effect.precision) : '')) : '')) : '')}
                             </Text>
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
+                                <IconCopy size={16} />
+                            </ActionIcon>
+                        </Group>)
+                },
+                {
+                    accessor: 'task',
+                    title: 'Task',
+                    render: (result) => (
+                        <Group position='apart'>
+                            <Text>
+                                {result.task.category +
+                                    (result.task.subcategory ? ('/' + result.task.subcategory
+                                        + (result.task.characteristic ? ('/' + result.task.characteristic + (
+                                            result.task.precision ? ('/' + result.task.precision) : '')) : '')) : '')}
+                            </Text>
+                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'task')}>
+                                <IconCopy size={16} />
+                            </ActionIcon>
+                        </Group>)
+                },
+                {
+                    accessor: 'function',
+                    title: 'Function',
+                    render: (result) => (
+                        <Group position='apart'>
+                            <Text>
+                                {result.function.category +
+                                    (result.function.subcategory ? ('/' + result.function.subcategory
+                                        + (result.function.characteristic ? ('/' + result.function.characteristic + (
+                                            result.function.precision ? ('/' + result.function.precision) : '')) : '')) : '')}
+                            </Text>
+                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'function')}>
                                 <IconCopy size={16} />
                             </ActionIcon>
                         </Group>)
@@ -174,6 +247,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                         edit_result={record}
                         rois={props.rois}
                         effects={props.effects}
+                        tasks={props.tasks}
+                        functions={props.functions}
                         onSubmit={(values) => handleEdit(values, record.id)} />
                 ),
             }}
@@ -186,6 +261,8 @@ type ResultsTableProps = {
     data: ResultDdo[],
     rois: ROIDdo[],
     effects: EffectDdo[];
+    tasks: TaskDdo[];
+    functions: FunctionDdo[];
     onEdit: (result: ResultDdo) => void,
     onCreate: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void

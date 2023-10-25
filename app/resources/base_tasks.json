@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Task1",
+        "level": "category",
+        "children": [
+            {
+                "name": "Task1 sub1",
+                "level": "subcategory",
+                "children": []
+            },
+            {
+                "name": "Task1 sub2",
+                "level": "subcategory",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "Task2",
+        "level": "category",
+        "children": [
+            {
+                "name": "Task2 sub 1",
+                "level": "subcategory",
+                "children": [
+                    {
+                        "name": "Task2 sub1 characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Task2 sub1 characteristic 2",
+                        "level": "characteristic",
+                        "children": [
+                            {
+                                "name": "Task2 sub1 characteristic 2 precision 1",
+                                "level": "precision",
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

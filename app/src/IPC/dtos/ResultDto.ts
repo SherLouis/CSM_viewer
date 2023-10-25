@@ -22,7 +22,19 @@ export type ResultDto = {
         characteristic: string,
         precision: string,
         post_discharge: boolean
-    }
+    },
+    task: {
+        category: string,
+        subcategory: string,
+        characteristic: string,
+        precision: string,
+    },
+    function: {
+        category: string,
+        subcategory: string,
+        characteristic: string,
+        precision: string,
+    },
     occurrences: number,
     comments?: string
 }
@@ -35,6 +47,8 @@ export class ResultsDtoMapper {
             roi: ddo.roi,
             stimulation_parameters: ddo.stimulation_parameters,
             effect: ddo.effect,
+            task: ddo.task,
+            function: ddo.function,
             occurrences: ddo.occurrences,
             comments: ddo.comments
         };
@@ -62,6 +76,18 @@ export class ResultsDtoMapper {
                 semiology: dto.effect.semiology != '' ? dto.effect.semiology : null,
                 characteristic: dto.effect.characteristic != '' ? dto.effect.characteristic : null,
                 precision: dto.effect.precision != '' ? dto.effect.precision : null,
+            },
+            task: {
+                category: dto.task.category != '' ? dto.task.category : null,
+                subcategory: dto.task.subcategory != '' ? dto.task.subcategory : null,
+                characteristic: dto.task.characteristic != '' ? dto.task.characteristic : null,
+                precision: dto.task.precision != '' ? dto.task.precision : null, 
+            },
+            function: {
+                category: dto.function.category != '' ? dto.function.category : null,
+                subcategory: dto.function.subcategory != '' ? dto.function.subcategory : null,
+                characteristic: dto.function.characteristic != '' ? dto.function.characteristic : null,
+                precision: dto.function.precision != '' ? dto.function.precision : null, 
             }
         } as Result;
     }

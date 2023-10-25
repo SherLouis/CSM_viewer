@@ -14,6 +14,8 @@ import { EffectDdo } from "../../../models/EffectDdo";
 import ResultsTable from "../../../components/ResultsTable/ResultsTable";
 import { CreateEditResultForm, CreateEditResultFormValues } from "../../../components/CreateEditResultForm/CreateEditResultForm";
 import { CreateResponseDto, EditResponseDto } from "../../../../IPC/dtos/CreateEditResponseDto";
+import { TaskDdo } from "../../../models/TaskDdo";
+import { FunctionDdo } from "../../../models/FunctionDdo";
 
 
 export const SourceDetailsPage = () => {
@@ -31,8 +33,10 @@ export const SourceDetailsPage = () => {
 
     const [rois, roisHandlers] = useListState<ROIDdo>([]);
     const [effects, effectsHandlers] = useListState<EffectDdo>([]);
+    const [tasks, tasksHandlers] = useListState<TaskDdo>([]);
+    const [functions, functionsHandlers] = useListState<FunctionDdo>([])
 
-    // Load current source, results and rois
+    // Load current source, results, rois, tasks and functions
     useEffect(() => {
         console.debug("getting current source");
         SourceUIService.getSource(sourceId)
@@ -46,12 +50,21 @@ export const SourceDetailsPage = () => {
                         ResultUIService.getROIs()
                             .then((rois) => {
                                 roisHandlers.setState(rois);
-                                console.debug(rois);
                                 console.debug("getting Effects");
                                 ResultUIService.getEffects()
                                     .then((res_effects) => {
                                         effectsHandlers.setState(res_effects)
-                                        setIsLoading(false);
+                                        console.debug("getting Tasks");
+                                        ResultUIService.getTasks()
+                                        .then((tasks) => {
+                                            tasksHandlers.setState(tasks)
+                                            console.debug("getting Functions");
+                                            ResultUIService.getFunctions()
+                                            .then((functions) => {
+                                                functionsHandlers.setState(functions);
+                                                setIsLoading(false);
+                                            })
+                                        })
                                     })
                             })
                     });
@@ -88,6 +101,26 @@ export const SourceDetailsPage = () => {
             })
     }, []);
 
+    const refreshTasks = useCallback(() => {
+        setIsLoading(true);
+        console.debug("getting Tasks");
+        ResultUIService.getTasks()
+            .then((tasks) => {
+                tasksHandlers.setState(tasks);
+                setIsLoading(false);
+            })
+    }, []);
+
+    const refreshFunctions = useCallback(() => {
+        setIsLoading(true);
+        console.debug("getting Functions");
+        ResultUIService.getFunctions()
+            .then((functions) => {
+                functionsHandlers.setState(functions);
+                setIsLoading(false);
+            })
+    }, []);
+
     // Listen for the event db location changed
     useEffect(() => {
         window.electronAPI.dbLocationChanged((event, value) => {
@@ -115,6 +148,12 @@ export const SourceDetailsPage = () => {
                     }
                     if (shouldCreateNewEffect(result)) {
                         refreshEffects();
+                    }
+                    if (shouldCreateNewTask(result)) {
+                        refreshTasks();
+                    }
+                    if (shouldCreateNewFunction(result)) {
+                        refreshFunctions();
                     }
                 }
                 notifications.update({
@@ -151,6 +190,12 @@ export const SourceDetailsPage = () => {
                     if (shouldCreateNewEffect(result)) {
                         refreshEffects();
                     }
+                    if (shouldCreateNewTask(result)) {
+                        refreshTasks();
+                    }
+                    if (shouldCreateNewFunction(result)) {
+                        refreshFunctions();
+                    }
                 }
                 notifications.update({
                     id: 'editingResult',
@@ -179,7 +224,7 @@ export const SourceDetailsPage = () => {
             title: "Deleting result...",
             message: "Please wait while the data is being saved.",
             loading: true,
-          });
+        });
         ResultUIService.deleteResult(toDeleteResultId)
             .then((res: EditResponseDto) => {
                 console.debug(res);
@@ -192,9 +237,9 @@ export const SourceDetailsPage = () => {
                     title: res.successful ? "Deleted" : "Error",
                     message: res.message,
                     color: res.successful ? 'teal' : 'red',
-                    icon: res.successful ? <IconCheck /> : <IconX/>,
+                    icon: res.successful ? <IconCheck /> : <IconX />,
                     loading: false,
-                  });
+                });
                 setIsLoading(false);
                 setToDeleteResultId(undefined);
             })
@@ -220,6 +265,18 @@ export const SourceDetailsPage = () => {
                 characteristic: values.effect.characteristic,
                 precision: values.effect.precision,
                 post_discharge: values.effect.post_discharge
+            },
+            task: {
+                category: values.task.category,
+                subcategory: values.task.subcategory,
+                characteristic: values.task.characteristic,
+                precision: values.task.precision,
+            },
+            function: {
+                category: values.function.category,
+                subcategory: values.function.subcategory,
+                characteristic: values.function.characteristic,
+                precision: values.function.precision,
             },
             occurrences: values.occurrences,
             comments: values.comments
@@ -258,6 +315,36 @@ export const SourceDetailsPage = () => {
         return isNewEffect;
     }
 
+    const shouldCreateNewTask = (result: ResultDdo): boolean => {
+        const task = {
+            category: result.task.category != '' ? result.task.category : null,
+            subcategory: result.task.subcategory != '' ? result.task.subcategory : null,
+            characteristic: result.task.characteristic != '' ? result.task.characteristic : null,
+            precision: result.task.precision != '' ? result.task.precision : null,
+        }
+        const isNew = tasks.filter((i) =>
+            i.category === task.category &&
+            i.subcategory === task.subcategory &&
+            i.characteristic === task.characteristic &&
+            i.precision === task.precision).length === 0;
+        return isNew;
+    }
+
+    const shouldCreateNewFunction = (result: ResultDdo): boolean => {
+        const func = {
+            category: result.task.category != '' ? result.task.category : null,
+            subcategory: result.task.subcategory != '' ? result.task.subcategory : null,
+            characteristic: result.task.characteristic != '' ? result.task.characteristic : null,
+            precision: result.task.precision != '' ? result.task.precision : null,
+        }
+        const isNew = functions.filter((i) =>
+            i.category === func.category &&
+            i.subcategory === func.subcategory &&
+            i.characteristic === func.characteristic &&
+            i.precision === func.precision).length === 0;
+        return isNew;
+    }
+
     return (
         <Container size={"80%"}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
@@ -289,12 +376,16 @@ export const SourceDetailsPage = () => {
                                 onSubmit={(values) => onCreateResult(values)}
                                 rois={rois}
                                 effects={effects}
+                                tasks={tasks}
+                                functions={functions}
                             />
                         )}
                         <ResultsTable
                             data={results}
                             rois={rois}
                             effects={effects}
+                            tasks={tasks}
+                            functions={functions}
                             onEdit={(result) => editResult(result)}
                             onCreate={(result) => createResult(result)}
                             onDelete={(resultId) => onDeleteResult(resultId)} />
