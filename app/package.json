@@ -61,11 +61,5 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0"
-  },
-  "build": {
-    "files": [
-      "./resources/base_effects.json",
-      "./resources/base_rois.json"
-    ]
   }
 }

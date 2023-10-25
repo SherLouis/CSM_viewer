@@ -14,7 +14,9 @@ const config: ForgeConfig = {
     prune: true,
     extraResource: [
       "./resources/base_effects.json",
-      "./resources/base_rois.json"
+      "./resources/base_rois.json",
+      "./resources/base_tasks.json",
+      "./resources/base_functions.json"
     ]
   },
   rebuildConfig: {},
