@@ -13,5 +13,6 @@ export type Source = {
     location: string,
     doi: string,
     title: string,
-    cohort: number
+    cohort: number,
+    state: "À Faire" | "Fait" | "À Discutter"
 }
