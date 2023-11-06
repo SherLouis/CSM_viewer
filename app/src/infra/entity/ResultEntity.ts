@@ -1,45 +1,45 @@
 import { Result } from "../../core/models/Result"
 
-export type ResultEntity = {
-    id: number,
-    source_id: number,
-    roi_id: number,
-    stim_amp_ma: number,
-    stim_freq: number,
-    stim_electrode_separation: number,
-    stim_duration_ms: number,
-    effect_id: number,
-    effect_post_discharge: number,
-    occurrences: number,
-    comments: string
-}
-
 export type ReadResultEntity = {
     id: number,
     source_id: number,
+    roi_side: string,
     roi_lobe: string,
     roi_gyrus: string,
     roi_sub: string,
     roi_precision: string,
     stim_amp_ma: number,
+    stim_amp_ma_max: number,
     stim_freq: number,
+    stim_freq_max: number,
+    stim_duration: number,
+    stim_duration_max: number,
+    stim_electrode_type: string,
     stim_electrode_separation: number,
-    stim_duration_ms: number,
+    stim_electrode_diameter: number,
+    stim_electrode_length: number,
+    stim_phase_length: number,
+    stim_phase_type: string,
     effect_category: string,
     effect_semiology: string,
     effect_characteristic: string,
-    effect_precision: string,
     effect_post_discharge: number,
+    effect_lateralization: string,
+    effect_dominant: string,
+    effect_body_part: string,
+    effect_comments: string,
     task_category: string,
     task_subcategory: string,
     task_characteristic: string,
-    task_precision: string,
+    task_comments: string,
     function_category: string,
     function_subcategory: string,
     function_characteristic: string,
-    function_precision: string,
+    function_comments: string,
     occurrences: number,
-    comments: string
+    comments: string,
+    comments_2: string,
+    precision_score: number,
 }
 
 export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result => {
@@ -47,6 +47,7 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
         id: readEntity.id,
         source_id: readEntity.source_id,
         roi: {
+            side: readEntity.roi_side,
             lobe: readEntity.roi_lobe,
             gyrus: readEntity.roi_gyrus,
             sub: readEntity.roi_sub,
@@ -54,30 +55,43 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
         },
         stimulation_parameters: {
             amplitude_ma: readEntity.stim_amp_ma,
+            amplitude_ma_max: readEntity.stim_amp_ma_max,
             frequency_hz: readEntity.stim_freq,
-            electrode_separation_mm: readEntity.stim_electrode_separation,
-            duration_s: readEntity.stim_duration_ms
+            frequency_hz_max: readEntity.stim_freq_max,
+            duration_s: readEntity.stim_duration,
+            duration_s_max: readEntity.stim_duration_max,
+            electrode_type: readEntity.stim_electrode_type,
+            electrode_separation: readEntity.stim_electrode_separation,
+            electrode_diameter: readEntity.stim_electrode_diameter,
+            electrode_length: readEntity.stim_electrode_length,
+            phase_length: readEntity.stim_phase_length,
+            phase_type: readEntity.stim_phase_type
         },
         effect: {
             category: readEntity.effect_category,
             semiology: readEntity.effect_semiology,
             characteristic: readEntity.effect_characteristic,
-            precision: readEntity.effect_precision,
-            post_discharge: readEntity.effect_post_discharge > 0
+            post_discharge: readEntity.effect_post_discharge > 0,
+            lateralization: readEntity.effect_lateralization,
+            dominant: readEntity.effect_dominant,
+            body_part: readEntity.effect_body_part,
+            comments: readEntity.effect_comments
         },
         task: {
             category: readEntity.task_category,
             subcategory: readEntity.task_subcategory,
             characteristic: readEntity.task_characteristic,
-            precision: readEntity.task_precision
+            comments: readEntity.task_comments
         },
         function: {
             category: readEntity.function_category,
             subcategory: readEntity.function_subcategory,
             characteristic: readEntity.function_characteristic,
-            precision: readEntity.function_precision
+            comments: readEntity.function_comments
         },
         occurrences: readEntity.occurrences,
-        comments: readEntity.comments
+        comments: readEntity.comments,
+        comments_2: readEntity.comments_2,
+        precision_score: readEntity.precision_score
     }
 }

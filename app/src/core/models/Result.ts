@@ -13,7 +13,6 @@ export type Result = {
         amplitude_ma_max: number,
         frequency_hz: number,
         frequency_hz_max: number,
-        electrode_separation_mm: number,
         duration_s: number,
         duration_s_max: number,
         electrode_type: string,
@@ -27,9 +26,9 @@ export type Result = {
         category: string,
         semiology: string,
         characteristic: string,
-        post_discharge: boolean, // TODO: create enum to allow null if unknown
+        post_discharge: boolean,
         lateralization: string,
-        dominant: string, // TODO: create enum
+        dominant: string,
         body_part: string,
         comments: string,
     },

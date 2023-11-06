@@ -1,7 +1,8 @@
 export type SourceSummary = {
     id: number,
     title: string,
-    nb_results: number
+    nb_results: number,
+    state: "À Faire" | "Fait" | "À Discutter"
 }
 
 export type Source = {
