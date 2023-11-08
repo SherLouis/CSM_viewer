@@ -6,7 +6,6 @@ export type TaskDto = {
     category: string,
     subcategory: string,
     characteristic: string,
-    precision: string,
     is_manual: boolean
 }
 

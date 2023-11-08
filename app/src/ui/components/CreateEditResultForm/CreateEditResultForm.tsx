@@ -12,6 +12,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
             roi: {
+                side: edit_result && edit_result.roi.side != null ? edit_result.roi.side : "",
                 lobe: edit_result && edit_result.roi.lobe != null ? edit_result.roi.lobe : "",
                 gyrus: edit_result && edit_result.roi.gyrus != null ? edit_result.roi.gyrus : "",
                 sub: edit_result && edit_result.roi.sub != null ? edit_result.roi.sub : "",
@@ -19,31 +20,44 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
             },
             stimulation_parameters: {
                 amplitude_ma: edit_result && edit_result.stimulation_parameters.amplitude_ma != null ? edit_result.stimulation_parameters.amplitude_ma : 0,
+                amplitude_ma_max: edit_result && edit_result.stimulation_parameters.amplitude_ma_max != null ? edit_result.stimulation_parameters.amplitude_ma_max : 0,
                 frequency_hz: edit_result && edit_result.stimulation_parameters.frequency_hz != null ? edit_result.stimulation_parameters.frequency_hz : 0,
-                electrode_separation_mm: edit_result && edit_result.stimulation_parameters.electrode_separation_mm != null ? edit_result.stimulation_parameters.electrode_separation_mm : 0,
-                duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0
+                frequency_hz_max: edit_result && edit_result.stimulation_parameters.frequency_hz_max != null ? edit_result.stimulation_parameters.frequency_hz_max : 0,
+                duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0,
+                duration_s_max: edit_result && edit_result.stimulation_parameters.duration_s_max != null ? edit_result.stimulation_parameters.duration_s_max : 0,
+                electrode_type: edit_result && edit_result.stimulation_parameters.electrode_type != null ? edit_result.stimulation_parameters.electrode_type : "",
+                electrode_separation: edit_result && edit_result.stimulation_parameters.electrode_separation != null ? edit_result.stimulation_parameters.electrode_separation : 0,
+                electrode_diameter: edit_result && edit_result.stimulation_parameters.electrode_diameter != null ? edit_result.stimulation_parameters.electrode_diameter : 0,
+                electrode_length: edit_result && edit_result.stimulation_parameters.electrode_length != null ? edit_result.stimulation_parameters.electrode_length : 0,
+                phase_length: edit_result && edit_result.stimulation_parameters.phase_length != null ? edit_result.stimulation_parameters.phase_length : 0,
+                phase_type: edit_result && edit_result.stimulation_parameters.phase_type != null ? edit_result.stimulation_parameters.phase_type : "",
             },
             effect: {
                 category: edit_result && edit_result.effect.category != null ? edit_result.effect.category : "",
                 semiology: edit_result && edit_result.effect.semiology != null ? edit_result.effect.semiology : "",
                 characteristic: edit_result && edit_result.effect.characteristic != null ? edit_result.effect.characteristic : "",
-                precision: edit_result && edit_result.effect.precision != null ? edit_result.effect.precision : "",
-                post_discharge: edit_result && edit_result.effect.post_discharge != null ? edit_result.effect.post_discharge : false
+                post_discharge: edit_result && edit_result.effect.post_discharge != null ? edit_result.effect.post_discharge : false,
+                lateralization: edit_result && edit_result.effect.lateralization != null ? edit_result.effect.lateralization : "",
+                dominant: edit_result && edit_result.effect.dominant != null ? edit_result.effect.dominant : "",
+                body_part: edit_result && edit_result.effect.body_part != null ? edit_result.effect.body_part : "",
+                comments: edit_result && edit_result.effect.comments != null ? edit_result.effect.comments : "",
             },
             task: {
-                category: edit_result && edit_result.task.category != null ? edit_result.task.category : "" ,
-                subcategory: edit_result && edit_result.task.subcategory != null ? edit_result.task.subcategory : "" ,
-                characteristic: edit_result && edit_result.task.characteristic != null ? edit_result.task.characteristic : "" ,
-                precision: edit_result && edit_result.task.precision != null ? edit_result.task.precision : "" ,
+                category: edit_result && edit_result.task.category != null ? edit_result.task.category : "",
+                subcategory: edit_result && edit_result.task.subcategory != null ? edit_result.task.subcategory : "",
+                characteristic: edit_result && edit_result.task.characteristic != null ? edit_result.task.characteristic : "",
+                comments: edit_result && edit_result.task.comments != null ? edit_result.task.comments : "",
             },
             function: {
                 category: edit_result && edit_result.function.category != null ? edit_result.function.category : "",
                 subcategory: edit_result && edit_result.function.subcategory != null ? edit_result.function.subcategory : "",
                 characteristic: edit_result && edit_result.function.characteristic != null ? edit_result.function.characteristic : "",
-                precision: edit_result && edit_result.function.precision != null ? edit_result.function.precision : "",
+                comments: edit_result && edit_result.function.comments != null ? edit_result.function.comments : "",
             },
             occurrences: edit_result && edit_result.occurrences != null ? edit_result.occurrences : 0,
-            comments: edit_result && edit_result.comments != null ? edit_result.comments : ""
+            comments: edit_result && edit_result.comments != null ? edit_result.comments : "",
+            comments_2: edit_result && edit_result.comments_2 != null ? edit_result.comments_2 : "",
+            precision_score: edit_result && edit_result.precision_score != null ? edit_result.precision_score : 0,
         } as CreateEditResultFormValues,
     });
 
@@ -71,7 +85,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
         }
     }
 
-    const getEffectOptions = (level: 'category' | 'semiology' | 'characteristic' | 'precision') => {
+    const getEffectOptions = (level: 'category' | 'semiology' | 'characteristic') => {
         switch (level) {
             case 'category':
                 return effects.filter((effect) => effect.level == level).map((effect) => effect.category);
@@ -82,15 +96,10 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                 return effects.filter((effect) => effect.level == level
                     && effect.category == form.getInputProps('effect.category').value
                     && effect.semiology == form.getInputProps('effect.semiology').value).map((effect) => effect.characteristic);
-            case 'precision':
-                return effects.filter((effect) => effect.level == level
-                    && effect.category == form.getInputProps('effect.category').value
-                    && effect.semiology == form.getInputProps('effect.semiology').value
-                    && effect.characteristic == form.getInputProps('effect.characteristic').value).map((effect) => effect.precision);
         }
     }
 
-    const getTaskOptions = (level: 'category' | 'subcategory' | 'characteristic' | 'precision') => {
+    const getTaskOptions = (level: 'category' | 'subcategory' | 'characteristic') => {
         switch (level) {
             case 'category':
                 return tasks.filter((task) => task.level == level).map((task) => task.category);
@@ -101,15 +110,10 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                 return tasks.filter((task) => task.level == level
                     && task.category == form.getInputProps('task.category').value
                     && task.subcategory == form.getInputProps('task.subcategory').value).map((task) => task.characteristic);
-            case 'precision':
-                return tasks.filter((task) => task.level == level
-                    && task.category == form.getInputProps('task.category').value
-                    && task.subcategory == form.getInputProps('task.subcategory').value
-                    && task.characteristic == form.getInputProps('task.characteristic').value).map((task) => task.precision);
         }
     }
 
-    const getFunctionOptions = (level: 'category' | 'subcategory' | 'characteristic' | 'precision') => {
+    const getFunctionOptions = (level: 'category' | 'subcategory' | 'characteristic') => {
         switch (level) {
             case 'category':
                 return functions.filter((func) => func.level == level).map((func) => func.category);
@@ -120,11 +124,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                 return functions.filter((func) => func.level == level
                     && func.category == form.getInputProps('function.category').value
                     && func.subcategory == form.getInputProps('function.subcategory').value).map((func) => func.characteristic);
-            case 'precision':
-                return functions.filter((func) => func.level == level
-                    && func.category == form.getInputProps('function.category').value
-                    && func.subcategory == form.getInputProps('function.subcategory').value
-                    && func.characteristic == form.getInputProps('function.characteristic').value).map((func) => func.precision);
         }
     }
 
@@ -143,7 +142,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
         }
     }
 
-    const canAddNewEffectManual = (level: 'category' | 'semiology' | 'characteristic' | 'precision'): boolean => {
+    const canAddNewEffectManual = (level: 'category' | 'semiology' | 'characteristic'): boolean => {
         switch (level) {
             case 'category':
                 return false;
@@ -152,13 +151,10 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
             case 'characteristic':
                 return getEffectOptions('semiology').includes(form.getInputProps('effect.semiology').value)
                     && !effects.find((e) => e.level == 'semiology' && e.semiology == form.getInputProps('effect.semiology').value).is_manual
-            case 'precision':
-                return getEffectOptions('characteristic').includes(form.getInputProps('effect.characteristic').value)
-                    && !effects.find((e) => e.level == 'characteristic' && e.characteristic == form.getInputProps('effect.characteristic').value).is_manual
         }
     }
 
-    const canAddNewTaskManual = (level: 'category' | 'subcategory' | 'characteristic' | 'precision'): boolean => {
+    const canAddNewTaskManual = (level: 'category' | 'subcategory' | 'characteristic'): boolean => {
         switch (level) {
             case 'category':
                 return false;
@@ -167,13 +163,10 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
             case 'characteristic':
                 return getTaskOptions('subcategory').includes(form.getInputProps('task.subcategory').value)
                     && !tasks.find((i) => i.level == 'subcategory' && i.subcategory == form.getInputProps('task.subcategory').value).is_manual
-            case 'precision':
-                return getTaskOptions('characteristic').includes(form.getInputProps('task.characteristic').value)
-                    && !tasks.find((i) => i.level == 'characteristic' && i.characteristic == form.getInputProps('task.characteristic').value).is_manual
         }
     }
 
-    const canAddNewFunctionManual = (level: 'category' | 'subcategory' | 'characteristic' | 'precision'): boolean => {
+    const canAddNewFunctionManual = (level: 'category' | 'subcategory' | 'characteristic'): boolean => {
         switch (level) {
             case 'category':
                 return false;
@@ -182,9 +175,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
             case 'characteristic':
                 return getFunctionOptions('subcategory').includes(form.getInputProps('function.subcategory').value)
                     && !functions.find((i) => i.level == 'subcategory' && i.subcategory == form.getInputProps('function.subcategory').value).is_manual
-            case 'precision':
-                return getFunctionOptions('characteristic').includes(form.getInputProps('function.characteristic').value)
-                    && !functions.find((i) => i.level == 'characteristic' && i.characteristic == form.getInputProps('function.characteristic').value).is_manual
         }
     }
 
@@ -344,21 +334,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 }}
                             />
                         }
-                        {getEffectOptions('precision').length > 0 && !canAddNewEffectManual('precision') &&
-                            <NativeSelect
-                                label="precision"
-                                data={[{ value: '', label: 'Pick One' }, ...getEffectOptions('precision')]}
-                                {...form.getInputProps('effect.precision')}
-                            />
-                        }
-                        {canAddNewEffectManual('precision') &&
-                            <Autocomplete
-                                label="precision"
-                                data={...getEffectOptions('precision')}
-                                placeholder="Select from the list or type a new value"
-                                {...form.getInputProps('effect.precision')}
-                            />
-                        }
                         <Switch
                             label="Post discharge ?"
                             labelPosition="left"
@@ -413,21 +388,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 }}
                             />
                         }
-                        {getTaskOptions('precision').length > 0 && !canAddNewTaskManual('precision') &&
-                            <NativeSelect
-                                label="precision"
-                                data={[{ value: '', label: 'Pick One' }, ...getTaskOptions('precision')]}
-                                {...form.getInputProps('task.precision')}
-                            />
-                        }
-                        {canAddNewTaskManual('precision') &&
-                            <Autocomplete
-                                label="precision"
-                                data={...getTaskOptions('precision')}
-                                placeholder="Select from the list or type a new value"
-                                {...form.getInputProps('task.precision')}
-                            />
-                        }
                     </Tabs.Panel>
                     <Tabs.Panel value="function">
                         <NativeSelect
@@ -477,21 +437,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 }}
                             />
                         }
-                        {getFunctionOptions('precision').length > 0 && !canAddNewFunctionManual('precision') &&
-                            <NativeSelect
-                                label="precision"
-                                data={[{ value: '', label: 'Pick One' }, ...getFunctionOptions('precision')]}
-                                {...form.getInputProps('function.precision')}
-                            />
-                        }
-                        {canAddNewFunctionManual('precision') &&
-                            <Autocomplete
-                                label="precision"
-                                data={...getFunctionOptions('precision')}
-                                placeholder="Select from the list or type a new value"
-                                {...form.getInputProps('function.precision')}
-                            />
-                        }
                     </Tabs.Panel>
                     <Tabs.Panel value="details">
                         <NumberInput
@@ -516,6 +461,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
 
 export interface CreateEditResultFormValues {
     roi: {
+        side: string,
         lobe: string,
         gyrus: string,
         sub: string,
@@ -523,31 +469,44 @@ export interface CreateEditResultFormValues {
     }
     stimulation_parameters: {
         amplitude_ma: number,
+        amplitude_ma_max: number,
         frequency_hz: number,
-        electrode_separation_mm: number,
-        duration_s: number
+        frequency_hz_max: number,
+        duration_s: number,
+        duration_s_max: number,
+        electrode_type: string,
+        electrode_separation: number,
+        electrode_diameter: number,
+        electrode_length: number,
+        phase_length: number,
+        phase_type: string,
     }
     effect: {
         category: string,
         semiology: string,
         characteristic: string,
-        precision: string,
-        post_discharge: boolean
+        post_discharge: boolean,
+        lateralization: string,
+        dominant: string,
+        body_part: string,
+        comments: string,
     },
     task: {
         category: string,
         subcategory: string,
         characteristic: string,
-        precision: string,
+        comments: string,
     },
     function: {
         category: string,
         subcategory: string,
         characteristic: string,
-        precision: string,
+        comments: string,
     },
     occurrences: number,
-    comments?: string
+    comments?: string,
+    comments_2?: string,
+    precision_score: number,
 }
 
 interface CreateEditResultFormProps {

@@ -36,7 +36,8 @@ export default class SourceUIService {
         return {
             id: dto.id,
             title: dto.title,
-            nb_results: dto.nb_results
+            nb_results: dto.nb_results,
+            state: dto.state,
         } as SourceSummaryDdo
     }
 

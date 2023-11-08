@@ -10,7 +10,8 @@ export type SourceDto = {
     location: string,
     doi: string,
     title: string,
-    cohort: number
+    cohort: number,
+    state: "À Faire" | "Fait" | "À Discutter"
 }
 
 export const SourceDtoFromDdo = (ddo: SourceDdo): SourceDto => { return ddo as SourceDto }

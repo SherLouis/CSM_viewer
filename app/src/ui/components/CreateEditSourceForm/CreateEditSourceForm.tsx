@@ -17,8 +17,9 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
         location: edit_source != null ? edit_source.location : '',
         doi: edit_source != null ? edit_source.doi : '',
         title: edit_source != null ? edit_source.title : '',
-        cohort: edit_source != null ? edit_source.cohort : 0
-      }
+        cohort: edit_source != null ? edit_source.cohort : 0,
+      },
+      status: edit_source != null ? edit_source.state : "À Faire"
     } as CreateFormValues,
     validate: {
       reference: {
@@ -128,6 +129,12 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
           </Accordion.Item>
         </Accordion>
 
+        <NativeSelect
+          label="Status"
+          data = {["À Faire", "Fait", "À Discutter"]}
+          {...form.getInputProps('status')}
+        />
+
         <Group position="right" mt="md">
           <Button type="submit">{mode === "create" ? "Create" : "Save"}</Button>
         </Group>
@@ -146,7 +153,8 @@ export interface CreateFormValues {
     doi: string
     title: string
     cohort: number
-  }
+  },
+  status: "À Faire" | "Fait" | "À Discutter"
 }
 
 interface CreateSourceFormProps {

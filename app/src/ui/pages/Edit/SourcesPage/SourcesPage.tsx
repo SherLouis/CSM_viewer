@@ -45,7 +45,7 @@ export function SourcesPage() {
     SourceUIService.getAllSourcesSummary()
       .then((res) => {
         setSources(res);
-        setIsLoading(false)
+        setIsLoading(false);
       });
   }, [sources]);
 
@@ -93,7 +93,8 @@ export function SourcesPage() {
       location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
-      cohort: values.reference.cohort
+      cohort: values.reference.cohort,
+      state: values.status,
     } as SourceDdo;
     SourceUIService.editSource(currentSource.id, SourceDtoFromDdo(source))
       .then((res: EditResponseDto) => {
@@ -101,7 +102,7 @@ export function SourcesPage() {
         if (res.successful) {
           setSources(sources.map(a => {
             if (a.id === currentSource.id) {
-              return { id: source.id, title: source.title, nb_results: a.nb_results };
+              return { id: source.id, title: source.title, nb_results: a.nb_results, state: source.state};
             }
             else {
               return a;
@@ -186,7 +187,8 @@ export function SourcesPage() {
       location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
-      cohort: values.reference.cohort
+      cohort: values.reference.cohort,
+      state: values.status
     } as SourceDdo;
     createSource(source);
     createEditModalHandlers.close();

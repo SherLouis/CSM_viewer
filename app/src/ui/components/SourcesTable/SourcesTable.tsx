@@ -41,6 +41,10 @@ const SourcesTable = (props: SourcesTableProps) => {
           title: "# results"
         },
         {
+          accessor: 'state',
+          title: "Status"
+        },
+        {
           accessor: 'actions',
           title: <Text mr="xs">Actions</Text>,
           textAlignment: 'right',
