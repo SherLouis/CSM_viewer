@@ -1,4 +1,4 @@
-import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea, Checkbox, Tabs, rem } from "@mantine/core"
+import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea, Checkbox, Tabs, rem, Radio, Stack, Title, Divider } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
@@ -178,6 +178,36 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
         }
     }
 
+    const setAmplitudeValue = (value: number) => {
+        form.setFieldValue('stimulation_parameters.amplitude_ma', value);
+        form.setFieldValue('stimulation_parameters.amplitude_ma_max', value);
+    }
+
+    const setFrequencyValue = (value: number) => {
+        form.setFieldValue('stimulation_parameters.frequency_hz', value);
+        form.setFieldValue('stimulation_parameters.frequency_hz_max', value);
+    }
+    const setDurationValue = (value: number) => {
+        form.setFieldValue('stimulation_parameters.duration_s', value);
+        form.setFieldValue('stimulation_parameters.duration_s_max', value);
+    }
+
+    const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
+        const options = [
+            { implantationType: "SEEG", diameter: 1, separation: 2, lenght: 0 },
+            { implantationType: "SEEG", diameter: 1, separation: 3, lenght: 0 },
+            { implantationType: "SEEG", diameter: 1, separation: 4, lenght: 0 },
+            { implantationType: "SEEG", diameter: 1, separation: 5, lenght: 0 },
+            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 1 },
+            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 2 },
+            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 3 },
+            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 4 },
+        ] as ElectrodeOption[];
+        return new Map(options.map(opt => [opt.implantationType + '|' + opt.diameter + '|' + opt.separation + '|' + opt.lenght, opt]));
+    }
+
+    const ElectrodeOptions = getElectrodeOptions();
+
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>
@@ -205,6 +235,15 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                     </Tabs.List>
 
                     <Tabs.Panel value="roi">
+                        <Radio.Group
+                            label="Side"
+                            {...form.getInputProps('roi.side')}
+                        >
+                            <Group mt="xs">
+                                <Radio value="left" label="Left" />
+                                <Radio value="right" label="Right" />
+                            </Group>
+                        </Radio.Group>
                         <NativeSelect
                             required
                             label="Lobe"
@@ -269,22 +308,122 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                         }
                     </Tabs.Panel>
                     <Tabs.Panel value="parameters">
-                        <NumberInput
-                            label="Amplitude (mA)"
-                            {...form.getInputProps('stimulation_parameters.amplitude_ma')}
-                        />
-                        <NumberInput
-                            label="Frequency (Hz)"
-                            {...form.getInputProps('stimulation_parameters.frequency_hz')}
-                        />
-                        <NumberInput
-                            label="Electrode separation (mm)"
-                            {...form.getInputProps('stimulation_parameters.electrode_separation_mm')}
-                        />
-                        <NumberInput
-                            label="Duration (s)"
-                            {...form.getInputProps('stimulation_parameters.duration_s')}
-                        />
+                        <Divider label="Aplitude" />
+                        <Group position="apart">
+                            <NumberInput
+                                label="Amplitude (mA)"
+                                precision={1}
+                                {...form.getInputProps('stimulation_parameters.amplitude_ma')}
+                                onChange={(value) => { setAmplitudeValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.amplitude_ma').onChange(value); }}
+                            />
+                            <Button.Group>
+                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 0.5 ? "filled" : "default"} onClick={() => setAmplitudeValue(0.5)}>0.5</Button>
+                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 0.8 ? "filled" : "default"} onClick={() => setAmplitudeValue(0.8)}>0.8</Button>
+                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 1.0 ? "filled" : "default"} onClick={() => setAmplitudeValue(1.0)}>1.0</Button>
+                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 1.2 ? "filled" : "default"} onClick={() => setAmplitudeValue(1.2)}>1.2</Button>
+                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 1.4 ? "filled" : "default"} onClick={() => setAmplitudeValue(1.4)}>1.4</Button>
+                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 2.0 ? "filled" : "default"} onClick={() => setAmplitudeValue(2.0)}>2.0</Button>
+                            </Button.Group>
+                            <NumberInput
+                                label="Amplitude Max (mA)"
+                                precision={1}
+                                {...form.getInputProps('stimulation_parameters.amplitude_ma_max')}
+                            />
+                        </Group>
+                        <Divider label="Frequency" />
+                        <Group position="apart">
+                            <NumberInput
+                                label="Frequency (Hz)"
+                                {...form.getInputProps('stimulation_parameters.frequency_hz')}
+                                onChange={(value) => { setFrequencyValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.frequency_hz').onChange(value); }}
+                            />
+                            <Button.Group>
+                                <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 1 ? "filled" : "default"} onClick={() => setFrequencyValue(1)}>1</Button>
+                                <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 55 ? "filled" : "default"} onClick={() => setFrequencyValue(55)}>55</Button>
+                            </Button.Group>
+                            <NumberInput
+                                label="Frequency Max (Hz)"
+                                {...form.getInputProps('stimulation_parameters.frequency_hz_max')}
+                            />
+                        </Group>
+                        <Divider label="Electrodes" />
+                        <Stack>
+                            <NativeSelect
+                                label="Configuration"
+                                data={[{ value: '', label: 'Pick One' }, ...ElectrodeOptions.keys()]}
+                                onChange={(event) => {
+                                    if (ElectrodeOptions.has(event.target.value)) {
+                                        var option = ElectrodeOptions.get(event.target.value);
+                                        form.setFieldValue('stimulation_parameters.electrode_type', option.implantationType);
+                                        form.setFieldValue('stimulation_parameters.electrode_diameter', option.diameter);
+                                        form.setFieldValue('stimulation_parameters.electrode_separation', option.separation);
+                                        form.setFieldValue('stimulation_parameters.electrode_length', option.lenght);
+                                    }
+                                }}
+                            />
+                            <Group position="apart">
+                                <Radio.Group
+                                    label="Type"
+                                    {...form.getInputProps('stimulation_parameters.electrode_type')}
+                                >
+                                    <Group mt="xs">
+                                        <Radio value="SEEG" label="SEEG" />
+                                        <Radio value="Grids" label="Grids" />
+                                    </Group>
+                                </Radio.Group>
+                                <NumberInput
+                                    label="Electrode diameter (mm)"
+                                    {...form.getInputProps('stimulation_parameters.electrode_diameter')}
+                                />
+                                <NumberInput
+                                    label="Electrode separation (mm)"
+                                    {...form.getInputProps('stimulation_parameters.electrode_separation')}
+                                />
+                                <NumberInput
+                                    label="Electrode diameter (mm)"
+                                    {...form.getInputProps('stimulation_parameters.electrode_length')}
+                                />
+                            </Group>
+                        </Stack>
+                        <Divider label="Phase" />
+                        <Stack>
+                            <Title order={5}>Phase</Title>
+                            <Group>
+                                <NumberInput
+                                    label="Phase Length"
+                                    precision={1}
+                                    {...form.getInputProps('stimulation_parameters.phase_length')}
+                                />
+                                <Button.Group>
+                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.3 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.3)}>0.3</Button>
+                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.5 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.5)}>0.5</Button>
+                                </Button.Group>
+                            </Group>
+                            <Radio.Group
+                                label="Phase type"
+                                {...form.getInputProps('stimulation_parameters.phase_type')}
+                            >
+                                <Group mt="xs">
+                                    <Radio value="Monophasic" label="Monophasic" />
+                                    <Radio value="Biphasic" label="Biphasic" />
+                                </Group>
+                            </Radio.Group>
+                        </Stack>
+                        <Divider label="Duration" />
+                        <Group position="apart">
+                            <NumberInput
+                                label="Duration (s)"
+                                {...form.getInputProps('stimulation_parameters.duration_s')}
+                                onChange={(value) => { setDurationValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.duration_s').onChange(value); }}
+                            />
+                            <Button.Group>
+                                <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 5 ? "filled" : "default"} onClick={() => setDurationValue(5)}>5</Button>
+                            </Button.Group>
+                            <NumberInput
+                                label="Duration Max (s)"
+                                {...form.getInputProps('stimulation_parameters.duration_s_max')}
+                            />
+                        </Group>
                     </Tabs.Panel>
                     <Tabs.Panel value="effect">
                         <NativeSelect
@@ -458,6 +597,8 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
         </Box>
     )
 }
+
+interface ElectrodeOption { implantationType: "SEEG" | "Grids", diameter: number, separation: number, lenght: number }
 
 export interface CreateEditResultFormValues {
     roi: {

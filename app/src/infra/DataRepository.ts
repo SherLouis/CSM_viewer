@@ -193,6 +193,8 @@ export default class DataRepository implements IDataRepository {
                              Results.stim_amp_ma_max,
                              Results.stim_freq,
                              Results.stim_freq_max,
+                             Results.stim_duration,
+                             Results.stim_duration_max,
                              Results.stim_electrode_type,
                              Results.stim_electrode_separation,
                              Results.stim_electrode_diameter,
