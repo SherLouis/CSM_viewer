@@ -1,7 +1,8 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { ActionIcon, Group, Text } from '@mantine/core';
-import { IconCopy, IconEdit, IconTrash } from '@tabler/icons-react';
-import { DataTable } from 'mantine-datatable';
+import sortBy from 'lodash.sortby';
+import { IconCopy, IconTrash } from '@tabler/icons-react';
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { ResultDdo } from '../../models/ResultDdo';
 import { CreateEditResultForm, CreateEditResultFormValues } from '../CreateEditResultForm/CreateEditResultForm';
 import { ROIDdo } from '../../models/ROIDdo';
@@ -10,7 +11,7 @@ import { TaskDdo } from '../../models/TaskDdo';
 import { FunctionDdo } from '../../models/FunctionDdo';
 
 const ResultsTable = (props: ResultsTableProps) => {
-    // [ ] add sorting and filtering
+    // [ ] add filtering
     // [ ] add pagination
 
     const handleEdit = (values: CreateEditResultFormValues, resultId: number) => {
@@ -158,14 +159,29 @@ const ResultsTable = (props: ResultsTableProps) => {
         }
     }
 
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
+    const [records, setRecords] = useState(sortBy(props.data, 'id'));
+
+    useEffect(() => {
+        const data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
+        setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
+    }, [sortStatus, props.data])
+
     return (
         <DataTable
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
             withColumnBorders
             striped
             highlightOnHover
             idAccessor={(record) => String(record.id)}
-            records={props.data}
+            records={records}
             columns={[
+                {
+                    accessor: 'id',
+                    title: 'ID',
+                    sortable: true
+                },
                 {
                     accessor: 'roi',
                     title: 'ROI',
@@ -247,6 +263,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 {
                     accessor: 'occurrences',
                     title: 'Occurrences',
+                    sortable: true
                 },
                 {
                     accessor: 'actions',

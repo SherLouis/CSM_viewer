@@ -1,4 +1,4 @@
-import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea, Checkbox, Tabs, rem, Radio, Stack, Title, Divider, SelectItem } from "@mantine/core"
+import { Box, Group, Button, NativeSelect, NumberInput, Autocomplete, Switch, Textarea, Tabs, rem, Radio, Stack, Title, Divider, SelectItem, TextInput, Table } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
@@ -6,6 +6,7 @@ import { ROIDdo } from "../../models/ROIDdo";
 import { EffectDdo } from "../../models/EffectDdo";
 import { TaskDdo } from "../../models/TaskDdo";
 import { FunctionDdo } from "../../models/FunctionDdo";
+import ColumnButtonSelect from "./ColumnButtonSelect";
 
 export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tasks, functions }: CreateEditResultFormProps) => {
     // TODO: Ajouter validations
@@ -147,7 +148,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
             case 'category':
                 return false;
             case 'semiology':
-                return false;
+                return getEffectOptions('category').includes(form.getInputProps('effect.category').value);
             case 'characteristic':
                 return getEffectOptions('semiology').includes(form.getInputProps('effect.semiology').value)
                     && !effects.find((e) => e.level == 'semiology' && e.semiology == form.getInputProps('effect.semiology').value).is_manual
@@ -159,7 +160,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
             case 'category':
                 return false;
             case 'subcategory':
-                return false;
+                return getTaskOptions('category').includes(form.getInputProps('task.category').value);
             case 'characteristic':
                 return getTaskOptions('subcategory').includes(form.getInputProps('task.subcategory').value)
                     && !tasks.find((i) => i.level == 'subcategory' && i.subcategory == form.getInputProps('task.subcategory').value).is_manual
@@ -171,7 +172,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
             case 'category':
                 return false;
             case 'subcategory':
-                return false;
+                return getFunctionOptions('category').includes(form.getInputProps('function.category').value);
             case 'characteristic':
                 return getFunctionOptions('subcategory').includes(form.getInputProps('function.subcategory').value)
                     && !functions.find((i) => i.level == 'subcategory' && i.subcategory == form.getInputProps('function.subcategory').value).is_manual
@@ -434,49 +435,77 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                         </Group>
                     </Tabs.Panel>
                     <Tabs.Panel value="effect">
-                        <NativeSelect
-                            label="Category"
-                            data={[{ value: '', label: 'Pick One' }, ...getEffectOptions('category')]}
-                            placeholder="Pick one"
-                            {...form.getInputProps('effect.category')}
-                            onChange={(event) => {
-                                form.setFieldValue('effect.semiology', '');
-                                form.setFieldValue('effect.characteristic', '');
-                                form.getInputProps('effect.category').onChange(event);
-                            }}
-                        />
-                        {getEffectOptions('semiology').length > 0 &&
-                            <NativeSelect
-                                label="Semiology"
-                                data={[{ value: '', label: 'Pick One' }, ...getEffectOptions('semiology')]}
-                                {...form.getInputProps('effect.semiology')}
-                                onChange={(event) => {
-                                    form.setFieldValue('effect.characteristic', '');
-                                    form.getInputProps('effect.semiology').onChange(event);
-                                }}
-                            />
-                        }
-                        {getEffectOptions('characteristic').length > 0 && !canAddNewEffectManual('characteristic') &&
-                            <NativeSelect
-                                label="characteristic"
-                                data={[{ value: '', label: 'Pick One' }, ...getEffectOptions('characteristic')]}
-                                {...form.getInputProps('effect.characteristic')}
-                            />
-                        }
-                        {canAddNewEffectManual('characteristic') &&
-                            <Autocomplete
-                                label="characteristic"
-                                data={...getEffectOptions('characteristic')}
-                                placeholder="Select from the list or type a new value"
-                                {...form.getInputProps('effect.characteristic')}
-                            />
-                        }
+                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
+                            <thead>
+                                <th>Category</th>
+                                <th>Semiology</th>
+                                <th>Characteristic</th>
+                            </thead>
+                            <tbody>
+                                <tr key={"options"}>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getEffectOptions('category')}
+                                            form={form} form_path="effect.category"
+                                            onChange={(v) => {
+                                                form.setFieldValue('effect.semiology', '');
+                                                form.setFieldValue('effect.characteristic', '');
+                                                form.getInputProps('effect.category').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getEffectOptions('semiology')}
+                                            form={form} form_path="effect.semiology"
+                                            onChange={(v) => {
+                                                form.setFieldValue('effect.characteristic', '');
+                                                form.getInputProps('effect.semiology').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getEffectOptions('characteristic')}
+                                            form={form} form_path="effect.characteristic"
+                                            onChange={(v) => {
+                                                form.getInputProps('effect.characteristic').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {canAddNewEffectManual('category') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('effect.category')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewEffectManual('semiology') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('effect.semiology')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewEffectManual('characteristic') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('effect.characteristic')}
+                                            />}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
+
+                        <Divider />
                         <Switch
                             label="Post discharge ?"
                             labelPosition="left"
                             {...form.getInputProps('effect.post_discharge', { type: 'checkbox' })}
                         />
-                        <Divider />
                         <Radio.Group
                             label="Lateralization"
                             {...form.getInputProps('effect.lateralization')}
@@ -509,43 +538,70 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                         />
                     </Tabs.Panel>
                     <Tabs.Panel value="task">
-                        <NativeSelect
-                            label="Category"
-                            data={[{ value: '', label: 'Pick One' }, ...getTaskOptions('category')]}
-                            placeholder="Pick one"
-                            {...form.getInputProps('task.category')}
-                            onChange={(event) => {
-                                form.setFieldValue('task.subcategory', '');
-                                form.setFieldValue('task.characteristic', '');
-                                form.getInputProps('task.category').onChange(event);
-                            }}
-                        />
-                        {getTaskOptions('subcategory').length > 0 &&
-                            <NativeSelect
-                                label="Subcategory"
-                                data={[{ value: '', label: 'Pick One' }, ...getTaskOptions('subcategory')]}
-                                {...form.getInputProps('task.subcategory')}
-                                onChange={(event) => {
-                                    form.setFieldValue('task.characteristic', '');
-                                    form.getInputProps('task.subcategory').onChange(event);
-                                }}
-                            />
-                        }
-                        {getTaskOptions('characteristic').length > 0 && !canAddNewTaskManual('characteristic') &&
-                            <NativeSelect
-                                label="characteristic"
-                                data={[{ value: '', label: 'Pick One' }, ...getTaskOptions('characteristic')]}
-                                {...form.getInputProps('task.characteristic')}
-                            />
-                        }
-                        {canAddNewTaskManual('characteristic') &&
-                            <Autocomplete
-                                label="characteristic"
-                                data={...getTaskOptions('characteristic')}
-                                placeholder="Select from the list or type a new value"
-                                {...form.getInputProps('task.characteristic')}
-                            />
-                        }
+                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
+                            <thead>
+                                <th>Category</th>
+                                <th>Subcategory</th>
+                                <th>Characteristic</th>
+                            </thead>
+                            <tbody>
+                                <tr key={"options"}>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getTaskOptions('category')}
+                                            form={form} form_path="task.category"
+                                            onChange={(v) => {
+                                                form.setFieldValue('task.subcategory', '');
+                                                form.setFieldValue('task.characteristic', '');
+                                                form.getInputProps('task.category').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getTaskOptions('subcategory')}
+                                            form={form} form_path="task.subcategory"
+                                            onChange={(v) => {
+                                                form.setFieldValue('task.characteristic', '');
+                                                form.getInputProps('task.subcategory').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getTaskOptions('characteristic')}
+                                            form={form} form_path="task.characteristic"
+                                            onChange={(v) => {
+                                                form.getInputProps('task.characteristic').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {canAddNewTaskManual('category') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('task.category')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewTaskManual('subcategory') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('task.subcategory')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewTaskManual('characteristic') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('task.characteristic')}
+                                            />}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
                         <Divider />
                         <Textarea
                             label="Comments"
@@ -554,43 +610,70 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                         />
                     </Tabs.Panel>
                     <Tabs.Panel value="function">
-                        <NativeSelect
-                            label="Category"
-                            data={[{ value: '', label: 'Pick One' }, ...getFunctionOptions('category')]}
-                            placeholder="Pick one"
-                            {...form.getInputProps('function.category')}
-                            onChange={(event) => {
-                                form.setFieldValue('function.subcategory', '');
-                                form.setFieldValue('function.characteristic', '');
-                                form.getInputProps('function.category').onChange(event);
-                            }}
-                        />
-                        {getFunctionOptions('subcategory').length > 0 &&
-                            <NativeSelect
-                                label="Subcategory"
-                                data={[{ value: '', label: 'Pick One' }, ...getFunctionOptions('subcategory')]}
-                                {...form.getInputProps('function.subcategory')}
-                                onChange={(event) => {
-                                    form.setFieldValue('function.characteristic', '');
-                                    form.getInputProps('function.subcategory').onChange(event);
-                                }}
-                            />
-                        }
-                        {getFunctionOptions('characteristic').length > 0 && !canAddNewFunctionManual('characteristic') &&
-                            <NativeSelect
-                                label="characteristic"
-                                data={[{ value: '', label: 'Pick One' }, ...getFunctionOptions('characteristic')]}
-                                {...form.getInputProps('function.characteristic')}
-                            />
-                        }
-                        {canAddNewFunctionManual('characteristic') &&
-                            <Autocomplete
-                                label="characteristic"
-                                data={...getFunctionOptions('characteristic')}
-                                placeholder="Select from the list or type a new value"
-                                {...form.getInputProps('function.characteristic')}
-                            />
-                        }
+                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
+                            <thead>
+                                <th>Category</th>
+                                <th>Subcategory</th>
+                                <th>Characteristic</th>
+                            </thead>
+                            <tbody>
+                                <tr key={"options"}>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getFunctionOptions('category')}
+                                            form={form} form_path="function.category"
+                                            onChange={(v) => {
+                                                form.setFieldValue('function.subcategory', '');
+                                                form.setFieldValue('function.characteristic', '');
+                                                form.getInputProps('function.category').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getFunctionOptions('subcategory')}
+                                            form={form} form_path="function.subcategory"
+                                            onChange={(v) => {
+                                                form.setFieldValue('function.characteristic', '');
+                                                form.getInputProps('function.subcategory').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getFunctionOptions('characteristic')}
+                                            form={form} form_path="function.characteristic"
+                                            onChange={(v) => {
+                                                form.getInputProps('function.characteristic').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {canAddNewFunctionManual('category') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('function.category')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewFunctionManual('subcategory') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('function.subcategory')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewFunctionManual('characteristic') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('function.characteristic')}
+                                            />}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
                         <Divider />
                         <Textarea
                             label="Comments"

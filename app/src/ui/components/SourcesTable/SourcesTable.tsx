@@ -1,11 +1,13 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
+import sortBy from 'lodash.sortby';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
-import { DataTable } from 'mantine-datatable';
-import { SourceDdo, SourceSummaryDdo } from "../../models/SourceDdo";
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import { SourceSummaryDdo } from "../../models/SourceDdo";
+import { useListState } from '@mantine/hooks';
 
 const SourcesTable = (props: SourcesTableProps) => {
-  // [ ] add sorting and filtering
+  // [ ] add filtering
   // [ ] add pagination
 
   const handleView = (event: MouseEvent, sourceId: number) => {
@@ -23,26 +25,43 @@ const SourcesTable = (props: SourcesTableProps) => {
     props.onDelete(sourceId);
   }
 
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
+  const [sourceRecords, sourceRecordsHandlers] = useListState(props.data);
+
+  useEffect(() => {
+    const data = sortBy(props.data, sortStatus.columnAccessor) as SourceSummaryDdo[];
+    sourceRecordsHandlers.setState(sortStatus.direction === 'desc' ? data.reverse() : data);
+  }, [sortStatus, props.data])
+
   return (
     <DataTable
       withColumnBorders
+      sortStatus={sortStatus}
+      onSortStatusChange={setSortStatus}
       striped
       highlightOnHover
-      idAccessor={"id"}
-      records={props.data}
+      idAccessor={(record) => String(record.id)}
+      records={sourceRecords}
       columns={[
         {
           accessor: 'id',
-          title: 'ID'
+          title: 'ID',
+          sortable: true
         },
-        { accessor: 'title' },
+        {
+          accessor: 'title',
+          title: 'Title',
+          sortable: true
+        },
         {
           accessor: 'nb_results',
-          title: "# results"
+          title: "# results",
+          sortable: true
         },
         {
           accessor: 'state',
-          title: "Status"
+          title: "Status",
+          sortable: true
         },
         {
           accessor: 'actions',
