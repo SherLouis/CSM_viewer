@@ -1,4 +1,4 @@
-import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea, Checkbox, Tabs, rem, Radio, Stack, Title, Divider } from "@mantine/core"
+import { Box, TextInput, Group, Button, Accordion, NativeSelect, NumberInput, Autocomplete, MultiSelect, Switch, Space, Textarea, Checkbox, Tabs, rem, Radio, Stack, Title, Divider, SelectItem } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
@@ -207,6 +207,14 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
     }
 
     const ElectrodeOptions = getElectrodeOptions();
+
+    const getBodyPartOptions = (): SelectItem[] => {
+        return [
+            { value: "arm", label: "Arm" },
+            { value: "leg", label: "Leg" },
+            { value: "chest", label: "Chest" },
+        ];
+    }
 
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
@@ -434,7 +442,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                             onChange={(event) => {
                                 form.setFieldValue('effect.semiology', '');
                                 form.setFieldValue('effect.characteristic', '');
-                                form.setFieldValue('effect.precision', '');
                                 form.getInputProps('effect.category').onChange(event);
                             }}
                         />
@@ -445,7 +452,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 {...form.getInputProps('effect.semiology')}
                                 onChange={(event) => {
                                     form.setFieldValue('effect.characteristic', '');
-                                    form.setFieldValue('effect.precision', '');
                                     form.getInputProps('effect.semiology').onChange(event);
                                 }}
                             />
@@ -455,10 +461,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 label="characteristic"
                                 data={[{ value: '', label: 'Pick One' }, ...getEffectOptions('characteristic')]}
                                 {...form.getInputProps('effect.characteristic')}
-                                onChange={(event) => {
-                                    form.setFieldValue('effect.precision', '');
-                                    form.getInputProps('effect.characteristic').onChange(event);
-                                }}
                             />
                         }
                         {canAddNewEffectManual('characteristic') &&
@@ -467,16 +469,43 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 data={...getEffectOptions('characteristic')}
                                 placeholder="Select from the list or type a new value"
                                 {...form.getInputProps('effect.characteristic')}
-                                onChange={(event) => {
-                                    form.setFieldValue('effect.precision', '');
-                                    form.getInputProps('effect.characteristic').onChange(event);
-                                }}
                             />
                         }
                         <Switch
                             label="Post discharge ?"
                             labelPosition="left"
                             {...form.getInputProps('effect.post_discharge', { type: 'checkbox' })}
+                        />
+                        <Divider />
+                        <Radio.Group
+                            label="Lateralization"
+                            {...form.getInputProps('effect.lateralization')}
+                        >
+                            <Group mt="xs">
+                                <Radio value="ipsilateral" label="Ipsilateral" />
+                                <Radio value="non-lateralizable" label="Non-lateralizable" />
+                                <Radio value="contralateral" label="Contralateral" />
+                            </Group>
+                        </Radio.Group>
+                        <Radio.Group
+                            label="Dominance"
+                            {...form.getInputProps('effect.dominant')}
+                        >
+                            <Group mt="xs">
+                                <Radio value="dominant" label="Dominant" />
+                                <Radio value="non-dominant" label="Non-dominant" />
+                            </Group>
+                        </Radio.Group>
+                        <NativeSelect
+                            label="Body part"
+                            data={[{ value: '', label: 'Pick One' }, ...getBodyPartOptions()]}
+                            {...form.getInputProps('effect.body_part')}
+                        />
+                        <Divider />
+                        <Textarea
+                            label="Comments"
+                            placeholder="Write your comments here"
+                            {...form.getInputProps('effect.comments')}
                         />
                     </Tabs.Panel>
                     <Tabs.Panel value="task">
@@ -488,7 +517,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                             onChange={(event) => {
                                 form.setFieldValue('task.subcategory', '');
                                 form.setFieldValue('task.characteristic', '');
-                                form.setFieldValue('task.precision', '');
                                 form.getInputProps('task.category').onChange(event);
                             }}
                         />
@@ -499,7 +527,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 {...form.getInputProps('task.subcategory')}
                                 onChange={(event) => {
                                     form.setFieldValue('task.characteristic', '');
-                                    form.setFieldValue('task.precision', '');
                                     form.getInputProps('task.subcategory').onChange(event);
                                 }}
                             />
@@ -509,10 +536,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 label="characteristic"
                                 data={[{ value: '', label: 'Pick One' }, ...getTaskOptions('characteristic')]}
                                 {...form.getInputProps('task.characteristic')}
-                                onChange={(event) => {
-                                    form.setFieldValue('task.precision', '');
-                                    form.getInputProps('task.characteristic').onChange(event);
-                                }}
                             />
                         }
                         {canAddNewTaskManual('characteristic') &&
@@ -521,12 +544,14 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 data={...getTaskOptions('characteristic')}
                                 placeholder="Select from the list or type a new value"
                                 {...form.getInputProps('task.characteristic')}
-                                onChange={(event) => {
-                                    form.setFieldValue('task.precision', '');
-                                    form.getInputProps('task.characteristic').onChange(event);
-                                }}
                             />
                         }
+                        <Divider />
+                        <Textarea
+                            label="Comments"
+                            placeholder="Write your comments here"
+                            {...form.getInputProps('task.comments')}
+                        />
                     </Tabs.Panel>
                     <Tabs.Panel value="function">
                         <NativeSelect
@@ -537,7 +562,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                             onChange={(event) => {
                                 form.setFieldValue('function.subcategory', '');
                                 form.setFieldValue('function.characteristic', '');
-                                form.setFieldValue('function.precision', '');
                                 form.getInputProps('function.category').onChange(event);
                             }}
                         />
@@ -548,7 +572,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 {...form.getInputProps('function.subcategory')}
                                 onChange={(event) => {
                                     form.setFieldValue('function.characteristic', '');
-                                    form.setFieldValue('function.precision', '');
                                     form.getInputProps('function.subcategory').onChange(event);
                                 }}
                             />
@@ -558,10 +581,6 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 label="characteristic"
                                 data={[{ value: '', label: 'Pick One' }, ...getFunctionOptions('characteristic')]}
                                 {...form.getInputProps('function.characteristic')}
-                                onChange={(event) => {
-                                    form.setFieldValue('function.precision', '');
-                                    form.getInputProps('function.characteristic').onChange(event);
-                                }}
                             />
                         }
                         {canAddNewFunctionManual('characteristic') &&
@@ -570,12 +589,14 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 data={...getFunctionOptions('characteristic')}
                                 placeholder="Select from the list or type a new value"
                                 {...form.getInputProps('function.characteristic')}
-                                onChange={(event) => {
-                                    form.setFieldValue('function.precision', '');
-                                    form.getInputProps('function.characteristic').onChange(event);
-                                }}
                             />
                         }
+                        <Divider />
+                        <Textarea
+                            label="Comments"
+                            placeholder="Write your comments here"
+                            {...form.getInputProps('function.comments')}
+                        />
                     </Tabs.Panel>
                     <Tabs.Panel value="details">
                         <NumberInput
@@ -586,6 +607,16 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                             label="Comments"
                             placeholder="Write your comments here"
                             {...form.getInputProps('comments')}
+                        />
+                        <Textarea
+                            label="Comments 2"
+                            placeholder="Write your comments here"
+                            {...form.getInputProps('comments_2')}
+                        />
+                        <NumberInput
+                            label="Precision score"
+                            precision={2}
+                            {...form.getInputProps('precision_score')}
                         />
                     </Tabs.Panel>
                 </Tabs>
