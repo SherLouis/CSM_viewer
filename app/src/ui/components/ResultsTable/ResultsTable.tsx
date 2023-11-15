@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useState } from 'react';
-import { ActionIcon, Group, Text } from '@mantine/core';
+import { ActionIcon, Group, Text, TextInput } from '@mantine/core';
 import sortBy from 'lodash.sortby';
-import { IconCopy, IconTrash } from '@tabler/icons-react';
+import { IconCopy, IconSearch, IconTrash } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { ResultDdo } from '../../models/ResultDdo';
 import { CreateEditResultForm, CreateEditResultFormValues } from '../CreateEditResultForm/CreateEditResultForm';
@@ -9,6 +9,7 @@ import { ROIDdo } from '../../models/ROIDdo';
 import { EffectDdo } from '../../models/EffectDdo';
 import { TaskDdo } from '../../models/TaskDdo';
 import { FunctionDdo } from '../../models/FunctionDdo';
+import { useDebouncedState } from '@mantine/hooks';
 
 const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add filtering
@@ -159,13 +160,30 @@ const ResultsTable = (props: ResultsTableProps) => {
         }
     }
 
+    // sorting & filtering
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
     const [records, setRecords] = useState(sortBy(props.data, 'id'));
+    const [roiQuery, setRoiQuery] = useDebouncedState('', 200);
+    const [effectQuery, setEffectQuery] = useDebouncedState('', 200);
+    const [taskQuery, setTaskQuery] = useDebouncedState('', 200);
+    const [functionQuery, setFunctionQuery] = useDebouncedState('', 200);
 
     useEffect(() => {
-        const data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
+        var data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
+        data = data.filter((result) => {
+            const roiValue = result.roi.lobe + (result.roi.gyrus ? ('/' + result.roi.gyrus + (result.roi.sub ? ('/' + result.roi.sub + (result.roi.precision ? ('/' + result.roi.precision) : '')) : '')) : '');
+            const effectValue = result.effect.category + (result.effect.semiology ? ('/' + result.effect.semiology + (result.effect.characteristic ? ('/' + result.effect.characteristic + (result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '');
+            const taskValue = result.task.category + (result.task.subcategory ? ('/' + result.task.subcategory + (result.task.characteristic ? ('/' + result.task.characteristic) : '')) : '');
+            const functionValue = result.function.category + (result.function.subcategory ? ('/' + result.function.subcategory + (result.function.characteristic ? ('/' + result.function.characteristic) : '')) : '');
+
+            if (roiQuery !== '' && !roiValue.toLowerCase().includes(roiQuery.trim().toLowerCase())) { return false; }
+            if (effectQuery !== '' && !effectValue.toLowerCase().includes(effectQuery.trim().toLowerCase())) { return false; }
+            if (taskQuery !== '' && !taskValue.toLowerCase().includes(taskQuery.trim().toLowerCase())) { return false; }
+            if (functionQuery !== '' && !functionValue.toLowerCase().includes(functionQuery.trim().toLowerCase())) { return false; }
+            return true;
+        });
         setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [sortStatus, props.data])
+    }, [sortStatus, roiQuery, effectQuery, taskQuery, functionQuery, props.data])
 
     return (
         <DataTable
@@ -196,7 +214,18 @@ const ResultsTable = (props: ResultsTableProps) => {
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
                                 <IconCopy size={16} />
                             </ActionIcon>
-                        </Group>)
+                        </Group>),
+                    filter: (
+                        <TextInput
+                            label="ROI"
+                            description="Search for a ROI that includes specified text"
+                            placeholder='Search ROI...'
+                            icon={<IconSearch size={16} />}
+                            defaultValue={roiQuery}
+                            onChange={(e) => setRoiQuery(e.currentTarget.value)}
+                        />
+                    ),
+                    filtering: roiQuery != '',
                 },
                 {
                     accessor: 'stimulation_parameters',
@@ -228,7 +257,18 @@ const ResultsTable = (props: ResultsTableProps) => {
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
                                 <IconCopy size={16} />
                             </ActionIcon>
-                        </Group>)
+                        </Group>),
+                    filter: (
+                        <TextInput
+                            label="Effect"
+                            description="Search for an Effect that includes specified text"
+                            placeholder='Search Effect...'
+                            icon={<IconSearch size={16} />}
+                            defaultValue={effectQuery}
+                            onChange={(e) => setEffectQuery(e.currentTarget.value)}
+                        />
+                    ),
+                    filtering: effectQuery != '',
                 },
                 {
                     accessor: 'task',
@@ -243,7 +283,18 @@ const ResultsTable = (props: ResultsTableProps) => {
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'task')}>
                                 <IconCopy size={16} />
                             </ActionIcon>
-                        </Group>)
+                        </Group>),
+                    filter: (
+                        <TextInput
+                            label="Task"
+                            description="Search for a Task that includes specified text"
+                            placeholder='Search Task...'
+                            icon={<IconSearch size={16} />}
+                            defaultValue={taskQuery}
+                            onChange={(e) => setTaskQuery(e.currentTarget.value)}
+                        />
+                    ),
+                    filtering: taskQuery != '',
                 },
                 {
                     accessor: 'function',
@@ -258,7 +309,18 @@ const ResultsTable = (props: ResultsTableProps) => {
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'function')}>
                                 <IconCopy size={16} />
                             </ActionIcon>
-                        </Group>)
+                        </Group>),
+                    filter: (
+                        <TextInput
+                            label="Function"
+                            description="Search for a Function that includes specified text"
+                            placeholder='Search Function...'
+                            icon={<IconSearch size={16} />}
+                            defaultValue={functionQuery}
+                            onChange={(e) => setFunctionQuery(e.currentTarget.value)}
+                        />
+                    ),
+                    filtering: functionQuery != '',
                 },
                 {
                     accessor: 'occurrences',

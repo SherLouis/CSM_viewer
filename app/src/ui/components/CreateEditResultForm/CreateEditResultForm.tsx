@@ -437,9 +437,11 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                     <Tabs.Panel value="effect">
                         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
                             <thead>
-                                <th>Category</th>
-                                <th>Semiology</th>
-                                <th>Characteristic</th>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Semiology</th>
+                                    <th>Characteristic</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr key={"options"}>
@@ -540,9 +542,11 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                     <Tabs.Panel value="task">
                         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
                             <thead>
-                                <th>Category</th>
-                                <th>Subcategory</th>
-                                <th>Characteristic</th>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Subcategory</th>
+                                    <th>Characteristic</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr key={"options"}>
@@ -612,9 +616,11 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                     <Tabs.Panel value="function">
                         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
                             <thead>
-                                <th>Category</th>
-                                <th>Subcategory</th>
-                                <th>Characteristic</th>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Subcategory</th>
+                                    <th>Characteristic</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr key={"options"}>
