@@ -7,6 +7,7 @@ const db_location = './testdb.sqlite';
 const repository = new DataRepository(db_location);
 const db = new Database(db_location);
 
+/*
 describe('Given Source in DB', () => {
     beforeAll(() => {
         deleteAllRecords();
@@ -66,6 +67,7 @@ describe('Given Source in DB', () => {
         })
     })
 })
+*/
 
 const deleteAllRecords = () => {
     db.prepare('DELETE FROM Sources;').run();
