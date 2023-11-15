@@ -1,13 +1,12 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import sortBy from 'lodash.sortby';
-import { ActionIcon, Group, Text } from '@mantine/core';
-import { IconEye, IconEdit, IconTrash } from '@tabler/icons-react';
+import { ActionIcon, Group, MultiSelect, Text, TextInput } from '@mantine/core';
+import { IconEye, IconEdit, IconTrash, IconSearch } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { SourceSummaryDdo } from "../../models/SourceDdo";
-import { useListState } from '@mantine/hooks';
+import { useDebouncedState, useListState } from '@mantine/hooks';
 
 const SourcesTable = (props: SourcesTableProps) => {
-  // [ ] add filtering
   // [ ] add pagination
 
   const handleView = (event: MouseEvent, sourceId: number) => {
@@ -25,13 +24,25 @@ const SourcesTable = (props: SourcesTableProps) => {
     props.onDelete(sourceId);
   }
 
+  // sorting & filtering
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
-  const [sourceRecords, sourceRecordsHandlers] = useListState(props.data);
+  const [records, sourceRecordsHandlers] = useListState(props.data);
+  const [titleQuery, setTitleQuery] = useDebouncedState('', 200);
+  const [selectedStates, selectedStatesHandler] = useListState<string>([]);
+  const states = useMemo(() => {
+    const states = new Set(props.data.map((source) => source.state));
+    return [...states];
+  }, [props.data])
 
   useEffect(() => {
-    const data = sortBy(props.data, sortStatus.columnAccessor) as SourceSummaryDdo[];
+    var data = sortBy(props.data, sortStatus.columnAccessor) as SourceSummaryDdo[];
+    data = data.filter((sourceSummary) => {
+      if (titleQuery !== '' && !sourceSummary.title.toLowerCase().includes(titleQuery.trim().toLowerCase())) { return false; }
+      if (selectedStates.length !== 0 && !selectedStates.some((s) => s === sourceSummary.state)) { return false; }
+      return true;
+    });
     sourceRecordsHandlers.setState(sortStatus.direction === 'desc' ? data.reverse() : data);
-  }, [sortStatus, props.data])
+  }, [sortStatus, titleQuery, selectedStates, props.data])
 
   return (
     <DataTable
@@ -41,7 +52,7 @@ const SourcesTable = (props: SourcesTableProps) => {
       striped
       highlightOnHover
       idAccessor={(record) => String(record.id)}
-      records={sourceRecords}
+      records={records}
       columns={[
         {
           accessor: 'id',
@@ -51,7 +62,18 @@ const SourcesTable = (props: SourcesTableProps) => {
         {
           accessor: 'title',
           title: 'Title',
-          sortable: true
+          sortable: true,
+          filter: (
+            <TextInput
+              label="Title"
+              description="Search for a title that includes specified text"
+              placeholder='Search title...'
+              icon={<IconSearch size={16} />}
+              defaultValue={titleQuery}
+              onChange={(e) => setTitleQuery(e.currentTarget.value)}
+            />
+          ),
+          filtering: titleQuery != '',
         },
         {
           accessor: 'nb_results',
@@ -61,7 +83,21 @@ const SourcesTable = (props: SourcesTableProps) => {
         {
           accessor: 'state',
           title: "Status",
-          sortable: true
+          sortable: true,
+          filter: (
+            <MultiSelect
+              label="Status "
+              description="Show all with selected status"
+              data={states}
+              value={selectedStates}
+              placeholder="Select state(s)"
+              onChange={selectedStatesHandler.setState}
+              icon={<IconSearch size={16} />}
+              clearable
+              searchable
+            />
+          ),
+          filtering: selectedStates.length > 0,
         },
         {
           accessor: 'actions',
