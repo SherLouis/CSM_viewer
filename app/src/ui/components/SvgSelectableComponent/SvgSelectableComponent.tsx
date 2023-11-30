@@ -27,10 +27,8 @@ export default function SvgSelectableComponent({ paths, onSelectCallback, onMous
     return (
         <svg
             fill="current"
-            viewBox="-141.007366 83.116658 -52.648425 41.730628"
             {...svgProps}
         >
-            <g transform="scale(0.25)"></g>
             {paths.map((path) => {
                 const pathProps: SvgPathProps = {
                     key: path.id,
