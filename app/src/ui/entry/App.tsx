@@ -30,10 +30,9 @@ function App() {
         <Notifications position="top-right"/>
         <BasePage title='CSM data'>
           <Routes>
-            {/* <Route path='*' element={<SourcesPage/>} /> */}
+            <Route path='*' element={<SourcesPage/>} />
             <Route path='/edit/sources' element={<SourcesPage/>} />
             <Route path='/edit/sources/:sourceIdParam' element={<SourceDetailsPage/>}/>
-            <Route path='*' element={<Container size={"100%"}><Paper><CanadaProvingSvg/></Paper></Container>}/>
           </Routes>
         </BasePage>
       </MantineProvider>

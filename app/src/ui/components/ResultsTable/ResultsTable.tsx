@@ -352,7 +352,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                         effects={props.effects}
                         tasks={props.tasks}
                         functions={props.functions}
-                        onSubmit={(values) => handleEdit(values, record.id)} />
+                        onSubmit={(values) => handleEdit(values, record.id)}
+                         />
                 ),
             }}
 

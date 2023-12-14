@@ -383,6 +383,7 @@ export const SourceDetailsPage = () => {
                         {showCreateForm && (
                             <CreateEditResultForm
                                 onSubmit={(values) => onCreateResult(values)}
+                                onCancel={() => setShowCreateForm(false)}
                                 rois={rois}
                                 effects={effects}
                                 tasks={tasks}

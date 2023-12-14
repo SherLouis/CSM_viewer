@@ -8,7 +8,7 @@ import { TaskDdo } from "../../models/TaskDdo";
 import { FunctionDdo } from "../../models/FunctionDdo";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 
-export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tasks, functions }: CreateEditResultFormProps) => {
+export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions }: CreateEditResultFormProps) => {
     // TODO: Ajouter validations
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
@@ -253,68 +253,94 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 <Radio value="right" label="Right" />
                             </Group>
                         </Radio.Group>
-                        <NativeSelect
-                            required
-                            label="Lobe"
-                            data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('lobe')]}
-                            onChange={(event) => {
-                                form.setFieldValue('roi.gyrus', '');
-                                form.setFieldValue('roi.sub', '');
-                                form.setFieldValue('roi.precision', '');
-                                form.getInputProps('roi.lobe').onChange(event)
-                            }}
-                            {...form.getInputProps('roi.lobe')}
-                        />
-                        {getRoiOptions('gyrus').length > 0 &&
-                            <NativeSelect
-                                label="Gyrus"
-                                data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('gyrus')]}
-                                onChange={(event) => {
-                                    form.setFieldValue('roi.sub', '');
-                                    form.setFieldValue('roi.precision', '');
-                                    form.getInputProps('roi.gyrus').onChange(event)
-                                }}
-                                {...form.getInputProps('roi.gyrus')}
-                            />
-                        }
-                        {getRoiOptions('sub').length > 0 && !canAddNewRoiManual("sub") &&
-                            <NativeSelect
-                                label="Subregion"
-                                data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('sub')]}
-                                onChange={(event) => {
-                                    form.setFieldValue('roi.precision', '');
-                                    form.getInputProps('roi.sub').onChange(event)
-                                }}
-                                {...form.getInputProps('roi.sub')}
-                            />
-                        }
-                        {canAddNewRoiManual("sub") &&
-                            <Autocomplete
-                                label="Subregion"
-                                data={[...getRoiOptions('sub')]}
-                                placeholder="Select from the list or type a new value"
-                                onChange={(event) => {
-                                    form.setFieldValue('roi.precision', '');
-                                    form.getInputProps('roi.sub').onChange(event)
-                                }}
-                                {...form.getInputProps('roi.sub')}
-                            />
-                        }
-                        {getRoiOptions('precision').length > 0 && !canAddNewRoiManual("precision") &&
-                            <NativeSelect
-                                label="Precision"
-                                data={[{ value: '', label: 'Pick One' }, ...getRoiOptions('precision')]}
-                                {...form.getInputProps('roi.precision')}
-                            />
-                        }
-                        {canAddNewRoiManual("precision") &&
-                            <Autocomplete
-                                label="Precision"
-                                data={...getRoiOptions('precision')}
-                                placeholder="Select from the list or type a new value"
-                                {...form.getInputProps('roi.precision')}
-                            />
-                        }
+
+                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
+                            <thead>
+                                <tr>
+                                    <th>Lobe</th>
+                                    <th>Gyrus</th>
+                                    <th>Region</th>
+                                    <th>Precision</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr key={"options"}>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getRoiOptions('lobe')}
+                                            onChange={(v) => {
+                                                form.setFieldValue('roi.gyrus', '');
+                                                form.setFieldValue('roi.sub', '');
+                                                form.setFieldValue('roi.precision', '');
+                                                form.getInputProps('roi.lobe').onChange(v)
+                                            }}
+                                            form={form} form_path='roi.lobe'
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getRoiOptions('gyrus')}
+                                            form={form} form_path="roi.gyrus"
+                                            onChange={(v) => {
+                                                form.setFieldValue('roi.sub', '');
+                                                form.setFieldValue('roi.precision', '');
+                                                form.getInputProps('roi.gyrus').onChange(v)
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getRoiOptions('sub')}
+                                            form={form} form_path="roi.sub"
+                                            onChange={(v) => {
+                                                form.setFieldValue('roi.precision', '');
+                                                form.getInputProps('roi.sub').onChange(v)
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getRoiOptions('precision')}
+                                            form={form} form_path="roi.precision"
+                                            onChange={(v) => {
+                                                form.getInputProps('roi.precision').onChange(v)
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {canAddNewRoiManual('lobe') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('roi.lobe')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewRoiManual('gyrus') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('roi.gyrus')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewRoiManual('sub') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('roi.sub')}
+                                            />}
+                                    </td>
+                                    <td>
+                                        {canAddNewRoiManual('precision') &&
+                                            <TextInput
+                                                placeholder="Insert some value here"
+                                                {...form.getInputProps('roi.precision')}
+                                            />}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
+
                     </Tabs.Panel>
                     <Tabs.Panel value="parameters">
                         <Divider label="Aplitude" />
@@ -378,18 +404,19 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                     <Group mt="xs">
                                         <Radio value="SEEG" label="SEEG" />
                                         <Radio value="Grids" label="Grids" />
+                                        <Radio value="" label="N/A" />
                                     </Group>
                                 </Radio.Group>
                                 <NumberInput
-                                    label="Electrode diameter (mm)"
+                                    label="Contact diameter (mm)"
                                     {...form.getInputProps('stimulation_parameters.electrode_diameter')}
                                 />
                                 <NumberInput
-                                    label="Electrode separation (mm)"
+                                    label="Contact separation (mm)"
                                     {...form.getInputProps('stimulation_parameters.electrode_separation')}
                                 />
                                 <NumberInput
-                                    label="Electrode diameter (mm)"
+                                    label="Contact length (mm)"
                                     {...form.getInputProps('stimulation_parameters.electrode_length')}
                                 />
                             </Group>
@@ -415,6 +442,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 <Group mt="xs">
                                     <Radio value="Monophasic" label="Monophasic" />
                                     <Radio value="Biphasic" label="Biphasic" />
+                                    <Radio value="" label="N/A" />
                                 </Group>
                             </Radio.Group>
                         </Stack>
@@ -516,6 +544,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                                 <Radio value="ipsilateral" label="Ipsilateral" />
                                 <Radio value="non-lateralizable" label="Non-lateralizable" />
                                 <Radio value="contralateral" label="Contralateral" />
+                                <Radio value="" label="N/A" />
                             </Group>
                         </Radio.Group>
                         <Radio.Group
@@ -525,6 +554,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                             <Group mt="xs">
                                 <Radio value="dominant" label="Dominant" />
                                 <Radio value="non-dominant" label="Non-dominant" />
+                                <Radio value="" label="N/A" />
                             </Group>
                         </Radio.Group>
                         <NativeSelect
@@ -711,6 +741,7 @@ export const CreateEditResultForm = ({ onSubmit, edit_result, rois, effects, tas
                 </Tabs>
 
                 <Group position="right" mt="md">
+                    {onCancel!=undefined && <Button type="reset" variant="light" onClick={() => {form.reset(); onCancel();}}>Cancel</Button>}
                     <Button type="submit">Save</Button>
                 </Group>
             </form>
@@ -772,6 +803,7 @@ export interface CreateEditResultFormValues {
 
 interface CreateEditResultFormProps {
     onSubmit: (values: CreateEditResultFormValues) => void;
+    onCancel: () => void;
     edit_result?: ResultDdo;
     rois: ROIDdo[];
     effects: EffectDdo[];
