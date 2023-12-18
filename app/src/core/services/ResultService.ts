@@ -32,6 +32,7 @@ export class ResultService {
             return true;
         }
         catch (e) {
+            console.log(result);
             console.log(e);
             return false;
         }

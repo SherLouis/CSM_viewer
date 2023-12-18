@@ -31,10 +31,11 @@ const ResultsTable = (props: ResultsTableProps) => {
                 frequency_hz_max: values.stimulation_parameters.frequency_hz_max,
                 duration_s: values.stimulation_parameters.duration_s,
                 duration_s_max: values.stimulation_parameters.duration_s_max,
-                electrode_type: values.stimulation_parameters.electrode_type,
-                electrode_separation: values.stimulation_parameters.electrode_separation,
-                electrode_diameter: values.stimulation_parameters.electrode_diameter,
-                electrode_length: values.stimulation_parameters.electrode_length,
+                electrode_make: values.stimulation_parameters.electrode_make,
+                implentation_type: values.stimulation_parameters.implentation_type,
+                contact_separation: values.stimulation_parameters.contact_separation,
+                contact_diameter: values.stimulation_parameters.contact_diameter,
+                contact_length: values.stimulation_parameters.contact_length,
                 phase_length: values.stimulation_parameters.phase_length,
                 phase_type: values.stimulation_parameters.phase_type
             },
@@ -85,10 +86,10 @@ const ResultsTable = (props: ResultsTableProps) => {
                 frequency_hz_max: 0,
                 duration_s: 0,
                 duration_s_max: 0,
-                electrode_type: '',
-                electrode_separation: 0,
-                electrode_diameter: 0,
-                electrode_length: 0,
+                implentation_type: '',
+                contact_separation: 0,
+                contact_diameter: 0,
+                contact_length: 0,
                 phase_length: 0,
                 phase_type: ''
             },
@@ -234,7 +235,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                             <Text>
                                 {(result.stimulation_parameters.amplitude_ma ? result.stimulation_parameters.amplitude_ma : '-') + ' mA '
                                     + '| ' + (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s '
-                                    + '| ' + (result.stimulation_parameters.electrode_separation ? result.stimulation_parameters.electrode_separation : '-') + ' mm '
+                                    + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
                                     + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}
                             </Text>
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'stim')}>

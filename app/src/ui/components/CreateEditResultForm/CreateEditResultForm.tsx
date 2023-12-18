@@ -26,10 +26,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 frequency_hz_max: edit_result && edit_result.stimulation_parameters.frequency_hz_max != null ? edit_result.stimulation_parameters.frequency_hz_max : 0,
                 duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0,
                 duration_s_max: edit_result && edit_result.stimulation_parameters.duration_s_max != null ? edit_result.stimulation_parameters.duration_s_max : 0,
-                electrode_type: edit_result && edit_result.stimulation_parameters.electrode_type != null ? edit_result.stimulation_parameters.electrode_type : "",
-                electrode_separation: edit_result && edit_result.stimulation_parameters.electrode_separation != null ? edit_result.stimulation_parameters.electrode_separation : 0,
-                electrode_diameter: edit_result && edit_result.stimulation_parameters.electrode_diameter != null ? edit_result.stimulation_parameters.electrode_diameter : 0,
-                electrode_length: edit_result && edit_result.stimulation_parameters.electrode_length != null ? edit_result.stimulation_parameters.electrode_length : 0,
+                electrode_make: edit_result && edit_result.stimulation_parameters.electrode_make != null ? edit_result.stimulation_parameters.electrode_make : "",
+                implentation_type: edit_result && edit_result.stimulation_parameters.implentation_type != null ? edit_result.stimulation_parameters.implentation_type : "",
+                contact_separation: edit_result && edit_result.stimulation_parameters.contact_separation != null ? edit_result.stimulation_parameters.contact_separation : 0,
+                contact_diameter: edit_result && edit_result.stimulation_parameters.contact_diameter != null ? edit_result.stimulation_parameters.contact_diameter : 0,
+                contact_length: edit_result && edit_result.stimulation_parameters.contact_length != null ? edit_result.stimulation_parameters.contact_length : 0,
                 phase_length: edit_result && edit_result.stimulation_parameters.phase_length != null ? edit_result.stimulation_parameters.phase_length : 0,
                 phase_type: edit_result && edit_result.stimulation_parameters.phase_type != null ? edit_result.stimulation_parameters.phase_type : "",
             },
@@ -195,16 +196,12 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
     const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
         const options = [
-            { implantationType: "SEEG", diameter: 1, separation: 2, lenght: 0 },
-            { implantationType: "SEEG", diameter: 1, separation: 3, lenght: 0 },
-            { implantationType: "SEEG", diameter: 1, separation: 4, lenght: 0 },
-            { implantationType: "SEEG", diameter: 1, separation: 5, lenght: 0 },
-            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 1 },
-            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 2 },
-            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 3 },
-            { implantationType: "DIXI", diameter: 0, separation: 5, lenght: 4 },
+            { implantationType: "SEEG", make: "AdTech", diameter: 0.9, separation: 3, lenght: 2.3 },
+            { implantationType: "SEEG", make: "AdTech", diameter: 0.9, separation: 4, lenght: 2.3 },
+            { implantationType: "SEEG", make: "Dixi", diameter: 0.8, separation: 3.5, lenght: 2 },
+            { implantationType: "SEEG", make: "Huake-Hengsheng", diameter: 0.8, separation: 3.5, lenght: 2 },
         ] as ElectrodeOption[];
-        return new Map(options.map(opt => [opt.implantationType + '|' + opt.diameter + '|' + opt.separation + '|' + opt.lenght, opt]));
+        return new Map(options.map(opt => [opt.implantationType + '|' + opt.make + '|' + opt.diameter + '|' + opt.separation + '|' + opt.lenght, opt]));
     }
 
     const ElectrodeOptions = getElectrodeOptions();
@@ -389,17 +386,18 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 onChange={(event) => {
                                     if (ElectrodeOptions.has(event.target.value)) {
                                         var option = ElectrodeOptions.get(event.target.value);
-                                        form.setFieldValue('stimulation_parameters.electrode_type', option.implantationType);
-                                        form.setFieldValue('stimulation_parameters.electrode_diameter', option.diameter);
-                                        form.setFieldValue('stimulation_parameters.electrode_separation', option.separation);
-                                        form.setFieldValue('stimulation_parameters.electrode_length', option.lenght);
+                                        form.setFieldValue('stimulation_parameters.implentation_type', option.implantationType);
+                                        form.setFieldValue('stimulation_parameters.electrode_make', option.make);
+                                        form.setFieldValue('stimulation_parameters.contact_diameter', option.diameter);
+                                        form.setFieldValue('stimulation_parameters.contact_separation', option.separation);
+                                        form.setFieldValue('stimulation_parameters.contact_length', option.lenght);
                                     }
                                 }}
                             />
                             <Group position="apart">
                                 <Radio.Group
-                                    label="Type"
-                                    {...form.getInputProps('stimulation_parameters.electrode_type')}
+                                    label="Implentation type"
+                                    {...form.getInputProps('stimulation_parameters.implentation_type')}
                                 >
                                     <Group mt="xs">
                                         <Radio value="SEEG" label="SEEG" />
@@ -407,17 +405,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                         <Radio value="" label="N/A" />
                                     </Group>
                                 </Radio.Group>
+                                <TextInput 
+                                    label="Electrode make"
+                                    {...form.getInputProps('stimulation_parameters.electrode_make')}
+                                />
                                 <NumberInput
                                     label="Contact diameter (mm)"
-                                    {...form.getInputProps('stimulation_parameters.electrode_diameter')}
+                                    {...form.getInputProps('stimulation_parameters.contact_diameter')}
                                 />
                                 <NumberInput
                                     label="Contact separation (mm)"
-                                    {...form.getInputProps('stimulation_parameters.electrode_separation')}
+                                    {...form.getInputProps('stimulation_parameters.contact_separation')}
                                 />
                                 <NumberInput
                                     label="Contact length (mm)"
-                                    {...form.getInputProps('stimulation_parameters.electrode_length')}
+                                    {...form.getInputProps('stimulation_parameters.contact_length')}
                                 />
                             </Group>
                         </Stack>
@@ -749,7 +751,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     )
 }
 
-interface ElectrodeOption { implantationType: "SEEG" | "Grids", diameter: number, separation: number, lenght: number }
+interface ElectrodeOption { implantationType: "SEEG" | "Grids", make: string, diameter: number, separation: number, lenght: number }
 
 export interface CreateEditResultFormValues {
     roi: {
@@ -766,10 +768,11 @@ export interface CreateEditResultFormValues {
         frequency_hz_max: number,
         duration_s: number,
         duration_s_max: number,
-        electrode_type: string,
-        electrode_separation: number,
-        electrode_diameter: number,
-        electrode_length: number,
+        implentation_type: string,
+        electrode_make: string,
+        contact_separation: number,
+        contact_diameter: number,
+        contact_length: number,
         phase_length: number,
         phase_type: string,
     }
@@ -803,7 +806,7 @@ export interface CreateEditResultFormValues {
 
 interface CreateEditResultFormProps {
     onSubmit: (values: CreateEditResultFormValues) => void;
-    onCancel: () => void;
+    onCancel?: () => void;
     edit_result?: ResultDdo;
     rois: ROIDdo[];
     effects: EffectDdo[];

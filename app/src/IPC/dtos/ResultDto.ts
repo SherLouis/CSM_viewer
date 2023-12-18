@@ -18,10 +18,11 @@ export type ResultDto = {
         frequency_hz_max: number,
         duration_s: number,
         duration_s_max: number,
-        electrode_type: string,
-        electrode_separation: number,
-        electrode_diameter: number,
-        electrode_length: number,
+        electrode_make: string,
+        implentation_type: string,
+        contact_separation: number,
+        contact_diameter: number,
+        contact_length: number,
         phase_length: number,
         phase_type: string,
     }
@@ -83,16 +84,20 @@ export class ResultsDtoMapper {
                 lateralization: dto.effect.lateralization != '' ? dto.effect.lateralization : null,
                 dominant: dto.effect.dominant != '' ? dto.effect.dominant : null,
                 body_part: dto.effect.body_part != '' ? dto.effect.body_part : null,
+                post_discharge: dto.effect.post_discharge === null ? false : dto.effect.post_discharge,
+                comments: dto.effect.comments
             },
             task: {
                 category: dto.task.category != '' ? dto.task.category : null,
                 subcategory: dto.task.subcategory != '' ? dto.task.subcategory : null,
                 characteristic: dto.task.characteristic != '' ? dto.task.characteristic : null,
+                comments: dto.task.comments
             },
             function: {
                 category: dto.function.category != '' ? dto.function.category : null,
                 subcategory: dto.function.subcategory != '' ? dto.function.subcategory : null,
                 characteristic: dto.function.characteristic != '' ? dto.function.characteristic : null,
+                comments: dto.function.comments
             }
         } as Result
     }
