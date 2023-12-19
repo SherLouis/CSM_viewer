@@ -6,7 +6,6 @@ export type EffectEntity = {
     category: string,
     semiology: string,
     characteristic: string,
-    precision: string,
     is_manual: number
 }
 
@@ -16,7 +15,6 @@ export const EffectEntityToModel = (entity: EffectEntity): Effect => {
         category: entity.category,
         semiology: entity.semiology,
         characteristic: entity.characteristic,
-        precision: entity.precision,
         is_manual: entity.is_manual > 0,
     } as Effect
 }

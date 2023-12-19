@@ -3,7 +3,8 @@ import { SourceSummary } from "../../core/models/Source";
 export type SourceSummaryDto = {
     id: number,
     title: string,
-    nb_results: number
+    nb_results: number,
+    state: "À Faire" | "Fait" | "À Discutter"
 }
 
 export class SourceSummaryDtoMapper {
@@ -11,7 +12,8 @@ export class SourceSummaryDtoMapper {
         return {
             id: model.id,
             title: model.title,
-            nb_results: model.nb_results
+            nb_results: model.nb_results,
+            state: model.state,
         };
     }
 }

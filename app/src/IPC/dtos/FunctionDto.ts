@@ -6,7 +6,6 @@ export type FunctionDto = {
     category: string,
     subcategory: string,
     characteristic: string,
-    precision: string,
     is_manual: boolean
 }
 

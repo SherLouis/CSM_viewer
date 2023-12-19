@@ -2,7 +2,7 @@ import { Box, Button, Container, Group, LoadingOverlay, Modal, Stack, Text } fro
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from "react-router-dom"
 import SourcesTable from "../../../components/SourcesTable/SourcesTable";
-import { IconCheck, IconCircleX, IconPlus, IconRefresh, IconTrash, IconX} from "@tabler/icons-react";
+import { IconCheck, IconCircleX, IconPlus, IconRefresh, IconTrash, IconX } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { CreateEditSourceForm, CreateFormValues } from "../../../components/CreateEditSourceForm/CreateEditSourceForm";
 import SourceUIService from "../../../services/SourceUIService";
@@ -45,7 +45,7 @@ export function SourcesPage() {
     SourceUIService.getAllSourcesSummary()
       .then((res) => {
         setSources(res);
-        setIsLoading(false)
+        setIsLoading(false);
       });
   }, [sources]);
 
@@ -69,7 +69,7 @@ export function SourcesPage() {
           title: res.successful ? "Created" : "Error",
           message: res.message,
           color: res.successful ? 'teal' : 'red',
-          icon: res.successful ? <IconCheck /> : <IconX/>,
+          icon: res.successful ? <IconCheck /> : <IconX />,
           loading: false,
         });
         setIsLoading(false)
@@ -93,7 +93,8 @@ export function SourcesPage() {
       location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
-      cohort: values.reference.cohort
+      cohort: values.reference.cohort,
+      state: values.status,
     } as SourceDdo;
     SourceUIService.editSource(currentSource.id, SourceDtoFromDdo(source))
       .then((res: EditResponseDto) => {
@@ -101,7 +102,7 @@ export function SourcesPage() {
         if (res.successful) {
           setSources(sources.map(a => {
             if (a.id === currentSource.id) {
-              return { id: source.id, title: source.title, nb_results: a.nb_results };
+              return { id: source.id, title: source.title, nb_results: a.nb_results, state: source.state };
             }
             else {
               return a;
@@ -114,7 +115,7 @@ export function SourcesPage() {
           title: res.successful ? "Saved" : "Error",
           message: res.message,
           color: res.successful ? 'teal' : 'red',
-          icon: res.successful ? <IconCheck /> : <IconX/>,
+          icon: res.successful ? <IconCheck /> : <IconX />,
           loading: false,
         });
         setIsLoading(false);
@@ -145,7 +146,7 @@ export function SourcesPage() {
           title: res.successful ? "Deleted" : "Error",
           message: res.message,
           color: res.successful ? 'teal' : 'red',
-          icon: res.successful ? <IconCheck /> : <IconX/>,
+          icon: res.successful ? <IconCheck /> : <IconX />,
           loading: false,
         });
         setIsLoading(false)
@@ -186,7 +187,8 @@ export function SourcesPage() {
       location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
-      cohort: values.reference.cohort
+      cohort: values.reference.cohort,
+      state: values.status
     } as SourceDdo;
     createSource(source);
     createEditModalHandlers.close();
@@ -210,12 +212,13 @@ export function SourcesPage() {
         </Modal>
 
         <Box h={"70vh"}>
-          <SourcesTable
-            data={sources}
-            onRowClick={(sourceId) => viewSource(sourceId)}
-            onEdit={(sourceId) => onEditSource(sourceId)}
-            onDelete={(sourceId) => onDeleteSource(sourceId)}
-          />
+          {!isLoading &&
+            <SourcesTable
+              data={sources}
+              onRowClick={(sourceId) => viewSource(sourceId)}
+              onEdit={(sourceId) => onEditSource(sourceId)}
+              onDelete={(sourceId) => onDeleteSource(sourceId)}
+            />}
         </Box>
       </Stack>
 

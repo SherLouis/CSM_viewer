@@ -6,7 +6,6 @@ export type FunctionEntity = {
     category: string,
     subcategory: string,
     characteristic: string,
-    precision: string,
     is_manual: number
 }
 
@@ -16,7 +15,6 @@ export const FunctionEntityToModel = (entity: FunctionEntity): Function => {
         category: entity.category,
         subcategory: entity.subcategory,
         characteristic: entity.characteristic,
-        precision: entity.precision,
         is_manual: entity.is_manual > 0,
     } as Function
 }

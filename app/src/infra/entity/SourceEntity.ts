@@ -9,7 +9,8 @@ export type SourceEntity = {
     location: string,
     doi: string,
     title: string,
-    cohort: number
+    cohort: number,
+    state: "À Faire" | "Fait" | "À Discutter"
 }
 
 export const SourceToEntity = (model: Source): SourceEntity => {
@@ -22,7 +23,8 @@ export const SourceToEntity = (model: Source): SourceEntity => {
         location: model.location,
         doi: model.doi,
         title: model.title,
-        cohort: model.cohort
+        cohort: model.cohort,
+        state: model.state
     }
 }
 
@@ -36,6 +38,7 @@ export const SourceEntityToModel = (entity: SourceEntity): Source => {
         location: entity.location,
         doi: entity.doi,
         title: entity.title,
-        cohort: entity.cohort
+        cohort: entity.cohort,
+        state: entity.state
     }
 }

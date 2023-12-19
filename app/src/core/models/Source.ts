@@ -1,7 +1,8 @@
 export type SourceSummary = {
     id: number,
     title: string,
-    nb_results: number
+    nb_results: number,
+    state: "À Faire" | "Fait" | "À Discutter"
 }
 
 export type Source = {
@@ -13,5 +14,6 @@ export type Source = {
     location: string,
     doi: string,
     title: string,
-    cohort: number
+    cohort: number,
+    state: "À Faire" | "Fait" | "À Discutter"
 }

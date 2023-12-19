@@ -14,6 +14,7 @@ export default class ResultUIService {
     public static getAllResultsForSource = async (sourceId: number): Promise<ResultDdo[]> => {
         console.debug(`Getting Results for source ${sourceId}`);
         let response = await window.electronAPI.getAllResultsForSource(sourceId);
+        console.debug(response);
         return response.map((dto) => ResultsDtoMapper.DtoToDdo(dto));
     }
 

@@ -56,15 +56,15 @@ export const SourceDetailsPage = () => {
                                         effectsHandlers.setState(res_effects)
                                         console.debug("getting Tasks");
                                         ResultUIService.getTasks()
-                                        .then((tasks) => {
-                                            tasksHandlers.setState(tasks)
-                                            console.debug("getting Functions");
-                                            ResultUIService.getFunctions()
-                                            .then((functions) => {
-                                                functionsHandlers.setState(functions);
-                                                setIsLoading(false);
+                                            .then((tasks) => {
+                                                tasksHandlers.setState(tasks)
+                                                console.debug("getting Functions");
+                                                ResultUIService.getFunctions()
+                                                    .then((functions) => {
+                                                        functionsHandlers.setState(functions);
+                                                        setIsLoading(false);
+                                                    })
                                             })
-                                        })
                                     })
                             })
                     });
@@ -248,38 +248,54 @@ export const SourceDetailsPage = () => {
     const onCreateResult = (values: CreateEditResultFormValues) => {
         const result = {
             roi: {
+                side: values.roi.side,
                 lobe: values.roi.lobe,
                 gyrus: values.roi.gyrus,
                 sub: values.roi.sub,
                 precision: values.roi.precision
             },
+            roi_destrieux: values.roi_destrieux,
             stimulation_parameters: {
                 amplitude_ma: values.stimulation_parameters.amplitude_ma,
+                amplitude_ma_max: values.stimulation_parameters.amplitude_ma_max,
                 frequency_hz: values.stimulation_parameters.frequency_hz,
-                electrode_separation_mm: values.stimulation_parameters.electrode_separation_mm,
-                duration_s: values.stimulation_parameters.duration_s
+                frequency_hz_max: values.stimulation_parameters.frequency_hz_max,
+                duration_s: values.stimulation_parameters.duration_s,
+                duration_s_max: values.stimulation_parameters.duration_s_max,
+                electrode_make: values.stimulation_parameters.electrode_make,
+                implentation_type: values.stimulation_parameters.implentation_type,
+                contact_separation: values.stimulation_parameters.contact_separation,
+                contact_diameter: values.stimulation_parameters.contact_diameter,
+                contact_length: values.stimulation_parameters.contact_length,
+                phase_length: values.stimulation_parameters.phase_length,
+                phase_type: values.stimulation_parameters.phase_type
             },
             effect: {
                 category: values.effect.category,
                 semiology: values.effect.semiology,
                 characteristic: values.effect.characteristic,
-                precision: values.effect.precision,
-                post_discharge: values.effect.post_discharge
+                post_discharge: values.effect.post_discharge,
+                lateralization: values.effect.lateralization,
+                dominant: values.effect.dominant,
+                body_part: values.effect.body_part,
+                comments: values.effect.comments
             },
             task: {
                 category: values.task.category,
                 subcategory: values.task.subcategory,
                 characteristic: values.task.characteristic,
-                precision: values.task.precision,
+                comments: values.task.comments
             },
             function: {
                 category: values.function.category,
                 subcategory: values.function.subcategory,
                 characteristic: values.function.characteristic,
-                precision: values.function.precision,
+                comments: values.function.comments
             },
             occurrences: values.occurrences,
-            comments: values.comments
+            comments: values.comments,
+            comments_2: values.comments_2,
+            precision_score: values.precision_score
         } as ResultDdo
         setShowCreateForm(false);
         createResult(result);
@@ -305,13 +321,11 @@ export const SourceDetailsPage = () => {
             category: result.effect.category != '' ? result.effect.category : null,
             semiology: result.effect.semiology != '' ? result.effect.semiology : null,
             characteristic: result.effect.characteristic != '' ? result.effect.characteristic : null,
-            precision: result.effect.precision != '' ? result.effect.precision : null,
         }
         const isNewEffect = effects.filter((e) =>
             e.category === effect.category &&
             e.semiology === effect.semiology &&
-            e.characteristic === effect.characteristic &&
-            e.precision === effect.precision).length === 0;
+            e.characteristic === effect.characteristic).length === 0;
         return isNewEffect;
     }
 
@@ -320,13 +334,11 @@ export const SourceDetailsPage = () => {
             category: result.task.category != '' ? result.task.category : null,
             subcategory: result.task.subcategory != '' ? result.task.subcategory : null,
             characteristic: result.task.characteristic != '' ? result.task.characteristic : null,
-            precision: result.task.precision != '' ? result.task.precision : null,
         }
         const isNew = tasks.filter((i) =>
             i.category === task.category &&
             i.subcategory === task.subcategory &&
-            i.characteristic === task.characteristic &&
-            i.precision === task.precision).length === 0;
+            i.characteristic === task.characteristic).length === 0;
         return isNew;
     }
 
@@ -334,17 +346,16 @@ export const SourceDetailsPage = () => {
         const func = {
             category: result.task.category != '' ? result.task.category : null,
             subcategory: result.task.subcategory != '' ? result.task.subcategory : null,
-            characteristic: result.task.characteristic != '' ? result.task.characteristic : null,
-            precision: result.task.precision != '' ? result.task.precision : null,
+            characteristic: result.task.characteristic != '' ? result.task.characteristic : null
         }
         const isNew = functions.filter((i) =>
             i.category === func.category &&
             i.subcategory === func.subcategory &&
-            i.characteristic === func.characteristic &&
-            i.precision === func.precision).length === 0;
+            i.characteristic === func.characteristic).length === 0;
         return isNew;
     }
 
+    console.debug(results);
     return (
         <Container size={"80%"}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
@@ -374,6 +385,7 @@ export const SourceDetailsPage = () => {
                         {showCreateForm && (
                             <CreateEditResultForm
                                 onSubmit={(values) => onCreateResult(values)}
+                                onCancel={() => setShowCreateForm(false)}
                                 rois={rois}
                                 effects={effects}
                                 tasks={tasks}
