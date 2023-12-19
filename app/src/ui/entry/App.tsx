@@ -6,7 +6,6 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import BasePage from './BasePage';
 import { SourcesPage } from '../pages/Edit/SourcesPage/SourcesPage';
 import { SourceDetailsPage } from '../pages/Edit/SourceDetailsPage/SourceDetailsPage';
-import CanadaProvingSvg from '../components/SvgSelectableComponent/CanadaProvinceSvg';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
