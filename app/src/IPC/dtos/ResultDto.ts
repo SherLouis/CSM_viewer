@@ -10,7 +10,8 @@ export type ResultDto = {
         gyrus: string,
         sub: string,
         precision: string
-    }
+    },
+    roi_destrieux: string[],
     stimulation_parameters: {
         amplitude_ma: number,
         amplitude_ma_max: number,

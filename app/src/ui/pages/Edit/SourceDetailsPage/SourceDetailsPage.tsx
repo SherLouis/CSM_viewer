@@ -254,6 +254,7 @@ export const SourceDetailsPage = () => {
                 sub: values.roi.sub,
                 precision: values.roi.precision
             },
+            roi_destrieux: values.roi_destrieux,
             stimulation_parameters: {
                 amplitude_ma: values.stimulation_parameters.amplitude_ma,
                 amplitude_ma_max: values.stimulation_parameters.amplitude_ma_max,

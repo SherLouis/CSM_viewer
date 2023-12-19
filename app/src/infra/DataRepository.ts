@@ -189,6 +189,7 @@ export default class DataRepository implements IDataRepository {
                              ROIs.gyrus AS roi_gyrus,
                              ROIs.sub AS roi_sub,
                              ROIs.precision AS roi_precision,
+                             Results.roi_destrieux,
                              Results.stim_amp_ma,
                              Results.stim_amp_ma_max,
                              Results.stim_freq,
@@ -253,12 +254,13 @@ export default class DataRepository implements IDataRepository {
         }
 
         const stmt = `INSERT INTO Results 
-        (source_id, roi_side, roi_id, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, effect_id, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_id, task_comments, function_id, function_comments, occurrences, comments, comments_2, precision_score)
-        Values (@source_id, @roi_side, @roi_id, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @effect_id, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_id, @task_comments, @function_id, @function_comments, @occurrences, @comments, @comments_2, @precision_score)`
+        (source_id, roi_side, roi_id, roi_destrieux, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, effect_id, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_id, task_comments, function_id, function_comments, occurrences, comments, comments_2, precision_score)
+        Values (@source_id, @roi_side, @roi_id, @roi_destrieux, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @effect_id, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_id, @task_comments, @function_id, @function_comments, @occurrences, @comments, @comments_2, @precision_score)`
         this.db.prepare(stmt).run({
             source_id: newResult.source_id,
             roi_side: newResult.roi.side,
             roi_id: newRoiId,
+            roi_destrieux: newResult.roi_destrieux != null ? newResult.roi_destrieux.map(i=>i.toString()).join(",") : "",
             stim_amp_ma: newResult.stimulation_parameters.amplitude_ma,
             stim_amp_ma_max: newResult.stimulation_parameters.amplitude_ma_max,
             stim_freq: newResult.stimulation_parameters.frequency_hz,
@@ -311,6 +313,7 @@ export default class DataRepository implements IDataRepository {
         UPDATE Results SET 
             roi_side=@roi_side,
             roi_id=@roi_id,
+            roi_destrieux=@roi_destrieux,
             stim_amp_ma=@stim_amp_ma,
             stim_amp_ma_max=@stim_amp_ma_max,
             stim_freq=@stim_freq,
@@ -342,6 +345,7 @@ export default class DataRepository implements IDataRepository {
         this.db.prepare(stmt).run({
             roi_side: newResult.roi.side,
             roi_id: newRoiId,
+            roi_destrieux: newResult.roi_destrieux != null ? newResult.roi_destrieux.map(i=>i.toString()).join(",") : "",
             stim_amp_ma: newResult.stimulation_parameters.amplitude_ma,
             stim_amp_ma_max: newResult.stimulation_parameters.amplitude_ma_max,
             stim_freq: newResult.stimulation_parameters.frequency_hz,
@@ -625,6 +629,7 @@ export default class DataRepository implements IDataRepository {
                 source_id INTEGER NOT NULL,
                 roi_side TEXT,
                 roi_id INTEGER,
+                roi_destrieux TEXT,
                 stim_amp_ma REAL,
                 stim_amp_ma_max REAL,
                 stim_freq INTEGER,

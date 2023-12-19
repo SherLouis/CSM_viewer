@@ -8,6 +8,7 @@ export type ReadResultEntity = {
     roi_gyrus: string,
     roi_sub: string,
     roi_precision: string,
+    roi_destrieux: string,
     stim_amp_ma: number,
     stim_amp_ma_max: number,
     stim_freq: number,
@@ -54,6 +55,7 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
             sub: readEntity.roi_sub,
             precision: readEntity.roi_precision
         },
+        roi_destrieux: readEntity.roi_destrieux.split(","),
         stimulation_parameters: {
             amplitude_ma: readEntity.stim_amp_ma,
             amplitude_ma_max: readEntity.stim_amp_ma_max,
