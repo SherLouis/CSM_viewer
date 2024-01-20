@@ -5,8 +5,7 @@ export type FunctionDto = {
     level: string,
     category: string,
     subcategory: string,
-    characteristic: string,
-    is_manual: boolean
+    characteristic: string
 }
 
 export class FunctionDtoMapper {

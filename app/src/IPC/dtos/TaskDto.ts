@@ -5,8 +5,7 @@ export type TaskDto = {
     level: string,
     category: string,
     subcategory: string,
-    characteristic: string,
-    is_manual: boolean
+    characteristic: string
 }
 
 export class TaskDtoMapper {

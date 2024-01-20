@@ -81,46 +81,6 @@ export const SourceDetailsPage = () => {
             });
     }, [currentSource]);
 
-    const refreshRois = useCallback(() => {
-        setIsLoading(true);
-        console.debug("getting ROIs");
-        ResultUIService.getROIs()
-            .then((rois) => {
-                roisHandlers.setState(rois);
-                setIsLoading(false);
-            })
-    }, []);
-
-    const refreshEffects = useCallback(() => {
-        setIsLoading(true);
-        console.debug("getting Effects");
-        ResultUIService.getEffects()
-            .then((effects) => {
-                effectsHandlers.setState(effects);
-                setIsLoading(false);
-            })
-    }, []);
-
-    const refreshTasks = useCallback(() => {
-        setIsLoading(true);
-        console.debug("getting Tasks");
-        ResultUIService.getTasks()
-            .then((tasks) => {
-                tasksHandlers.setState(tasks);
-                setIsLoading(false);
-            })
-    }, []);
-
-    const refreshFunctions = useCallback(() => {
-        setIsLoading(true);
-        console.debug("getting Functions");
-        ResultUIService.getFunctions()
-            .then((functions) => {
-                functionsHandlers.setState(functions);
-                setIsLoading(false);
-            })
-    }, []);
-
     // Listen for the event db location changed
     useEffect(() => {
         window.electronAPI.dbLocationChanged((event, value) => {
@@ -141,20 +101,7 @@ export const SourceDetailsPage = () => {
             .then((res: CreateResponseDto) => {
                 console.debug(res);
                 if (res.successful) {
-                    // TODO: add new id in response and append to list instead of refreshing all
                     refreshResults();
-                    if (shouldCreateNewRoi(result)) {
-                        refreshRois();
-                    }
-                    if (shouldCreateNewEffect(result)) {
-                        refreshEffects();
-                    }
-                    if (shouldCreateNewTask(result)) {
-                        refreshTasks();
-                    }
-                    if (shouldCreateNewFunction(result)) {
-                        refreshFunctions();
-                    }
                 }
                 notifications.update({
                     id: 'creatingResult',
@@ -184,18 +131,6 @@ export const SourceDetailsPage = () => {
                         (r) => (r.id === result.id),
                         (r) => result
                     );
-                    if (shouldCreateNewRoi(result)) {
-                        refreshRois();
-                    }
-                    if (shouldCreateNewEffect(result)) {
-                        refreshEffects();
-                    }
-                    if (shouldCreateNewTask(result)) {
-                        refreshTasks();
-                    }
-                    if (shouldCreateNewFunction(result)) {
-                        refreshFunctions();
-                    }
                 }
                 notifications.update({
                     id: 'editingResult',
@@ -250,11 +185,14 @@ export const SourceDetailsPage = () => {
             roi: {
                 side: values.roi.side,
                 lobe: values.roi.lobe,
-                gyrus: values.roi.gyrus,
-                sub: values.roi.sub,
-                precision: values.roi.precision
+                region: values.roi.region,
+                area: values.roi.area,
+                from_figure: values.roi.from_figure,
+                mni_x: values.roi.mni_x,
+                mni_y: values.roi.mni_y,
+                mni_z: values.roi.mni_z,
+                mni_average: values.roi.mni_average,
             },
-            roi_destrieux: values.roi_destrieux,
             stimulation_parameters: {
                 amplitude_ma: values.stimulation_parameters.amplitude_ma,
                 amplitude_ma_max: values.stimulation_parameters.amplitude_ma_max,
@@ -271,9 +209,9 @@ export const SourceDetailsPage = () => {
                 phase_type: values.stimulation_parameters.phase_type
             },
             effect: {
-                category: values.effect.category,
-                semiology: values.effect.semiology,
-                characteristic: values.effect.characteristic,
+                class: values.effect.class,
+                descriptor: values.effect.descriptor,
+                details: values.effect.details,
                 post_discharge: values.effect.post_discharge,
                 lateralization: values.effect.lateralization,
                 dominant: values.effect.dominant,
@@ -290,6 +228,7 @@ export const SourceDetailsPage = () => {
                 category: values.function.category,
                 subcategory: values.function.subcategory,
                 characteristic: values.function.characteristic,
+                article_designed_for_function: values.function.article_designed_for_function,
                 comments: values.function.comments
             },
             occurrences: values.occurrences,
@@ -303,56 +242,6 @@ export const SourceDetailsPage = () => {
 
     const onCreateButton = () => {
         setShowCreateForm(true);
-    }
-
-    const shouldCreateNewRoi = (result: ResultDdo): boolean => {
-        const roi = {
-            lobe: result.roi.lobe != '' ? result.roi.lobe : null,
-            gyrus: result.roi.gyrus != '' ? result.roi.gyrus : null,
-            sub: result.roi.sub != '' ? result.roi.sub : null,
-            precision: result.roi.precision != '' ? result.roi.precision : null,
-        }
-        const isNewRoi = rois.filter((r) => r.lobe === roi.lobe && r.gyrus === roi.gyrus && r.sub === roi.sub && r.precision === roi.precision).length === 0;
-        return isNewRoi;
-    }
-
-    const shouldCreateNewEffect = (result: ResultDdo): boolean => {
-        const effect = {
-            category: result.effect.category != '' ? result.effect.category : null,
-            semiology: result.effect.semiology != '' ? result.effect.semiology : null,
-            characteristic: result.effect.characteristic != '' ? result.effect.characteristic : null,
-        }
-        const isNewEffect = effects.filter((e) =>
-            e.category === effect.category &&
-            e.semiology === effect.semiology &&
-            e.characteristic === effect.characteristic).length === 0;
-        return isNewEffect;
-    }
-
-    const shouldCreateNewTask = (result: ResultDdo): boolean => {
-        const task = {
-            category: result.task.category != '' ? result.task.category : null,
-            subcategory: result.task.subcategory != '' ? result.task.subcategory : null,
-            characteristic: result.task.characteristic != '' ? result.task.characteristic : null,
-        }
-        const isNew = tasks.filter((i) =>
-            i.category === task.category &&
-            i.subcategory === task.subcategory &&
-            i.characteristic === task.characteristic).length === 0;
-        return isNew;
-    }
-
-    const shouldCreateNewFunction = (result: ResultDdo): boolean => {
-        const func = {
-            category: result.task.category != '' ? result.task.category : null,
-            subcategory: result.task.subcategory != '' ? result.task.subcategory : null,
-            characteristic: result.task.characteristic != '' ? result.task.characteristic : null
-        }
-        const isNew = functions.filter((i) =>
-            i.category === func.category &&
-            i.subcategory === func.subcategory &&
-            i.characteristic === func.characteristic).length === 0;
-        return isNew;
     }
 
     console.debug(results);

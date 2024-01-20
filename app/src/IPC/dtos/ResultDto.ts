@@ -7,11 +7,14 @@ export type ResultDto = {
     roi: {
         side: string,
         lobe: string,
-        gyrus: string,
-        sub: string,
-        precision: string
+        region: string,
+        area: string,
+        from_figure: boolean,
+        mni_x: number,
+        mni_y: number,
+        mni_z: number,
+        mni_average: boolean,
     },
-    roi_destrieux: string[],
     stimulation_parameters: {
         amplitude_ma: number,
         amplitude_ma_max: number,
@@ -28,10 +31,10 @@ export type ResultDto = {
         phase_type: string,
     }
     effect: {
-        category: string,
-        semiology: string,
-        characteristic: string,
-        post_discharge: boolean,
+        class: string,
+        descriptor: string,
+        details: string,
+        post_discharge: string,
         lateralization: string,
         dominant: string,
         body_part: string,
@@ -47,6 +50,7 @@ export type ResultDto = {
         category: string,
         subcategory: string,
         characteristic: string,
+        article_designed_for_function: boolean,
         comments: string,
     },
     occurrences: number,
@@ -57,7 +61,7 @@ export type ResultDto = {
 
 export class ResultsDtoMapper {
     public static DdotoDto = (source_id: number, ddo: ResultDdo): ResultDto => {
-        return {...ddo, source_id: source_id};
+        return { ...ddo, source_id: source_id };
     }
 
     public static DtoToDdo = (dto: ResultDto) => {
@@ -74,18 +78,22 @@ export class ResultsDtoMapper {
             roi: {
                 side: dto.roi.side != '' ? dto.roi.side : null,
                 lobe: dto.roi.lobe != '' ? dto.roi.lobe : null,
-                gyrus: dto.roi.gyrus != '' ? dto.roi.gyrus : null,
-                sub: dto.roi.sub != '' ? dto.roi.sub : null,
-                precision: dto.roi.precision != '' ? dto.roi.precision : null
+                region: dto.roi.region != '' ? dto.roi.region : null,
+                area: dto.roi.area != '' ? dto.roi.area : null,
+                from_figure: dto.roi.from_figure,
+                mni_x: dto.roi.mni_x,
+                mni_y: dto.roi.mni_y,
+                mni_z: dto.roi.mni_z,
+                mni_average: dto.roi.mni_average,
             },
             effect: {
-                category: dto.effect.category != '' ? dto.effect.category : null,
-                semiology: dto.effect.semiology != '' ? dto.effect.semiology : null,
-                characteristic: dto.effect.characteristic != '' ? dto.effect.characteristic : null,
+                class: dto.effect.class != '' ? dto.effect.class : null,
+                descriptor: dto.effect.descriptor != '' ? dto.effect.descriptor : null,
+                details: dto.effect.details != '' ? dto.effect.details : null,
                 lateralization: dto.effect.lateralization != '' ? dto.effect.lateralization : null,
                 dominant: dto.effect.dominant != '' ? dto.effect.dominant : null,
                 body_part: dto.effect.body_part != '' ? dto.effect.body_part : null,
-                post_discharge: dto.effect.post_discharge === null ? false : dto.effect.post_discharge,
+                post_discharge: dto.effect.post_discharge != '' ? dto.effect.post_discharge : null,
                 comments: dto.effect.comments
             },
             task: {
@@ -98,6 +106,7 @@ export class ResultsDtoMapper {
                 category: dto.function.category != '' ? dto.function.category : null,
                 subcategory: dto.function.subcategory != '' ? dto.function.subcategory : null,
                 characteristic: dto.function.characteristic != '' ? dto.function.characteristic : null,
+                article_designed_for_function: dto.function.article_designed_for_function,
                 comments: dto.function.comments
             }
         } as Result

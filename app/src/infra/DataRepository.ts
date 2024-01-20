@@ -6,14 +6,10 @@ import { SourceSummaryEntity, SourceSummaryEntityToModel } from "./entity/Source
 import Database from "better-sqlite3";
 import { ReadResultEntity, ReadResultEntityToModel } from "./entity/ResultEntity";
 import { ROI } from "../core/models/ROI";
-import { ROIEntity, ROIEntityToModel } from "./entity/ROIEntity";
 import { Effect } from "../core/models/Effect";
 import path = require('path')
 import * as fs from 'fs'
 import { app } from "electron";
-import { EffectEntity, EffectEntityToModel } from "./entity/EffectEntity";
-import { TaskEntity, TaskEntityToModel } from "./entity/TaskEntity";
-import { FunctionEntity, FunctionEntityToModel } from "./entity/FunctionEntity";
 import { Task } from "../core/models/Task";
 import { Function } from "../core/models/Function";
 
@@ -21,7 +17,17 @@ export default class DataRepository implements IDataRepository {
     private dbLocation: string;
     private db: Database.Database;
 
+    private rois: ROI[];
+    private effects: Effect[];
+    private tasks: Task[];
+    private functions: Function[];
+
+
     constructor(dbLocation: string) {
+        this.rois = this.readRoisFromFile();
+        this.effects = this.readEffectsFromFile();
+        this.tasks = this.readTasksFromFile();
+        this.functions = this.readFunctionsFromFile();
         this.dbLocation = dbLocation;
         this.db = new Database(this.dbLocation);
         this.createTablesIfNotExist();
@@ -49,26 +55,22 @@ export default class DataRepository implements IDataRepository {
 
     // ROIs
     getROIs(): ROI[] {
-        const entities = this._getROIs();
-        return entities.map((e) => ROIEntityToModel(e));
+        return this.rois;
     }
 
     // Effects
     getEffects(): Effect[] {
-        const entities = this._getEffects();
-        return entities.map((e) => EffectEntityToModel(e));
+        return this.effects;
     }
 
     // Tasks
     getTasks(): Task[] {
-        const entities = this._getTasks();
-        return entities.map((e) => TaskEntityToModel(e));
+        return this.tasks;
     }
 
     // Functions
     getFunctions(): Function[] {
-        const entities = this._getFunctions();
-        return entities.map((e) => FunctionEntityToModel(e));
+        return this.functions;
     }
 
     // Sources
@@ -185,49 +187,49 @@ export default class DataRepository implements IDataRepository {
         const stmt = `SELECT Results.id,
                              Results.source_id,
                              Results.roi_side,
-                             ROIs.lobe AS roi_lobe,
-                             ROIs.gyrus AS roi_gyrus,
-                             ROIs.sub AS roi_sub,
-                             ROIs.precision AS roi_precision,
-                             Results.roi_destrieux,
+                             Results.roi_lobe,
+                             Results.roi_region,
+                             Results.roi_area,
+                             Results.roi_from_figure,
+                             Results.roi_mni_x,
+                             Results.roi_mni_y,
+                             Results.roi_mni_z,
+                             Results.roi_mni_average,
                              Results.stim_amp_ma,
                              Results.stim_amp_ma_max,
                              Results.stim_freq,
                              Results.stim_freq_max,
                              Results.stim_duration,
                              Results.stim_duration_max,
-                             Results.stim_implentation_type,
                              Results.stim_electrode_make,
+                             Results.stim_implentation_type,
                              Results.stim_contact_separation,
                              Results.stim_contact_diameter,
                              Results.stim_contact_length,
                              Results.stim_phase_length,
                              Results.stim_phase_type,
-                             Effects.category AS effect_category,
-                             Effects.semiology AS effect_semiology,
-                             Effects.characteristic AS effect_characteristic,
-                             Results.effect_post_discharge AS effect_post_discharge,
-                             Results.effect_lateralization AS effect_lateralization,
-                             Results.effect_dominant AS effect_dominant,
-                             Results.effect_body_part AS effect_body_part,
-                             Results.effect_comments AS effect_comments,
-                             Tasks.category AS task_category,
-                             Tasks.subcategory AS task_subcategory,
-                             Tasks.characteristic AS task_characteristic,
-                             Results.task_comments AS task_comments,
-                             Functions.category AS function_category,
-                             Functions.subcategory AS function_subcategory,
-                             Functions.characteristic AS function_characteristic,
-                             Results.function_comments AS function_comments,
+                             Results.effect_class,
+                             Results.effect_descriptor,
+                             Results.effect_details,
+                             Results.effect_post_discharge,
+                             Results.effect_lateralization,
+                             Results.effect_dominant,
+                             Results.effect_body_part,
+                             Results.effect_comments,
+                             Results.task_category,
+                             Results.task_subcategory,
+                             Results.task_characteristic,
+                             Results.task_comments,
+                             Results.function_category,
+                             Results.function_subcategory,
+                             Results.function_characteristic,
+                             Results.function_article_designed_for_function,
+                             Results.function_comments,
                              Results.occurrences,
                              Results.comments,
                              Results.comments_2,
                              Results.precision_score
                         FROM Results 
-                        LEFT JOIN ROIs ON Results.roi_id = ROIs.id
-                        LEFT JOIN Effects ON Results.effect_id = Effects.id
-                        LEFT JOIN Tasks ON Results.task_id = Tasks.id
-                        LEFT JOIN Functions ON Results.function_id = Functions.id
                         WHERE source_id = ?`;
         const results = this.db.prepare(stmt).all(sourceId) as ReadResultEntity[];
         return results;
@@ -236,31 +238,21 @@ export default class DataRepository implements IDataRepository {
     private _insertNewResult(newResult: Result): void {
         console.debug("Inserting new result: ");
         console.debug(newResult);
-        let newRoiId: number = null;
-        if (newResult.roi.lobe != null) {
-            newRoiId = this._getROIIdOrInsertNewManual(newResult);
-        }
-        let newEffectId: number = null;
-        if (newResult.effect.category != null) {
-            newEffectId = this._getEffectIdOrInsertNewManual(newResult);
-        }
-        let newTaskId: number = null;
-        if (newResult.task.category != null) {
-            newTaskId = this._getTaskIdOrInsertNewManual(newResult);
-        }
-        let newFunctionId: number = null;
-        if (newResult.function.category != null) {
-            newFunctionId = this._getFunctionIdOrInsertNewManual(newResult);
-        }
 
         const stmt = `INSERT INTO Results 
-        (source_id, roi_side, roi_id, roi_destrieux, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, effect_id, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_id, task_comments, function_id, function_comments, occurrences, comments, comments_2, precision_score)
-        Values (@source_id, @roi_side, @roi_id, @roi_destrieux, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @effect_id, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_id, @task_comments, @function_id, @function_comments, @occurrences, @comments, @comments_2, @precision_score)`
+        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score)
+        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score)`
         this.db.prepare(stmt).run({
             source_id: newResult.source_id,
             roi_side: newResult.roi.side,
-            roi_id: newRoiId,
-            roi_destrieux: newResult.roi_destrieux != null ? newResult.roi_destrieux.map(i=>i.toString()).join(",") : "",
+            roi_lobe: newResult.roi.lobe,
+            roi_region: newResult.roi.region,
+            roi_area: newResult.roi.area,
+            roi_from_figure: newResult.roi.from_figure ? 1 : 0,
+            roi_mni_x: newResult.roi.mni_x,
+            roi_mni_y: newResult.roi.mni_y,
+            roi_mni_z: newResult.roi.mni_z,
+            roi_mni_average: newResult.roi.mni_average ? 1 : 0,
             stim_amp_ma: newResult.stimulation_parameters.amplitude_ma,
             stim_amp_ma_max: newResult.stimulation_parameters.amplitude_ma_max,
             stim_freq: newResult.stimulation_parameters.frequency_hz,
@@ -274,15 +266,22 @@ export default class DataRepository implements IDataRepository {
             stim_contact_length: newResult.stimulation_parameters.contact_length,
             stim_phase_length: newResult.stimulation_parameters.phase_length,
             stim_phase_type: newResult.stimulation_parameters.phase_type,
-            effect_id: newEffectId,
-            effect_post_discharge: newResult.effect.post_discharge ? 1 : 0,
+            effect_class: newResult.effect.class,
+            effect_descriptor: newResult.effect.descriptor,
+            effect_details: newResult.effect.details,
+            effect_post_discharge: newResult.effect.post_discharge,
             effect_lateralization: newResult.effect.lateralization,
             effect_dominant: newResult.effect.dominant,
             effect_body_part: newResult.effect.body_part,
             effect_comments: newResult.effect.comments,
-            task_id: newTaskId,
+            task_category: newResult.task.category,
+            task_subcategory: newResult.task.subcategory,
+            task_characteristic: newResult.task.characteristic,
             task_comments: newResult.task.comments,
-            function_id: newFunctionId,
+            function_category: newResult.function.category,
+            function_subcategory: newResult.function.subcategory,
+            function_characteristic: newResult.function.characteristic,
+            function_article_designed_for_function: newResult.function.article_designed_for_function ? 1 : 0,
             function_comments: newResult.function.comments,
             occurrences: newResult.occurrences,
             comments: newResult.comments,
@@ -292,28 +291,18 @@ export default class DataRepository implements IDataRepository {
     }
     private _editResult(resultId: number, newResult: Result): void {
         console.debug("Editing result: ");
-        let newRoiId: number = null;
-        if (newResult.roi.lobe != null) {
-            newRoiId = newRoiId = this._getROIIdOrInsertNewManual(newResult);
-        }
-        let newEffectId: number = null;
-        if (newResult.effect.category != null) {
-            newEffectId = this._getEffectIdOrInsertNewManual(newResult);
-        }
-        let newTaskId: number = null;
-        if (newResult.task.category != null) {
-            newTaskId = this._getTaskIdOrInsertNewManual(newResult);
-        }
-        let newFunctionId: number = null;
-        if (newResult.function.category != null) {
-            newFunctionId = this._getFunctionIdOrInsertNewManual(newResult);
-        }
 
         const stmt = `
         UPDATE Results SET 
             roi_side=@roi_side,
-            roi_id=@roi_id,
-            roi_destrieux=@roi_destrieux,
+            roi_lobe=@roi_lobe,
+            roi_region=@roi_region,
+            roi_area=@roi_area,
+            roi_from_figure=@roi_from_figure,
+            roi_mni_x=@roi_mni_x,
+            roi_mni_y=@roi_mni_y,
+            roi_mni_z=@roi_mni_z,
+            roi_mni_average=@roi_mni_average,
             stim_amp_ma=@stim_amp_ma,
             stim_amp_ma_max=@stim_amp_ma_max,
             stim_freq=@stim_freq,
@@ -327,15 +316,22 @@ export default class DataRepository implements IDataRepository {
             stim_contact_length=@stim_contact_length,
             stim_phase_length=@stim_phase_length,
             stim_phase_type=@stim_phase_type,
-            effect_id=@effect_id,
+            effect_class=@effect_class,
+            effect_descriptor=@effect_descriptor,
+            effect_details=@effect_details,
             effect_post_discharge=@effect_post_discharge,
             effect_lateralization=@effect_lateralization,
             effect_dominant=@effect_dominant,
             effect_body_part=@effect_body_part,
             effect_comments=@effect_comments,
-            task_id=@task_id,
+            task_category=@task_category,
+            task_subcategory=@task_subcategory,
+            task_characteristic=@task_characteristic,
             task_comments=@task_comments,
-            function_id=@function_id,
+            function_category=@function_category,
+            function_subcategory=@function_subcategory,
+            function_characteristic=@function_characteristic,
+            function_article_designed_for_function=@function_article_designed_for_function,
             function_comments=@function_comments,
             occurrences=@occurrences,
             comments=@comments,
@@ -344,8 +340,14 @@ export default class DataRepository implements IDataRepository {
         WHERE id=@resultIdToEdit`
         this.db.prepare(stmt).run({
             roi_side: newResult.roi.side,
-            roi_id: newRoiId,
-            roi_destrieux: newResult.roi_destrieux != null ? newResult.roi_destrieux.map(i=>i.toString()).join(",") : "",
+            roi_lobe: newResult.roi.lobe,
+            roi_region: newResult.roi.region,
+            roi_area: newResult.roi.area,
+            roi_from_figure: newResult.roi.from_figure ? 1 : 0,
+            roi_mni_x: newResult.roi.mni_x,
+            roi_mni_y: newResult.roi.mni_y,
+            roi_mni_z: newResult.roi.mni_z,
+            roi_mni_average: newResult.roi.mni_average ? 1 : 0,
             stim_amp_ma: newResult.stimulation_parameters.amplitude_ma,
             stim_amp_ma_max: newResult.stimulation_parameters.amplitude_ma_max,
             stim_freq: newResult.stimulation_parameters.frequency_hz,
@@ -359,15 +361,22 @@ export default class DataRepository implements IDataRepository {
             stim_contact_length: newResult.stimulation_parameters.contact_length,
             stim_phase_length: newResult.stimulation_parameters.phase_length,
             stim_phase_type: newResult.stimulation_parameters.phase_type,
-            effect_id: newEffectId,
-            effect_post_discharge: newResult.effect.post_discharge ? 1 : 0,
+            effect_class: newResult.effect.class,
+            effect_descriptor: newResult.effect.descriptor,
+            effect_details: newResult.effect.details,
+            effect_post_discharge: newResult.effect.post_discharge,
             effect_lateralization: newResult.effect.lateralization,
             effect_dominant: newResult.effect.dominant,
             effect_body_part: newResult.effect.body_part,
             effect_comments: newResult.effect.comments,
-            task_id: newTaskId,
+            task_category: newResult.task.category,
+            task_subcategory: newResult.task.subcategory,
+            task_characteristic: newResult.task.characteristic,
             task_comments: newResult.task.comments,
-            function_id: newFunctionId,
+            function_category: newResult.function.category,
+            function_subcategory: newResult.function.subcategory,
+            function_characteristic: newResult.function.characteristic,
+            function_article_designed_for_function: newResult.function.article_designed_for_function ? 1 : 0,
             function_comments: newResult.function.comments,
             occurrences: newResult.occurrences,
             comments: newResult.comments,
@@ -383,211 +392,93 @@ export default class DataRepository implements IDataRepository {
 
 
     // ROIs
-    private _getROIs(): ROIEntity[] {
-        const stmt = `SELECT id, level, lobe, gyrus, sub, precision, parent_id, is_manual FROM ROIs`;
-        const rois = this.db.prepare(stmt).all() as ROIEntity[];
-        return rois;
-    }
-    private _insertROI(level: string, lobe: string, gyrus: string, sub: string, precision: string, parent_id: number, is_manual: boolean): number {
-        const stmt = `INSERT INTO ROIs 
-        (level, lobe, gyrus, sub, precision, parent_id, is_manual) 
-        Values (@level, @lobe, @gyrus, @sub, @precision, @parent_id, @is_manual)`;
-        const info = this.db.prepare(stmt).run({ level: level, lobe: lobe, gyrus: gyrus, sub: sub, precision: precision, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
-        return info.lastInsertRowid as number;
-    }
-    private _getROIIdOrInsertNewManual(result: Result): number {
-        const getRoiId_stmt = 'SELECT * FROM ROIs WHERE lobe IS @lobe AND gyrus IS @gyrus AND sub IS @sub AND precision IS @precision';
-        const roi = this.db.prepare(getRoiId_stmt).get(result.roi) as ROIEntity;
-        if (!roi) {
-            const level = result.roi.precision != null ? 'precision' : (result.roi.sub != null ? 'sub' : (result.roi.gyrus != null ? 'gyrus' : 'lobe'));
-            const parent_level = result.roi.precision != null ? 'sub' : (result.roi.sub != null ? 'gyrus' : 'lobe');
-            const parent_value = level === 'precision' ? result.roi.sub : (level === 'sub' ? result.roi.gyrus : (level === 'gyrus' ? result.roi.lobe : null));
-            const parent_id = (this.db.prepare(`SELECT * FROM ROIs WHERE level=@level AND ${parent_level}=@value`).get({ level: parent_level, value: parent_value }) as ROIEntity).id;
-            return this._insertROI(level, result.roi.lobe, result.roi.gyrus, result.roi.sub, result.roi.precision, parent_id, true);
+    private readRoisFromFile(): ROI[] {
+        let file = path.join(app.getAppPath(), '../..', 'resources', 'base_rois.json');
+        if (!fs.existsSync(file)) {
+            file = path.join(app.getAppPath(), 'resources', 'base_rois.json');
         }
-        return roi.id
-    }
-    private _setupROITable() {
-        if (!this._tableExists('ROIs')) {
-            this._createROITableIfNotExist();
-            let file = path.join(app.getAppPath(), '../..', 'resources', 'base_rois.json');
-            if (!fs.existsSync(file)) {
-                file = path.join(app.getAppPath(), 'resources', 'base_rois.json');
-            }
-            const jsonstring = fs.readFileSync(file, 'utf-8');
-            const base_rois = JSON.parse(jsonstring) as DataItem[];
+        const jsonstring = fs.readFileSync(file, 'utf-8');
+        const base_rois = JSON.parse(jsonstring) as DataItem[];
 
-            for (let lobe of base_rois) {
-                let lobe_id = this._insertROI('lobe', lobe.name, null, null, null, null, false);
-                for (let gyrus of lobe.children) {
-                    let gyrus_id = this._insertROI('gyrus', lobe.name, gyrus.name, null, null, lobe_id, false);
-                    for (let sub of gyrus.children) {
-                        let sub_id = this._insertROI('sub', lobe.name, gyrus.name, sub.name, null, gyrus_id, false);
-                        for (let precision of sub.children) {
-                            let precision_id = this._insertROI('precision', lobe.name, gyrus.name, sub.name, precision.name, sub_id, false);
-                        }
-                    }
+        let rois: ROI[] = [];
+        for (let lobe of base_rois) {
+            rois.push({level: 'lobe', lobe: lobe.name, region: null, area: null});
+            for (let region of lobe.children) {
+                rois.push({level: 'region', lobe: lobe.name, region: region.name, area: null});
+                for (let area of region.children) {
+                    rois.push({level: 'area', lobe: lobe.name, region: region.name, area: area.name});
                 }
             }
         }
+
+        return rois;
     }
 
 
     // Effects
-    private _getEffects(): EffectEntity[] {
-        const stmt = `SELECT id, level, category, semiology, characteristic, parent_id, is_manual FROM Effects`;
-        const effects = this.db.prepare(stmt).all() as EffectEntity[];
-        return effects;
-    }
-    private _insertEffect(level: string, category: string, semiology: string, characteristic: string, parent_id: number, is_manual: boolean): number {
-        const stmt = `INSERT INTO Effects 
-        (level, category, semiology, characteristic, parent_id, is_manual) 
-        Values (@level, @category, @semiology, @characteristic, @parent_id, @is_manual)`;
-        const info = this.db.prepare(stmt).run({ level: level, category: category, semiology: semiology, characteristic: characteristic, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
-        return info.lastInsertRowid as number;
-    }
-    private _getEffectIdOrInsertNewManual(result: Result): number {
-        const getEffectId_stmt = 'SELECT * FROM Effects WHERE category IS @category AND semiology IS @semiology AND characteristic IS @characteristic';
-        const effect = this.db.prepare(getEffectId_stmt).get(result.effect) as EffectEntity;
-        if (!effect) {
-            const level = result.effect.characteristic != null ? 'characteristic' : (result.effect.semiology != null ? 'semiology' : 'category');
-            const parent_level = result.effect.characteristic != null ? 'semiology' : 'category';
-            const parent_value = level === 'characteristic' ? result.effect.semiology : (level === 'semiology' ? result.effect.category : null);
-            const parent_id = (this.db.prepare(`SELECT * FROM Effects WHERE level=@level AND ${parent_level}=@value`).get({ level: parent_level, value: parent_value }) as EffectEntity).id;
-            return this._insertEffect(level, result.effect.category, result.effect.semiology, result.effect.characteristic, parent_id, true);
+    private readEffectsFromFile(): Effect[] {
+        let file = path.join(app.getAppPath(), '../..', 'resources', 'base_effects.json');
+        if (!fs.existsSync(file)) {
+            file = path.join(app.getAppPath(), 'resources', 'base_effects.json');
         }
-        return effect.id
-    }
-    private _setupEffectsTable() {
-        if (!this._tableExists('Effects')) {
-            this._createEffectsTableIfNotExist();
+        const jsonstring = fs.readFileSync(file, 'utf-8');
+        const base_effects = JSON.parse(jsonstring) as DataItem[];
 
-            let file = path.join(app.getAppPath(), '../..', 'resources', 'base_effects.json');
-            if (!fs.existsSync(file)) {
-                file = path.join(app.getAppPath(), 'resources', 'base_effects.json');
-            }
-            const jsonstring = fs.readFileSync(file, 'utf-8');
-            const base_effects = JSON.parse(jsonstring) as DataItem[];
-
-            for (let category of base_effects) {
-                let category_id = this._insertEffect('category', category.name, null, null, null, false);
-                for (let semiology of category.children) {
-                    let semiology_id = this._insertEffect('semiology', category.name, semiology.name, null, category_id, false);
-                    for (let characteristic of semiology.children) {
-                        let characteristic_id = this._insertEffect('characteristic', category.name, semiology.name, characteristic.name, semiology_id, false);
-                    }
+        let effects: Effect[] = [];
+        for (let e_class of base_effects) {
+            effects.push({level: 'class', class: e_class.name, descriptor: null, details: null});
+            for (let descriptor of e_class.children) {
+                effects.push({level: 'descriptor', class: e_class.name, descriptor: descriptor.name, details: null});
+                for (let details of descriptor.children) {
+                    effects.push({level: 'details', class: e_class.name, descriptor: descriptor.name, details: details.name});
                 }
             }
         }
-    }
-    private _createEffectsTableIfNotExist() {
-        const createStmt = `
-            CREATE TABLE IF NOT EXISTS Effects (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                level TEXT NOT NULL,
-                category TEXT NOT NULL,
-                semiology TEXT,
-                characteristic TEXT,
-                parent_id INTEGER,
-                is_manual NUMBER
-            );`;
-        this.db.prepare(createStmt).run();
+        return effects;
     }
 
     // Tasks
-    private _getTasks(): TaskEntity[] {
-        const stmt = `SELECT id, level, category, subcategory, characteristic, parent_id, is_manual FROM Tasks`;
-        const tasks = this.db.prepare(stmt).all() as TaskEntity[];
-        return tasks;
-    }
-    private _insertTask(level: string, category: string, subcategory: string, characteristic: string, parent_id: number, is_manual: boolean): number {
-        const stmt = `INSERT INTO Tasks 
-        (level, category, subcategory, characteristic, parent_id, is_manual) 
-        Values (@level, @category, @subcategory, @characteristic, @parent_id, @is_manual)`;
-        const info = this.db.prepare(stmt).run({ level: level, category: category, subcategory: subcategory, characteristic: characteristic, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
-        return info.lastInsertRowid as number;
-    }
-    private _getTaskIdOrInsertNewManual(result: Result): number {
-        const getTaskId_stmt = 'SELECT * FROM Tasks WHERE category IS @category AND subcategory IS @subcategory AND characteristic IS @characteristic';
-        const task = this.db.prepare(getTaskId_stmt).get(result.task) as TaskEntity;
-        if (!task) {
-            const level = result.task.characteristic != null ? 'characteristic' : (result.task.subcategory != null ? 'subcategory' : 'category');
-            const parent_level = result.task.characteristic != null ? 'subcategory' : 'category';
-            const parent_value = level === 'characteristic' ? result.task.subcategory : (level === 'subcategory' ? result.task.category : null);
-            const parent_id = (this.db.prepare(`SELECT * FROM Tasks WHERE level=@level AND ${parent_level}=@value`).get({ level: parent_level, value: parent_value }) as TaskEntity).id;
-            return this._insertTask(level, result.task.category, result.task.subcategory, result.task.characteristic, parent_id, true);
+    private readTasksFromFile(): Task[] {
+        let file = path.join(app.getAppPath(), '../..', 'resources', 'base_tasks.json');
+        if (!fs.existsSync(file)) {
+            file = path.join(app.getAppPath(), 'resources', 'base_tasks.json');
         }
-        return task.id
-    }
-    private _setupTasksTable() {
-        if (!this._tableExists('Tasks')) {
-            this._createTasksTableIfNotExist();
+        const jsonstring = fs.readFileSync(file, 'utf-8');
+        const base_tasks = JSON.parse(jsonstring) as DataItem[];
 
-            let file = path.join(app.getAppPath(), '../..', 'resources', 'base_tasks.json');
-            if (!fs.existsSync(file)) {
-                file = path.join(app.getAppPath(), 'resources', 'base_tasks.json');
-            }
-            const jsonstring = fs.readFileSync(file, 'utf-8');
-            const base_tasks = JSON.parse(jsonstring) as DataItem[];
-
-            for (let category of base_tasks) {
-                let category_id = this._insertTask('category', category.name, null, null, null, false);
-                for (let subcategory of category.children) {
-                    let subcategory_id = this._insertTask('subcategory', category.name, subcategory.name, null, category_id, false);
-                    for (let characteristic of subcategory.children) {
-                        let characteristic_id = this._insertTask('characteristic', category.name, subcategory.name, characteristic.name, subcategory_id, false);
-                    }
+        let tasks: Task[] = [];
+        for (let category of base_tasks) {
+            tasks.push({level: 'category', category: category.name, subcategory: null, characteristic: null});
+            for (let subcategory of category.children) {
+                tasks.push({level: 'subcategory', category: category.name, subcategory: subcategory.name, characteristic: null});
+                for (let characteristic of subcategory.children) {
+                    tasks.push({level: 'characteristic', category: category.name, subcategory: subcategory.name, characteristic: characteristic.name});
                 }
             }
         }
+        return tasks;
     }
 
     // Functions
-    private _getFunctions(): FunctionEntity[] {
-        const stmt = `SELECT id, level, category, subcategory, characteristic, parent_id, is_manual FROM Functions`;
-        const tasks = this.db.prepare(stmt).all() as FunctionEntity[];
-        return tasks;
-    }
-    private _insertFunction(level: string, category: string, subcategory: string, characteristic: string, parent_id: number, is_manual: boolean): number {
-        const stmt = `INSERT INTO Functions 
-        (level, category, subcategory, characteristic, parent_id, is_manual) 
-        Values (@level, @category, @subcategory, @characteristic, @parent_id, @is_manual)`;
-        const info = this.db.prepare(stmt).run({ level: level, category: category, subcategory: subcategory, characteristic: characteristic, parent_id: parent_id, is_manual: is_manual ? 1 : 0 });
-        return info.lastInsertRowid as number;
-    }
-    private _getFunctionIdOrInsertNewManual(result: Result): number {
-        const getFunctionId_stmt = 'SELECT * FROM Functions WHERE category IS @category AND subcategory IS @subcategory AND characteristic IS @characteristic';
-        const func = this.db.prepare(getFunctionId_stmt).get(result.function) as FunctionEntity;
-        if (!func) {
-            const level = result.function.characteristic != null ? 'characteristic' : (result.function.subcategory != null ? 'subcategory' : 'category');
-            const parent_level = result.function.characteristic != null ? 'subcategory' : 'category';
-            const parent_value = level === 'characteristic' ? result.function.subcategory : (level === 'subcategory' ? result.function.category : null);
-            const parent_id = (this.db.prepare(`SELECT * FROM Functions WHERE level=@level AND ${parent_level}=@value`).get({ level: parent_level, value: parent_value }) as TaskEntity).id;
-            return this._insertFunction(level, result.function.category, result.function.subcategory, result.function.characteristic, parent_id, true);
+    private readFunctionsFromFile(): Function[] {
+        let file = path.join(app.getAppPath(), '../..', 'resources', 'base_functions.json');
+        if (!fs.existsSync(file)) {
+            file = path.join(app.getAppPath(), 'resources', 'base_functions.json');
         }
-        return func.id
-    }
-    private _setupFunctionsTable() {
-        if (!this._tableExists('Functions')) {
-            this._createFunctionsTableIfNotExist();
+        const jsonstring = fs.readFileSync(file, 'utf-8');
+        const base_functions = JSON.parse(jsonstring) as DataItem[];
 
-            let file = path.join(app.getAppPath(), '../..', 'resources', 'base_functions.json');
-            if (!fs.existsSync(file)) {
-                file = path.join(app.getAppPath(), 'resources', 'base_functions.json');
-            }
-            const jsonstring = fs.readFileSync(file, 'utf-8');
-            const base_functions = JSON.parse(jsonstring) as DataItem[];
-
-            for (let category of base_functions) {
-                let category_id = this._insertFunction('category', category.name, null, null, null, false);
-                for (let subcategory of category.children) {
-                    let subcategory_id = this._insertFunction('subcategory', category.name, subcategory.name, null, category_id, false);
-                    for (let characteristic of subcategory.children) {
-                        let characteristic_id = this._insertFunction('characteristic', category.name, subcategory.name, characteristic.name, subcategory_id, false);
-                    }
+        let functions: Function[] = [];
+        for (let category of base_functions) {
+            functions.push({level: 'category', category: category.name, subcategory: null, characteristic: null});
+            for (let subcategory of category.children) {
+                functions.push({level: 'subcategory', category: category.name, subcategory: subcategory.name, characteristic: null});
+                for (let characteristic of subcategory.children) {
+                    functions.push({level: 'characteristic', category: category.name, subcategory: subcategory.name, characteristic: characteristic.name});
                 }
             }
         }
+        return functions;
     }
 
 
@@ -596,10 +487,6 @@ export default class DataRepository implements IDataRepository {
         console.debug('Creating tables...');
         this._createSourcesTableIfNotExist();
         this._createResultsTableIfNotExist();
-        this._setupROITable();
-        this._setupEffectsTable();
-        this._setupTasksTable();
-        this._setupFunctionsTable();
     }
     private _tableExists(table: string) {
         const stmt = `SELECT count(*) AS count FROM sqlite_master WHERE type='table' AND name=?;`
@@ -628,8 +515,14 @@ export default class DataRepository implements IDataRepository {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 source_id INTEGER NOT NULL,
                 roi_side TEXT,
-                roi_id INTEGER,
-                roi_destrieux TEXT,
+                roi_lobe TEXT,
+                roi_region TEXT,
+                roi_area TEXT,
+                roi_from_figure INTEGER,
+                roi_mni_x REAL,
+                roi_mni_y REAL,
+                roi_mni_z REAL,
+                roi_mni_average INTEGER,
                 stim_amp_ma REAL,
                 stim_amp_ma_max REAL,
                 stim_freq INTEGER,
@@ -643,61 +536,28 @@ export default class DataRepository implements IDataRepository {
                 stim_contact_length INTEGER,
                 stim_phase_length REAL,
                 stim_phase_type TEXT,
-                effect_id INTEGER,
+                effect_class TEXT,
+                effect_descriptor TEXT,
+                effect_details TEXT,
                 effect_post_discharge INTEGER,
                 effect_lateralization TEXT,
                 effect_dominant TEXT,
                 effect_body_part TEXT,
                 effect_comments TEXT,
-                task_id INTEGER,
+                task_category TEXT,
+                task_subcategory TEXT,
+                task_characteristic TEXT,
                 task_comments TEXT,
-                function_id INTEGER,
+                function_category TEXT,
+                function_subcategory TEXT,
+                function_characteristic TEXT,
+                function_article_designed_for_function INTEGER,
                 function_comments TEXT,
                 occurrences INTEGER,
                 comments TEXT,
                 comments_2 TEXT,
                 precision_score REAL
             );`;
-        this.db.prepare(createStmt).run();
-    }
-    private _createROITableIfNotExist() {
-        const createStmt = `
-            CREATE TABLE IF NOT EXISTS ROIs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                level TEXT NOT NULL,
-                lobe TEXT NOT NULL,
-                gyrus TEXT,
-                sub TEXT,
-                precision TEXT,
-                parent_id INTEGER,
-                is_manual NUMBER
-            );`;
-        this.db.prepare(createStmt).run();
-    }
-    private _createTasksTableIfNotExist() {
-        const createStmt = `
-        CREATE TABLE IF NOT EXISTS Tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            level TEXT NOT NULL,
-            category TEXT NOT NULL,
-            subcategory TEXT,
-            characteristic TEXT,
-            parent_id INTEGER,
-            is_manual NUMBER
-        );`;
-        this.db.prepare(createStmt).run();
-    }
-    private _createFunctionsTableIfNotExist() {
-        const createStmt = `
-        CREATE TABLE IF NOT EXISTS Functions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            level TEXT NOT NULL,
-            category TEXT NOT NULL,
-            subcategory TEXT,
-            characteristic TEXT,
-            parent_id INTEGER,
-            is_manual NUMBER
-        );`;
         this.db.prepare(createStmt).run();
     }
 }

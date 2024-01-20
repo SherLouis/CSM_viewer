@@ -20,11 +20,14 @@ const ResultsTable = (props: ResultsTableProps) => {
             roi: {
                 side: values.roi.side,
                 lobe: values.roi.lobe,
-                gyrus: values.roi.gyrus,
-                sub: values.roi.sub,
-                precision: values.roi.precision
+                region: values.roi.region,
+                area: values.roi.area,
+                from_figure: values.roi.from_figure,
+                mni_x: values.roi.mni_x,
+                mni_y: values.roi.mni_y,
+                mni_z: values.roi.mni_z,
+                mni_average: values.roi.mni_average,
             },
-            roi_destrieux: values.roi_destrieux,
             stimulation_parameters: {
                 amplitude_ma: values.stimulation_parameters.amplitude_ma,
                 amplitude_ma_max: values.stimulation_parameters.amplitude_ma_max,
@@ -41,9 +44,9 @@ const ResultsTable = (props: ResultsTableProps) => {
                 phase_type: values.stimulation_parameters.phase_type
             },
             effect: {
-                category: values.effect.category,
-                semiology: values.effect.semiology,
-                characteristic: values.effect.characteristic,
+                class: values.effect.class,
+                descriptor: values.effect.descriptor,
+                details: values.effect.details,
                 post_discharge: values.effect.post_discharge,
                 lateralization: values.effect.lateralization,
                 dominant: values.effect.dominant,
@@ -60,6 +63,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 category: values.function.category,
                 subcategory: values.function.subcategory,
                 characteristic: values.function.characteristic,
+                article_designed_for_function: values.function.article_designed_for_function,
                 comments: values.function.comments
             },
             occurrences: values.occurrences,
@@ -75,11 +79,11 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onDelete(resultId);
     }
 
-    const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "roi" | "stim" | "effect" | "task" | "function" | "all") => {
+    const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
             id: undefined,
-            roi: { side: '', lobe: '', gyrus: '', sub: '', precision: '' },
+            roi: { side: '', lobe: '', region: '', area: '', mni_x: 0, mni_y: 0, mni_z: 0, mni_average: false },
             stimulation_parameters: {
                 amplitude_ma: 0,
                 amplitude_ma_max: 0,
@@ -95,10 +99,10 @@ const ResultsTable = (props: ResultsTableProps) => {
                 phase_type: ''
             },
             effect: {
-                category: '',
-                semiology: '',
-                characteristic: '',
-                post_discharge: false,
+                class: '',
+                descriptor: '',
+                details: '',
+                post_discharge: '',
                 lateralization: '',
                 dominant: '',
                 body_part: '',
@@ -114,6 +118,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 category: '',
                 subcategory: '',
                 characteristic: '',
+                article_designed_for_function: false,
                 comments: '',
             },
             occurrences: 0,
@@ -122,31 +127,31 @@ const ResultsTable = (props: ResultsTableProps) => {
             precision_score: 0
         } as ResultDdo;
         switch (level) {
-            case "roi":
-                newResult.roi = result.roi;
+            case "stim":
+                newResult.stimulation_parameters = result.stimulation_parameters;
                 props.onCreate(newResult);
                 break;
-            case "stim":
-                newResult.roi = result.roi;
+            case "roi":
                 newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.roi = result.roi;
                 props.onCreate(newResult);
                 break;
             case "effect":
-                newResult.roi = result.roi;
                 newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.roi = result.roi;
                 newResult.effect = result.effect;
                 props.onCreate(newResult);
                 break;
             case "task":
-                newResult.roi = result.roi;
                 newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.roi = result.roi;
                 newResult.effect = result.effect;
                 newResult.task = result.task;
                 props.onCreate(newResult);
                 break;
             case "function":
-                newResult.roi = result.roi;
                 newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.roi = result.roi;
                 newResult.effect = result.effect;
                 newResult.task = result.task;
                 newResult.function = result.function;
@@ -172,8 +177,8 @@ const ResultsTable = (props: ResultsTableProps) => {
     useEffect(() => {
         var data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
         data = data.filter((result) => {
-            const roiValue = result.roi.lobe + (result.roi.gyrus ? ('/' + result.roi.gyrus + (result.roi.sub ? ('/' + result.roi.sub + (result.roi.precision ? ('/' + result.roi.precision) : '')) : '')) : '');
-            const effectValue = result.effect.category + (result.effect.semiology ? ('/' + result.effect.semiology + (result.effect.characteristic ? ('/' + result.effect.characteristic + (result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '');
+            const roiValue = result.roi.lobe + (result.roi.region ? ('/' + result.roi.region + (result.roi.area ? ('/' + result.roi.area) : '')) : '');
+            const effectValue = result.effect.class + (result.effect.descriptor ? ('/' + result.effect.descriptor + (result.effect.details ? ('/' + result.effect.details + (result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '');
             const taskValue = result.task.category + (result.task.subcategory ? ('/' + result.task.subcategory + (result.task.characteristic ? ('/' + result.task.characteristic) : '')) : '');
             const functionValue = result.function.category + (result.function.subcategory ? ('/' + result.function.subcategory + (result.function.characteristic ? ('/' + result.function.characteristic) : '')) : '');
 
@@ -202,15 +207,30 @@ const ResultsTable = (props: ResultsTableProps) => {
                     sortable: true
                 },
                 {
+                    accessor: 'stimulation_parameters',
+                    title: 'Parameters',
+                    render: (result) => (
+                        <Group position='apart'>
+                            <Text>
+                                {(result.stimulation_parameters.amplitude_ma ? result.stimulation_parameters.amplitude_ma : '-') + ' mA '
+                                    + '| ' + (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s '
+                                    + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
+                                    + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}
+                            </Text>
+                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'stim')}>
+                                <IconCopy size={16} />
+                            </ActionIcon>
+                        </Group>)
+                },
+                {
                     accessor: 'roi',
                     title: 'ROI',
                     render: (result) => (
                         <Group position='apart'>
                             <Text>
                                 {result.roi.lobe +
-                                    (result.roi.gyrus ? ('/' + result.roi.gyrus +
-                                        (result.roi.sub ? ('/' + result.roi.sub +
-                                            (result.roi.precision ? ('/' + result.roi.precision) : '')) : '')) : '')}
+                                    (result.roi.region ? ('/' + result.roi.region +
+                                        (result.roi.area ? ('/' + result.roi.area) : '')) : '')}
                             </Text>
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
                                 <IconCopy size={16} />
@@ -229,30 +249,14 @@ const ResultsTable = (props: ResultsTableProps) => {
                     filtering: roiQuery != '',
                 },
                 {
-                    accessor: 'stimulation_parameters',
-                    title: 'Parameters',
-                    render: (result) => (
-                        <Group position='apart'>
-                            <Text>
-                                {(result.stimulation_parameters.amplitude_ma ? result.stimulation_parameters.amplitude_ma : '-') + ' mA '
-                                    + '| ' + (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s '
-                                    + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
-                                    + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}
-                            </Text>
-                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'stim')}>
-                                <IconCopy size={16} />
-                            </ActionIcon>
-                        </Group>)
-                },
-                {
                     accessor: 'effect',
                     title: 'Effect',
                     render: (result) => (
                         <Group position='apart'>
                             <Text>
-                                {result.effect.category +
-                                    (result.effect.semiology ? ('/' + result.effect.semiology
-                                        + (result.effect.characteristic ? ('/' + result.effect.characteristic + (
+                                {result.effect.class +
+                                    (result.effect.descriptor ? ('/' + result.effect.descriptor
+                                        + (result.effect.details ? ('/' + result.effect.details + (
                                             result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '')}
                             </Text>
                             <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
@@ -355,7 +359,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                         tasks={props.tasks}
                         functions={props.functions}
                         onSubmit={(values) => handleEdit(values, record.id)}
-                         />
+                    />
                 ),
             }}
 

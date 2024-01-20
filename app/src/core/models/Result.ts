@@ -4,11 +4,14 @@ export type Result = {
     roi: {
         side: string,
         lobe: string,
-        gyrus: string,
-        sub: string,
-        precision: string
+        region: string,
+        area: string,
+        from_figure: boolean,
+        mni_x: number,
+        mni_y: number,
+        mni_z: number,
+        mni_average: boolean,
     },
-    roi_destrieux: string[],
     stimulation_parameters: {
         amplitude_ma: number,
         amplitude_ma_max: number,
@@ -25,10 +28,10 @@ export type Result = {
         phase_type: string,
     }
     effect: {
-        category: string,
-        semiology: string,
-        characteristic: string,
-        post_discharge: boolean,
+        class: string,
+        descriptor: string,
+        details: string,
+        post_discharge: string,
         lateralization: string,
         dominant: string,
         body_part: string,
@@ -44,10 +47,11 @@ export type Result = {
         category: string,
         subcategory: string,
         characteristic: string,
+        article_designed_for_function: boolean,
         comments: string,
     },
     occurrences: number,
     comments?: string,
-    comments_2: string,
+    comments_2?: string,
     precision_score: number,
 }

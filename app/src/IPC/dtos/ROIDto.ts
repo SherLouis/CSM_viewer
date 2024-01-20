@@ -4,10 +4,8 @@ import { ROI } from "../../core/models/ROI";
 export type ROIDto = {
     level: string,
     lobe: string,
-    gyrus: string,
-    sub: string,
-    precision: string,
-    is_manual: boolean
+    region: string,
+    area: string
 }
 
 export class ROIDtoMapper {

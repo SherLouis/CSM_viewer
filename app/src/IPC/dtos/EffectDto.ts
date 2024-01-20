@@ -1,11 +1,11 @@
+import { EffectDdo } from "../../ui/models/EffectDdo";
 import { Effect } from "../../core/models/Effect";
 
 export type EffectDto = {
     level: string,
-    category: string,
-    semiology: string,
-    characteristic: string,
-    is_manual: boolean
+    class: string,
+    descriptor: string,
+    details: string
 }
 
 export class EffectDtoMapper {
@@ -14,6 +14,6 @@ export class EffectDtoMapper {
     }
 
     public static DtoToDdo = (dto: EffectDto) => {
-        return dto as Effect;
+        return dto as EffectDdo;
     }
 }

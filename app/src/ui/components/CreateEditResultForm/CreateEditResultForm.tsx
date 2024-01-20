@@ -9,17 +9,19 @@ import { FunctionDdo } from "../../models/FunctionDdo";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 
 export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions }: CreateEditResultFormProps) => {
-    // TODO: Ajouter validations
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
             roi: {
                 side: edit_result && edit_result.roi.side != null ? edit_result.roi.side : "",
                 lobe: edit_result && edit_result.roi.lobe != null ? edit_result.roi.lobe : "",
-                gyrus: edit_result && edit_result.roi.gyrus != null ? edit_result.roi.gyrus : "",
-                sub: edit_result && edit_result.roi.sub != null ? edit_result.roi.sub : "",
-                precision: edit_result && edit_result.roi.precision != null ? edit_result.roi.precision : ""
+                region: edit_result && edit_result.roi.region != null ? edit_result.roi.region : "",
+                area: edit_result && edit_result.roi.area != null ? edit_result.roi.area : "",
+                from_figure: edit_result && edit_result.roi.from_figure != null ? edit_result.roi.from_figure : false,
+                mni_x: edit_result && edit_result.roi.mni_x != null ? edit_result.roi.mni_x : 0,
+                mni_y: edit_result && edit_result.roi.mni_y != null ? edit_result.roi.mni_y : 0,
+                mni_z: edit_result && edit_result.roi.mni_z != null ? edit_result.roi.mni_z : 0,
+                mni_average: edit_result && edit_result.roi.mni_average != null ? edit_result.roi.mni_average : false,
             },
-            roi_destrieux: edit_result && edit_result.roi_destrieux != null ? edit_result.roi_destrieux : [],
             stimulation_parameters: {
                 amplitude_ma: edit_result && edit_result.stimulation_parameters.amplitude_ma != null ? edit_result.stimulation_parameters.amplitude_ma : 0,
                 amplitude_ma_max: edit_result && edit_result.stimulation_parameters.amplitude_ma_max != null ? edit_result.stimulation_parameters.amplitude_ma_max : 0,
@@ -36,10 +38,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 phase_type: edit_result && edit_result.stimulation_parameters.phase_type != null ? edit_result.stimulation_parameters.phase_type : "",
             },
             effect: {
-                category: edit_result && edit_result.effect.category != null ? edit_result.effect.category : "",
-                semiology: edit_result && edit_result.effect.semiology != null ? edit_result.effect.semiology : "",
-                characteristic: edit_result && edit_result.effect.characteristic != null ? edit_result.effect.characteristic : "",
-                post_discharge: edit_result && edit_result.effect.post_discharge != null ? edit_result.effect.post_discharge : false,
+                class: edit_result && edit_result.effect.class != null ? edit_result.effect.class : "",
+                descriptor: edit_result && edit_result.effect.descriptor != null ? edit_result.effect.descriptor : "",
+                details: edit_result && edit_result.effect.details != null ? edit_result.effect.details : "",
+                post_discharge: edit_result && edit_result.effect.post_discharge != null ? edit_result.effect.post_discharge : "",
                 lateralization: edit_result && edit_result.effect.lateralization != null ? edit_result.effect.lateralization : "",
                 dominant: edit_result && edit_result.effect.dominant != null ? edit_result.effect.dominant : "",
                 body_part: edit_result && edit_result.effect.body_part != null ? edit_result.effect.body_part : "",
@@ -55,6 +57,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 category: edit_result && edit_result.function.category != null ? edit_result.function.category : "",
                 subcategory: edit_result && edit_result.function.subcategory != null ? edit_result.function.subcategory : "",
                 characteristic: edit_result && edit_result.function.characteristic != null ? edit_result.function.characteristic : "",
+                article_designed_for_function: edit_result && edit_result.function.article_designed_for_function != null ? edit_result.function.article_designed_for_function : false,
                 comments: edit_result && edit_result.function.comments != null ? edit_result.function.comments : "",
             },
             occurrences: edit_result && edit_result.occurrences != null ? edit_result.occurrences : 0,
@@ -65,40 +68,36 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     });
 
     const handleSubmit = (values: CreateEditResultFormValues) => {
-        // TODO: form.validate();
         onSubmit(values);
     }
 
-    const getRoiOptions = (level: 'lobe' | 'gyrus' | 'sub' | 'precision') => {
+    const getRoiOptions = (level: 'lobe' | 'region' | 'area') => {
         switch (level) {
             case 'lobe':
                 return rois.filter((roi) => roi.level == level).map((roi) => roi.lobe);
-            case 'gyrus':
+            case 'region':
                 return rois.filter((roi) => roi.level == level
-                    && roi.lobe == form.getInputProps('roi.lobe').value).map((roi) => roi.gyrus);
-            case 'sub':
-                return rois.filter((roi) => roi.level == level
-                    && roi.lobe == form.getInputProps('roi.lobe').value
-                    && roi.gyrus == form.getInputProps('roi.gyrus').value).map((roi) => roi.sub);
-            case 'precision':
+                    && roi.lobe == form.getInputProps('roi.lobe').value).map((roi) => roi.region);
+            case 'area':
                 return rois.filter((roi) => roi.level == level
                     && roi.lobe == form.getInputProps('roi.lobe').value
-                    && roi.gyrus == form.getInputProps('roi.gyrus').value
-                    && roi.sub == form.getInputProps('roi.sub').value).map((roi) => roi.precision);
+                    && roi.region == form.getInputProps('roi.region').value).map((roi) => roi.area);
+            default:
+                return [];
         }
     }
 
-    const getEffectOptions = (level: 'category' | 'semiology' | 'characteristic') => {
+    const getEffectOptions = (level: 'class' | 'descriptor' | 'details') => {
         switch (level) {
-            case 'category':
-                return effects.filter((effect) => effect.level == level).map((effect) => effect.category);
-            case 'semiology':
+            case 'class':
+                return effects.filter((effect) => effect.level == level).map((effect) => effect.class);
+            case 'descriptor':
                 return effects.filter((effect) => effect.level == level
-                    && effect.category == form.getInputProps('effect.category').value).map((effect) => effect.semiology);
-            case 'characteristic':
+                    && effect.class == form.getInputProps('effect.class').value).map((effect) => effect.descriptor);
+            case 'details':
                 return effects.filter((effect) => effect.level == level
-                    && effect.category == form.getInputProps('effect.category').value
-                    && effect.semiology == form.getInputProps('effect.semiology').value).map((effect) => effect.characteristic);
+                    && effect.class == form.getInputProps('effect.class').value
+                    && effect.descriptor == form.getInputProps('effect.descriptor').value).map((effect) => effect.details);
         }
     }
 
@@ -130,62 +129,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         }
     }
 
-    const canAddNewRoiManual = (level: 'lobe' | 'gyrus' | 'sub' | 'precision'): boolean => {
-        switch (level) {
-            case 'lobe':
-                return false;
-            case 'gyrus':
-                return false;
-            case 'sub':
-                return getRoiOptions('gyrus').includes(form.getInputProps('roi.gyrus').value)
-                    && !rois.find((r) => r.level == 'gyrus' && r.gyrus == form.getInputProps('roi.gyrus').value).is_manual
-            case 'precision':
-                return getRoiOptions('sub').includes(form.getInputProps('roi.sub').value)
-                    && !rois.find((r) => r.level == 'sub' && r.sub == form.getInputProps('roi.sub').value).is_manual
-        }
-    }
-
-    const canAddNewEffectManual = (level: 'category' | 'semiology' | 'characteristic'): boolean => {
-        switch (level) {
-            case 'category':
-                return false;
-            case 'semiology':
-                return getEffectOptions('category').includes(form.getInputProps('effect.category').value);
-            case 'characteristic':
-                return getEffectOptions('semiology').includes(form.getInputProps('effect.semiology').value)
-                    && !effects.find((e) => e.level == 'semiology' && e.semiology == form.getInputProps('effect.semiology').value).is_manual
-        }
-    }
-
-    const canAddNewTaskManual = (level: 'category' | 'subcategory' | 'characteristic'): boolean => {
-        switch (level) {
-            case 'category':
-                return false;
-            case 'subcategory':
-                return getTaskOptions('category').includes(form.getInputProps('task.category').value);
-            case 'characteristic':
-                return getTaskOptions('subcategory').includes(form.getInputProps('task.subcategory').value)
-                    && !tasks.find((i) => i.level == 'subcategory' && i.subcategory == form.getInputProps('task.subcategory').value).is_manual
-        }
-    }
-
-    const canAddNewFunctionManual = (level: 'category' | 'subcategory' | 'characteristic'): boolean => {
-        switch (level) {
-            case 'category':
-                return false;
-            case 'subcategory':
-                return getFunctionOptions('category').includes(form.getInputProps('function.category').value);
-            case 'characteristic':
-                return getFunctionOptions('subcategory').includes(form.getInputProps('function.subcategory').value)
-                    && !functions.find((i) => i.level == 'subcategory' && i.subcategory == form.getInputProps('function.subcategory').value).is_manual
-        }
-    }
-
     const setAmplitudeValue = (value: number) => {
         form.setFieldValue('stimulation_parameters.amplitude_ma', value);
         form.setFieldValue('stimulation_parameters.amplitude_ma_max', value);
     }
-
     const setFrequencyValue = (value: number) => {
         form.setFieldValue('stimulation_parameters.frequency_hz', value);
         form.setFieldValue('stimulation_parameters.frequency_hz_max', value);
@@ -204,7 +151,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         ] as ElectrodeOption[];
         return new Map(options.map(opt => [opt.implantationType + '|' + opt.make + '|' + opt.diameter + '|' + opt.separation + '|' + opt.lenght, opt]));
     }
-
     const ElectrodeOptions = getElectrodeOptions();
 
     const getBodyPartOptions = (): SelectItem[] => {
@@ -215,219 +161,38 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         ];
     }
 
-    const getRoiDestrieuxOptions = (): { value: string; label: string; }[] => {
-        return [
-            { value: "1", label: "G_and_S_frontomargin" },
-            { value: "2", label: "G_and_S_occipital_inf" },
-            { value: "3", label: "G_and_S_paracentral" },
-            { value: "4", label: "G_and_S_subcentral" },
-            { value: "5", label: "G_and_S_transv_frontopol" },
-            { value: "6", label: "G_and_S_cingul-Ant" },
-            { value: "7", label: "G_and_S_cingul-Mid-Ant" },
-            { value: "8", label: "G_and_S_cingul-Mid-Post" },
-            { value: "9", label: "G_cingul-Post-dorsal" },
-            { value: "10", label: "G_cingul-Post-ventral" },
-            { value: "11", label: "G_cuneus" },
-            { value: "12", label: "G_front_inf-Opercular" },
-            { value: "13", label: "G_front_inf-Orbital" },
-            { value: "14", label: "G_front_inf-Triangul" },
-            { value: "15", label: "G_front_middle" },
-            { value: "16", label: "G_front_sup" },
-            { value: "17", label: "G_Ins_lg_and_S_cent_ins" },
-            { value: "18", label: "G_insular_short" },
-            { value: "19", label: "G_occipital_middle" },
-            { value: "20", label: "G_occipital_sup" },
-            { value: "21", label: "G_oc-temp_lat-fusifor" },
-            { value: "22", label: "G_oc-temp_med-Lingual" },
-            { value: "23", label: "G_oc-temp_med-Parahip" },
-            { value: "24", label: "G_orbital" },
-            { value: "25", label: "G_pariet_inf-Angular" },
-            { value: "26", label: "G_pariet_inf-Supramar" },
-            { value: "27", label: "G_parietal_sup" },
-            { value: "28", label: "G_postcentral" },
-            { value: "29", label: "G_precentral" },
-            { value: "30", label: "G_precuneus" },
-            { value: "31", label: "G_rectus" },
-            { value: "32", label: "G_subcallosal" },
-            { value: "33", label: "G_temp_sup-G_T_transv" },
-            { value: "34", label: "G_temp_sup-Lateral" },
-            { value: "35", label: "G_temp_sup-Plan_polar" },
-            { value: "36", label: "G_temp_sup-Plan_tempo" },
-            { value: "37", label: "G_temporal_inf" },
-            { value: "38", label: "G_temporal_middle" },
-            { value: "39", label: "Lat_Fis-ant-Horizont" },
-            { value: "40", label: "Lat_Fis-ant-Vertical" },
-            { value: "41", label: "Lat_Fis-post" },
-            { value: "42", label: "Pole_occipital" },
-            { value: "43", label: "Pole_temporal" },
-            { value: "44", label: "S_calcarine" },
-            { value: "45", label: "S_central" },
-            { value: "46", label: "S_cingul-Marginalis" },
-            { value: "47", label: "S_circular_insula_ant" },
-            { value: "48", label: "S_circular_insula_inf" },
-            { value: "49", label: "S_circular_insula_sup" },
-            { value: "50", label: "S_collat_transv_ant" },
-            { value: "51", label: "S_collat_transv_post" },
-            { value: "52", label: "S_front_inf" },
-            { value: "53", label: "S_front_middle" },
-            { value: "54", label: "S_front_sup" },
-            { value: "55", label: "S_interm_prim-Jensen" },
-            { value: "56", label: "S_intrapariet_and_P_trans" },
-            { value: "57", label: "S_oc_middle_and_Lunatus" },
-            { value: "58", label: "S_oc_sup_and_transversal" },
-            { value: "59", label: "S_occipital_ant" },
-            { value: "60", label: "S_oc-temp_lat" },
-            { value: "61", label: "S_oc-temp_med_and_Lingual" },
-            { value: "62", label: "S_orbital_lateral" },
-            { value: "63", label: "S_orbital_med-olfact" },
-            { value: "64", label: "S_orbital-H_Shaped" },
-            { value: "65", label: "S_parieto_occipital" },
-            { value: "66", label: "S_pericallosal" },
-            { value: "67", label: "S_postcentral" },
-            { value: "68", label: "S_precentral-inf-part" },
-            { value: "69", label: "S_precentral-sup-part" },
-            { value: "70", label: "S_suborbital" },
-            { value: "71", label: "S_subparietal" },
-            { value: "72", label: "S_temporal_inf" },
-            { value: "73", label: "S_temporal_sup" },
-            { value: "74", label: "S_temporal_transverse" }
-        ];
-    }
-
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>
             <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-                <Tabs defaultValue="roi">
-                    <Tabs.List>
-                        <Tabs.Tab value="roi" icon={<IconTargetArrow style={iconStyle} />}>
-                            ROI
-                        </Tabs.Tab>
-                        <Tabs.Tab value="parameters" icon={<IconSettingsBolt style={iconStyle} />}>
-                            Parameters
-                        </Tabs.Tab>
-                        <Tabs.Tab value="effect" icon={<IconReportMedical style={iconStyle} />}>
-                            Effect
-                        </Tabs.Tab>
-                        <Tabs.Tab value="task" icon={<IconSubtask style={iconStyle} />}>
-                            Task
-                        </Tabs.Tab>
-                        <Tabs.Tab value="function" icon={<IconMathFunction style={iconStyle} />}>
-                            Function
-                        </Tabs.Tab>
-                        <Tabs.Tab value="details" icon={<IconChartPie style={iconStyle} />}>
-                            Details
-                        </Tabs.Tab>
-                    </Tabs.List>
+                <Tabs defaultValue="parameters">
+                    <Group position="apart" align='start'>
+                        <Tabs.List>
+                            <Tabs.Tab value="parameters" icon={<IconSettingsBolt style={iconStyle} />}>
+                                Parameters
+                            </Tabs.Tab>
+                            <Tabs.Tab value="roi" icon={<IconTargetArrow style={iconStyle} />}>
+                                ROI
+                            </Tabs.Tab>
+                            <Tabs.Tab value="effect" icon={<IconReportMedical style={iconStyle} />}>
+                                Effect
+                            </Tabs.Tab>
+                            <Tabs.Tab value="task" icon={<IconSubtask style={iconStyle} />}>
+                                Task
+                            </Tabs.Tab>
+                            <Tabs.Tab value="function" icon={<IconMathFunction style={iconStyle} />}>
+                                Function
+                            </Tabs.Tab>
+                            <Tabs.Tab value="details" icon={<IconChartPie style={iconStyle} />}>
+                                Details
+                            </Tabs.Tab>
+                        </Tabs.List>
+                        <Group position="right">
+                            {onCancel != undefined && <Button type="reset" variant="light" onClick={() => { form.reset(); onCancel(); }}>Cancel</Button>}
+                            <Button type="submit">Save</Button>
+                        </Group>
+                    </Group>
 
-                    <Tabs.Panel value="roi">
-                        <Radio.Group
-                            label="Side"
-                            {...form.getInputProps('roi.side')}
-                        >
-                            <Group mt="xs">
-                                <Radio value="left" label="Left" />
-                                <Radio value="right" label="Right" />
-                            </Group>
-                        </Radio.Group>
-
-                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-                            <thead>
-                                <tr>
-                                    <th>Lobe</th>
-                                    <th>Gyrus</th>
-                                    <th>Region</th>
-                                    <th>Precision</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr key={"options"}>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getRoiOptions('lobe')}
-                                            onChange={(v) => {
-                                                form.setFieldValue('roi.gyrus', '');
-                                                form.setFieldValue('roi.sub', '');
-                                                form.setFieldValue('roi.precision', '');
-                                                form.getInputProps('roi.lobe').onChange(v)
-                                            }}
-                                            form={form} form_path='roi.lobe'
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getRoiOptions('gyrus')}
-                                            form={form} form_path="roi.gyrus"
-                                            onChange={(v) => {
-                                                form.setFieldValue('roi.sub', '');
-                                                form.setFieldValue('roi.precision', '');
-                                                form.getInputProps('roi.gyrus').onChange(v)
-                                            }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getRoiOptions('sub')}
-                                            form={form} form_path="roi.sub"
-                                            onChange={(v) => {
-                                                form.setFieldValue('roi.precision', '');
-                                                form.getInputProps('roi.sub').onChange(v)
-                                            }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getRoiOptions('precision')}
-                                            form={form} form_path="roi.precision"
-                                            onChange={(v) => {
-                                                form.getInputProps('roi.precision').onChange(v)
-                                            }}
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {canAddNewRoiManual('lobe') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('roi.lobe')}
-                                            />}
-                                    </td>
-                                    <td>
-                                        {canAddNewRoiManual('gyrus') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('roi.gyrus')}
-                                            />}
-                                    </td>
-                                    <td>
-                                        {canAddNewRoiManual('sub') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('roi.sub')}
-                                            />}
-                                    </td>
-                                    <td>
-                                        {canAddNewRoiManual('precision') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('roi.precision')}
-                                            />}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
-
-                        <Checkbox.Group
-                            label="Destrieux region(s)"
-                            {...form.getInputProps('roi_destrieux')}
-                        >
-                            <Box sx={{ display: 'grid', gridAutoFlow: 'column', gridTemplateRows: 'repeat(20,1fr)', gap: '10px' }}>
-                                {getRoiDestrieuxOptions().map((roi_destrieux, i) => <Checkbox value={roi_destrieux.value} label={roi_destrieux.value + " - " + roi_destrieux.label} key={i} />)}
-                            </Box>
-                        </Checkbox.Group>
-
-                    </Tabs.Panel>
                     <Tabs.Panel value="parameters">
                         <Divider label="Aplitude" />
                         <Group position="apart">
@@ -500,14 +265,17 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 />
                                 <NumberInput
                                     label="Contact diameter (mm)"
+                                    precision={1}
                                     {...form.getInputProps('stimulation_parameters.contact_diameter')}
                                 />
                                 <NumberInput
                                     label="Contact separation (mm)"
+                                    precision={1}
                                     {...form.getInputProps('stimulation_parameters.contact_separation')}
                                 />
                                 <NumberInput
                                     label="Contact length (mm)"
+                                    precision={1}
                                     {...form.getInputProps('stimulation_parameters.contact_length')}
                                 />
                             </Group>
@@ -546,6 +314,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             />
                             <Button.Group>
                                 <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 5 ? "filled" : "default"} onClick={() => setDurationValue(5)}>5</Button>
+                                <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 10 ? "filled" : "default"} onClick={() => setDurationValue(10)}>10</Button>
                             </Button.Group>
                             <NumberInput
                                 label="Duration Max (s)"
@@ -553,80 +322,184 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             />
                         </Group>
                     </Tabs.Panel>
-                    <Tabs.Panel value="effect">
+                    <Tabs.Panel value="roi">
+                        <Radio.Group
+                            label="Side"
+                            {...form.getInputProps('roi.side')}
+                        >
+                            <Group mt="xs">
+                                <Radio value="left" label="Left" />
+                                <Radio value="right" label="Right" />
+                                <Radio value="" label="Not stated" />
+                            </Group>
+                        </Radio.Group>
+
                         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
                             <thead>
                                 <tr>
-                                    <th>Category</th>
-                                    <th>Semiology</th>
-                                    <th>Characteristic</th>
+                                    <th>Lobe</th>
+                                    <th>Region</th>
+                                    <th>Area</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr key={"options"}>
                                     <td>
                                         <ColumnButtonSelect
-                                            data={getEffectOptions('category')}
-                                            form={form} form_path="effect.category"
+                                            data={getRoiOptions('lobe')}
                                             onChange={(v) => {
-                                                form.setFieldValue('effect.semiology', '');
-                                                form.setFieldValue('effect.characteristic', '');
-                                                form.getInputProps('effect.category').onChange(v);
+                                                form.setFieldValue('roi.region', '');
+                                                form.setFieldValue('roi.area', '');
+                                                form.getInputProps('roi.lobe').onChange(v)
+                                            }}
+                                            form={form} form_path='roi.lobe'
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getRoiOptions('region')}
+                                            form={form} form_path="roi.region"
+                                            onChange={(v) => {
+                                                form.setFieldValue('roi.area', '');
+                                                form.getInputProps('roi.region').onChange(v)
                                             }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
-                                            data={getEffectOptions('semiology')}
-                                            form={form} form_path="effect.semiology"
+                                            data={getRoiOptions('area')}
+                                            form={form} form_path="roi.area"
                                             onChange={(v) => {
-                                                form.setFieldValue('effect.characteristic', '');
-                                                form.getInputProps('effect.semiology').onChange(v);
-                                            }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getEffectOptions('characteristic')}
-                                            form={form} form_path="effect.characteristic"
-                                            onChange={(v) => {
-                                                form.getInputProps('effect.characteristic').onChange(v);
+                                                form.getInputProps('roi.area').onChange(v)
                                             }}
                                         />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        {canAddNewEffectManual('category') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('effect.category')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('roi.lobe')}
+                                        />
                                     </td>
                                     <td>
-                                        {canAddNewEffectManual('semiology') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('effect.semiology')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('roi.region')}
+                                        />
                                     </td>
                                     <td>
-                                        {canAddNewEffectManual('characteristic') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('effect.characteristic')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('roi.area')}
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
+
+                        <Divider label="MNI" />
+
+                        <Group position="apart">
+                            <NumberInput
+                                label="X"
+                                precision={2}
+                                {...form.getInputProps('roi.mni_x')}
+                            />
+                            <NumberInput
+                                label="Y"
+                                precision={2}
+                                {...form.getInputProps('roi.mni_y')}
+                            />
+                            <NumberInput
+                                label="Z"
+                                precision={2}
+                                {...form.getInputProps('roi.mni_z')}
+                            />
+                            <Switch
+                                label="Average?"
+                                labelPosition="left"
+                                {...form.getInputProps('roi.mni_average', { type: 'checkbox' })}
+                            />
+                        </Group>
+
+                    </Tabs.Panel>
+                    <Tabs.Panel value="effect">
+                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
+                            <thead>
+                                <tr>
+                                    <th>Class</th>
+                                    <th>Descriptor</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr key={"options"}>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getEffectOptions('class')}
+                                            form={form} form_path="effect.class"
+                                            onChange={(v) => {
+                                                form.setFieldValue('effect.descriptor', '');
+                                                form.setFieldValue('effect.details', '');
+                                                form.getInputProps('effect.class').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getEffectOptions('descriptor')}
+                                            form={form} form_path="effect.descriptor"
+                                            onChange={(v) => {
+                                                form.setFieldValue('effect.details', '');
+                                                form.getInputProps('effect.descriptor').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <ColumnButtonSelect
+                                            data={getEffectOptions('details')}
+                                            form={form} form_path="effect.details"
+                                            onChange={(v) => {
+                                                form.getInputProps('effect.details').onChange(v);
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('effect.class')}
+                                        />
+                                    </td>
+                                    <td>
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('effect.descriptor')}
+                                        />
+                                    </td>
+                                    <td>
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('effect.details')}
+                                        />
                                     </td>
                                 </tr>
                             </tbody>
                         </Table>
 
                         <Divider />
-                        <Switch
+                        <Radio.Group
                             label="Post discharge ?"
-                            labelPosition="left"
-                            {...form.getInputProps('effect.post_discharge', { type: 'checkbox' })}
-                        />
+                            {...form.getInputProps('effect.post_discharge')}
+                        >
+                            <Group mt="xs">
+                                <Radio value="yes" label="Yes" />
+                                <Radio value="no" label="No" />
+                                <Radio value="" label="Not stated" />
+                            </Group>
+                        </Radio.Group>
                         <Radio.Group
                             label="Lateralization"
                             {...form.getInputProps('effect.lateralization')}
@@ -635,7 +508,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <Radio value="ipsilateral" label="Ipsilateral" />
                                 <Radio value="non-lateralizable" label="Non-lateralizable" />
                                 <Radio value="contralateral" label="Contralateral" />
-                                <Radio value="" label="N/A" />
+                                <Radio value="" label="Not stated" />
                             </Group>
                         </Radio.Group>
                         <Radio.Group
@@ -645,7 +518,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             <Group mt="xs">
                                 <Radio value="dominant" label="Dominant" />
                                 <Radio value="non-dominant" label="Non-dominant" />
-                                <Radio value="" label="N/A" />
+                                <Radio value="" label="Not stated" />
                             </Group>
                         </Radio.Group>
                         <NativeSelect
@@ -704,25 +577,22 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 </tr>
                                 <tr>
                                     <td>
-                                        {canAddNewTaskManual('category') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('task.category')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('task.category')}
+                                        />
                                     </td>
                                     <td>
-                                        {canAddNewTaskManual('subcategory') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('task.subcategory')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('task.subcategory')}
+                                        />
                                     </td>
                                     <td>
-                                        {canAddNewTaskManual('characteristic') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('task.characteristic')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('task.characteristic')}
+                                        />
                                     </td>
                                 </tr>
                             </tbody>
@@ -735,6 +605,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         />
                     </Tabs.Panel>
                     <Tabs.Panel value="function">
+                        <Switch
+                            label="Article designed to assess specific function ?"
+                            labelPosition="left"
+                            {...form.getInputProps('function.article_designed_for_function', { type: 'checkbox' })}
+                        />
                         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
                             <thead>
                                 <tr>
@@ -778,25 +653,22 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 </tr>
                                 <tr>
                                     <td>
-                                        {canAddNewFunctionManual('category') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('function.category')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('function.category')}
+                                        />
                                     </td>
                                     <td>
-                                        {canAddNewFunctionManual('subcategory') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('function.subcategory')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('function.subcategory')}
+                                        />
                                     </td>
                                     <td>
-                                        {canAddNewFunctionManual('characteristic') &&
-                                            <TextInput
-                                                placeholder="Insert some value here"
-                                                {...form.getInputProps('function.characteristic')}
-                                            />}
+                                        <TextInput
+                                            placeholder="Insert some value here"
+                                            {...form.getInputProps('function.characteristic')}
+                                        />
                                     </td>
                                 </tr>
                             </tbody>
@@ -831,10 +703,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                     </Tabs.Panel>
                 </Tabs>
 
-                <Group position="right" mt="md">
-                    {onCancel != undefined && <Button type="reset" variant="light" onClick={() => { form.reset(); onCancel(); }}>Cancel</Button>}
-                    <Button type="submit">Save</Button>
-                </Group>
+
             </form>
         </Box>
     )
@@ -846,11 +715,14 @@ export interface CreateEditResultFormValues {
     roi: {
         side: string,
         lobe: string,
-        gyrus: string,
-        sub: string,
-        precision: string
+        region: string,
+        area: string,
+        from_figure: boolean,
+        mni_x: number,
+        mni_y: number,
+        mni_z: number,
+        mni_average: boolean,
     },
-    roi_destrieux: string[],
     stimulation_parameters: {
         amplitude_ma: number,
         amplitude_ma_max: number,
@@ -867,10 +739,10 @@ export interface CreateEditResultFormValues {
         phase_type: string,
     }
     effect: {
-        category: string,
-        semiology: string,
-        characteristic: string,
-        post_discharge: boolean,
+        class: string,
+        descriptor: string,
+        details: string,
+        post_discharge: string,
         lateralization: string,
         dominant: string,
         body_part: string,
@@ -886,6 +758,7 @@ export interface CreateEditResultFormValues {
         category: string,
         subcategory: string,
         characteristic: string,
+        article_designed_for_function: boolean,
         comments: string,
     },
     occurrences: number,
