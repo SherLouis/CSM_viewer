@@ -4,22 +4,445 @@
         "level": "lobe",
         "children": [
             {
-                "name": "inferior frontal gyrus",
-                "level": "gyrus",
+                "name": "VEP Gyri",
+                "level": "region",
                 "children": [
                     {
-                        "name": "Pars opercularis",
-                        "level": "sub",
+                        "name": "Pole_F_G",
+                        "level": "area",
                         "children": []
                     },
                     {
-                        "name": "Pars triangularis",
-                        "level": "sub",
+                        "name": "Orbital_Cortex_F_G",
+                        "level": "area",
                         "children": []
                     },
                     {
-                        "name": "Pars orbitalis",
-                        "level": "sub",
+                        "name": "Rectus_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Inferior_Orbitalis_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Inferior_Triangularis_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Inferior_Opercularis_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_Rostral_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_Caudal_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Sup_Mesial_Pre_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Sup_Mesial_PreSMA_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Sup_Mesial_SMA_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Sup_Lateral_Pre_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Sup_Lateral_Premotor_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Subcallosal_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Precentral_head_face_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Precentral_upper_limb_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Paracentral_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Central_Operculum_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Anterior_Cingulate_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_Cingulate_Ant_F_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_Cingulate_Post_F_G",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "VEP Sulci",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Inferior_F_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_F_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Sup_Rostral_F_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Sup_Caudal_F_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Precentral_Inferior_F_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Precentral_Superior_F_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Central_head_face_F_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Central_upper_limb_F_S",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "parietal",
+        "level": "lobe",
+        "children": [
+            {
+                "name": "VEP Gyri",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Parietal_Operculum_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Posterior_Cingulate_Dorsal_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Posterior_Cingulate_RetroSpl_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Postcentral_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Supramarginal_Ant_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Supramarginal_Post_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Angular_P_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Precuneus_P_G",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "VEP Sulci",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Intraparietal_P_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Postcentral_P_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Marginal_Cingulate_P_S",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "insula",
+        "level": "lobe",
+        "children": [
+            {
+                "name": "VEP Gyri",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Insula-gyri-brevi",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Insula-gyri-longi",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "temporal",
+        "level": "lobe",
+        "children": [
+            {
+                "name": "VEP Gyri",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Pole_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_Pl_Polare_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_Heschl_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_Pl_Temporale_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_Lateral_Ant_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_Lateral_Post_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_Ant_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_Post_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Inferior_Ant_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Inferior_Post_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Fusiform_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Parahippocampal_T_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Rhinal_T_G",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "VEP Sulci",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Superior_Ant_T_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_Post_T_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Inferior_Ant_T_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Inferior_Post_T_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Occipito_T_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Coleral_T_S",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "occipital",
+        "level": "lobe",
+        "children": [
+            {
+                "name": "VEP Gyri",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Inferior_O_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Middle_O_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Superior_O_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Pole_O_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Lingual_O_G",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Cuneus_O_G",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name":"VEP Sulci",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Lingual_O_S",
+                        "level": "area",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name":"VEP",
+                "level": "region",
+                "children": [
+                    {
+                        "name": "Parieto_O_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Anterior_O_S",
+                        "level": "area",
+                        "children": []
+                    },
+                    {
+                        "name": "Calcarine_O_S",
+                        "level": "area",
                         "children": []
                     }
                 ]

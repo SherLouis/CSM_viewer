@@ -1,5 +1,10 @@
 [
     {
+        "name": "Not stated",
+        "level": "category",
+        "children": []
+    },
+    {
         "name": "Cat1",
         "level": "category",
         "children": [

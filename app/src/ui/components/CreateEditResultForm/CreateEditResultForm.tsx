@@ -141,6 +141,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         form.setFieldValue('stimulation_parameters.duration_s', value);
         form.setFieldValue('stimulation_parameters.duration_s_max', value);
     }
+    const appendValueToCurrentFormValue = (form_path: string, value: string) => {
+        const current_value = form.getInputProps(form_path).value;
+        if (current_value !== '') { form.setFieldValue(form_path, current_value + ';' + value); }
+        else { form.setFieldValue(form_path, value); }
+    }
 
     const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
         const options = [
@@ -347,11 +352,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     <td>
                                         <ColumnButtonSelect
                                             data={getRoiOptions('lobe')}
-                                            onChange={(v) => {
-                                                form.setFieldValue('roi.region', '');
-                                                form.setFieldValue('roi.area', '');
-                                                form.getInputProps('roi.lobe').onChange(v)
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('roi.lobe', v); }}
                                             form={form} form_path='roi.lobe'
                                         />
                                     </td>
@@ -359,19 +360,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                         <ColumnButtonSelect
                                             data={getRoiOptions('region')}
                                             form={form} form_path="roi.region"
-                                            onChange={(v) => {
-                                                form.setFieldValue('roi.area', '');
-                                                form.getInputProps('roi.region').onChange(v)
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('roi.region', v); }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
                                             data={getRoiOptions('area')}
                                             form={form} form_path="roi.area"
-                                            onChange={(v) => {
-                                                form.getInputProps('roi.area').onChange(v)
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('roi.area', v); }}
                                         />
                                     </td>
                                 </tr>
@@ -399,7 +395,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         </Table>
 
                         <Divider label="MNI" />
-
                         <Group position="apart">
                             <NumberInput
                                 label="X"
@@ -439,30 +434,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                         <ColumnButtonSelect
                                             data={getEffectOptions('class')}
                                             form={form} form_path="effect.class"
-                                            onChange={(v) => {
-                                                form.setFieldValue('effect.descriptor', '');
-                                                form.setFieldValue('effect.details', '');
-                                                form.getInputProps('effect.class').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('effect.class', v); }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
                                             data={getEffectOptions('descriptor')}
                                             form={form} form_path="effect.descriptor"
-                                            onChange={(v) => {
-                                                form.setFieldValue('effect.details', '');
-                                                form.getInputProps('effect.descriptor').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('effect.descriptor', v); }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
                                             data={getEffectOptions('details')}
                                             form={form} form_path="effect.details"
-                                            onChange={(v) => {
-                                                form.getInputProps('effect.details').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('effect.details', v); }}
                                         />
                                     </td>
                                 </tr>
@@ -548,30 +534,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                         <ColumnButtonSelect
                                             data={getTaskOptions('category')}
                                             form={form} form_path="task.category"
-                                            onChange={(v) => {
-                                                form.setFieldValue('task.subcategory', '');
-                                                form.setFieldValue('task.characteristic', '');
-                                                form.getInputProps('task.category').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('task.category', v); }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
                                             data={getTaskOptions('subcategory')}
                                             form={form} form_path="task.subcategory"
-                                            onChange={(v) => {
-                                                form.setFieldValue('task.characteristic', '');
-                                                form.getInputProps('task.subcategory').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('task.subcategory', v); }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
                                             data={getTaskOptions('characteristic')}
                                             form={form} form_path="task.characteristic"
-                                            onChange={(v) => {
-                                                form.getInputProps('task.characteristic').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('task.characteristic', v); }}
                                         />
                                     </td>
                                 </tr>
@@ -624,30 +601,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                         <ColumnButtonSelect
                                             data={getFunctionOptions('category')}
                                             form={form} form_path="function.category"
-                                            onChange={(v) => {
-                                                form.setFieldValue('function.subcategory', '');
-                                                form.setFieldValue('function.characteristic', '');
-                                                form.getInputProps('function.category').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('function.category', v); }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
                                             data={getFunctionOptions('subcategory')}
                                             form={form} form_path="function.subcategory"
-                                            onChange={(v) => {
-                                                form.setFieldValue('function.characteristic', '');
-                                                form.getInputProps('function.subcategory').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('function.subcategory', v); }}
                                         />
                                     </td>
                                     <td>
                                         <ColumnButtonSelect
                                             data={getFunctionOptions('characteristic')}
                                             form={form} form_path="function.characteristic"
-                                            onChange={(v) => {
-                                                form.getInputProps('function.characteristic').onChange(v);
-                                            }}
+                                            onChange={(v) => { appendValueToCurrentFormValue('function.characteristic', v); }}
                                         />
                                     </td>
                                 </tr>

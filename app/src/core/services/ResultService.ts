@@ -49,22 +49,18 @@ export class ResultService {
         }
     }
 
-    // TODO: get from json instead
-    public getROIs() : ROI[] {
+    public getROIs(): ROI[] {
         return this.dataRepository.getROIs();
     }
 
-    // TODO: get from json instead
     public getEffects(): Effect[] {
         return this.dataRepository.getEffects();
     }
 
-    // TODO: get from json instead
     public getTasks(): Task[] {
         return this.dataRepository.getTasks();
     }
 
-    // TODO: get from json instead
     public getFunctions(): Function[] {
         return this.dataRepository.getFunctions();
     }

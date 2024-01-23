@@ -1,5 +1,20 @@
 [
     {
+        "name": "Not stated",
+        "level": "category",
+        "children": []
+    },
+    {
+        "name": "No task used",
+        "level": "category",
+        "children": []
+    },
+    {
+        "name": "Task used but not described",
+        "level": "category",
+        "children": []
+    },
+    {
         "name": "Task1",
         "level": "category",
         "children": [

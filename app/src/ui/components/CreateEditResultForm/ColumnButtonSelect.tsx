@@ -8,11 +8,7 @@ const ColumnButtonSelect = ({ data, form, form_path, onChange }: ColumnButtonSel
     const [currentValue, setValue] = useState<string>();
 
     const handleClick = (newValue: string) => {
-        if (newValue != currentValue) {
-            form.setFieldValue(form_path, newValue);
-            setValue(newValue);
-            onChange(newValue);
-        }
+        onChange(newValue);
     }
 
     return (
