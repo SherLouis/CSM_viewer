@@ -1,32 +1,39 @@
 [
     {
-        "name": "Not stated",
-        "level": "category",
-        "children": []
-    },
-    {
-        "name": "No task used",
-        "level": "category",
-        "children": []
-    },
-    {
-        "name": "Task used but not described",
-        "level": "category",
-        "children": []
-    },
-    {
         "name": "Task1",
         "level": "category",
         "children": [
             {
                 "name": "Task1 sub1",
                 "level": "subcategory",
-                "children": []
+                "children": [
+                    {
+                        "name": "Task1 sub1 characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Task1 sub1 characteristic 2",
+                        "level": "characteristic",
+                        "children": []
+                    }
+                ]
             },
             {
                 "name": "Task1 sub2",
                 "level": "subcategory",
-                "children": []
+                "children": [
+                    {
+                        "name": "Task1 sub2 characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Task1 sub2 characteristic 2",
+                        "level": "characteristic",
+                        "children": []
+                    }
+                ]
             }
         ]
     },
@@ -46,13 +53,23 @@
                     {
                         "name": "Task2 sub1 characteristic 2",
                         "level": "characteristic",
-                        "children": [
-                            {
-                                "name": "Task2 sub1 characteristic 2 precision 1",
-                                "level": "precision",
-                                "children": []
-                            }
-                        ]
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Task2 sub 2",
+                "level": "subcategory",
+                "children": [
+                    {
+                        "name": "Task2 sub2 characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Task2 sub2 characteristic 2",
+                        "level": "characteristic",
+                        "children": []
                     }
                 ]
             }

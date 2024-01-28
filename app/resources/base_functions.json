@@ -1,48 +1,75 @@
 [
     {
-        "name": "Not stated",
-        "level": "category",
-        "children": []
-    },
-    {
-        "name": "Cat1",
+        "name": "Function1",
         "level": "category",
         "children": [
             {
-                "name": "subCat1",
-                "level": "subcategory",
-                "children": []
-            },
-            {
-                "name": "subCat2",
-                "level": "subcategory",
-                "children": []
-            }
-        ]
-    },
-    {
-        "name": "Cat2",
-        "level": "category",
-        "children": [
-            {
-                "name": "Cat2Sub1",
+                "name": "Function1 sub1",
                 "level": "subcategory",
                 "children": [
                     {
-                        "name": "Cat2Sub1 characteristic 1",
+                        "name": "Function1 Sub1 Characteristic 1",
                         "level": "characteristic",
                         "children": []
                     },
                     {
-                        "name": "Cat2Sub1 characteristic 2",
+                        "name": "Function1 Sub1 Characteristic 2",
                         "level": "characteristic",
-                        "children": [
-                            {
-                                "name": "Cat2Sub1 characteristic 2 precision 1",
-                                "level": "precision",
-                                "children": []
-                            }
-                        ]
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Function1 sub2",
+                "level": "subcategory",
+                "children": [
+                    {
+                        "name": "Function1 Sub2 Characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Function1 Sub2 Characteristic 2",
+                        "level": "characteristic",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Function2",
+        "level": "category",
+        "children": [
+            {
+                "name": "Function2 Sub1",
+                "level": "subcategory",
+                "children": [
+                    {
+                        "name": "Function2 Sub1 Characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Function2 Sub1 Characteristic 2",
+                        "level": "characteristic",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Function2 Sub2",
+                "level": "subcategory",
+                "children": [
+                    {
+                        "name": "Function2 Sub2 Characteristic 1",
+                        "level": "characteristic",
+                        "children": []
+                    },
+                    {
+                        "name": "Function2 Sub2 Characteristic 2",
+                        "level": "characteristic",
+                        "children": []
                     }
                 ]
             }

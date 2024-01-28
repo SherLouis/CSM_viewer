@@ -16,7 +16,7 @@ export default function AppHeader(props: HeaderProps) {
 
   // TODO: Add menu https://mantine.dev/core/menu/
   return (
-    <Header height={60} p="xs">
+    <Header height={"5rem"} p="xs">
       <Group position={"apart"}>
         <Title>{props.title}</Title>
 

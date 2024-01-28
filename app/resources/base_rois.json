@@ -4,7 +4,7 @@
         "level": "lobe",
         "children": [
             {
-                "name": "VEP Gyri",
+                "name": "VEP_Gyri_F",
                 "level": "region",
                 "children": [
                     {
@@ -115,7 +115,7 @@
                 ]
             },
             {
-                "name": "VEP Sulci",
+                "name": "VEP_Sulci_F",
                 "level": "region",
                 "children": [
                     {
@@ -167,7 +167,7 @@
         "level": "lobe",
         "children": [
             {
-                "name": "VEP Gyri",
+                "name": "VEP_Gyri_P",
                 "level": "region",
                 "children": [
                     {
@@ -218,7 +218,7 @@
                 ]
             },
             {
-                "name": "VEP Sulci",
+                "name": "VEP_Sulci_P",
                 "level": "region",
                 "children": [
                     {
@@ -245,7 +245,7 @@
         "level": "lobe",
         "children": [
             {
-                "name": "VEP Gyri",
+                "name": "VEP_Gyri_I",
                 "level": "region",
                 "children": [
                     {
@@ -267,7 +267,7 @@
         "level": "lobe",
         "children": [
             {
-                "name": "VEP Gyri",
+                "name": "VEP_Gyri_T",
                 "level": "region",
                 "children": [
                     {
@@ -338,7 +338,7 @@
                 ]
             },
             {
-                "name": "VEP Sulci",
+                "name": "VEP_Sulci_T",
                 "level": "region",
                 "children": [
                     {
@@ -380,7 +380,7 @@
         "level": "lobe",
         "children": [
             {
-                "name": "VEP Gyri",
+                "name": "VEP_Gyri_O",
                 "level": "region",
                 "children": [
                     {
@@ -416,20 +416,14 @@
                 ]
             },
             {
-                "name":"VEP Sulci",
+                "name":"VEP_Sulci_O",
                 "level": "region",
                 "children": [
                     {
                         "name": "Lingual_O_S",
                         "level": "area",
                         "children": []
-                    }
-                ]
-            },
-            {
-                "name":"VEP",
-                "level": "region",
-                "children": [
+                    },
                     {
                         "name": "Parieto_O_S",
                         "level": "area",

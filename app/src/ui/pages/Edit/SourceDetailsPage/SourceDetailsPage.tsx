@@ -246,7 +246,7 @@ export const SourceDetailsPage = () => {
 
     console.debug(results);
     return (
-        <Container size={"80%"}>
+        <Container size={"100%"}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
 
             <Breadcrumbs>

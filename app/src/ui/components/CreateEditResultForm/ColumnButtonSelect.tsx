@@ -1,32 +1,37 @@
-import { GetInputProps, UseFormInput, UseFormReturnType } from "@mantine/form/lib/types";
-import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { Button, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Button, Flex, Group, Stack, TextInput, Title } from "@mantine/core";
 import { useState } from "react";
+import { IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 
-const ColumnButtonSelect = ({ data, form, form_path, onChange }: ColumnButtonSelectProps) => {
+const ColumnButtonSelect = ({ data, onChange, onSelect }: ColumnButtonSelectProps) => {
 
     const [currentValue, setValue] = useState<string>();
 
     const handleClick = (newValue: string) => {
+        setValue(newValue);
         onChange(newValue);
     }
 
     return (
-        <Button.Group orientation="vertical">
+        <Stack spacing={"xs"} justify="flex-start">
             {data.map((value, index) =>
-                <Button key={index}
-                    variant={form.getInputProps(form_path).value === value ? "filled" : "default"}
-                    onClick={() => handleClick(value)}>{value}</Button>
+                <Group key={index} spacing={"xs"}>
+                    <Button w={"85%"} m={0} p={0}
+                        variant={currentValue === value ? "filled" : "default"}
+                        onClick={() => handleClick(value)}>{value}</Button>
+                    <ActionIcon m={0} p={0}
+                        onClick={() => onSelect(value)}>
+                        <IconSquareRoundedPlusFilled/>
+                    </ActionIcon>
+                </Group>
             )}
-        </Button.Group>
+        </Stack>
     )
 }
 
 interface ColumnButtonSelectProps {
     data: string[];
-    form: UseFormReturnType<CreateEditResultFormValues>;
-    form_path: string;
     onChange: (newValue: string) => void;
+    onSelect: (newValue: string) => void;
 };
 
 export default ColumnButtonSelect;

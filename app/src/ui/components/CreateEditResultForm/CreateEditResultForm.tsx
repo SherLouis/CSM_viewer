@@ -1,4 +1,4 @@
-import { Box, Group, Button, NativeSelect, NumberInput, Autocomplete, Switch, Textarea, Tabs, rem, Radio, Stack, Title, Divider, SelectItem, TextInput, Table, Checkbox } from "@mantine/core"
+import { Box, Group, Button, NativeSelect, NumberInput, Autocomplete, Switch, Textarea, Tabs, rem, Radio, Stack, Title, Divider, SelectItem, TextInput, Table, Checkbox, Accordion } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
@@ -6,7 +6,10 @@ import { ROIDdo } from "../../models/ROIDdo";
 import { EffectDdo } from "../../models/EffectDdo";
 import { TaskDdo } from "../../models/TaskDdo";
 import { FunctionDdo } from "../../models/FunctionDdo";
-import ColumnButtonSelect from "./ColumnButtonSelect";
+import ROIOptionsTableForm from "./ROIOptionsTableForm";
+import EffectOptionsTableForm from "./EffectOptionsTableForm";
+import TaskOptionsTableForm from "./TaskOptionsTableForm";
+import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
 
 export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions }: CreateEditResultFormProps) => {
     const form = useForm<CreateEditResultFormValues>({
@@ -71,64 +74,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         onSubmit(values);
     }
 
-    const getRoiOptions = (level: 'lobe' | 'region' | 'area') => {
-        switch (level) {
-            case 'lobe':
-                return rois.filter((roi) => roi.level == level).map((roi) => roi.lobe);
-            case 'region':
-                return rois.filter((roi) => roi.level == level
-                    && roi.lobe == form.getInputProps('roi.lobe').value).map((roi) => roi.region);
-            case 'area':
-                return rois.filter((roi) => roi.level == level
-                    && roi.lobe == form.getInputProps('roi.lobe').value
-                    && roi.region == form.getInputProps('roi.region').value).map((roi) => roi.area);
-            default:
-                return [];
-        }
-    }
-
-    const getEffectOptions = (level: 'class' | 'descriptor' | 'details') => {
-        switch (level) {
-            case 'class':
-                return effects.filter((effect) => effect.level == level).map((effect) => effect.class);
-            case 'descriptor':
-                return effects.filter((effect) => effect.level == level
-                    && effect.class == form.getInputProps('effect.class').value).map((effect) => effect.descriptor);
-            case 'details':
-                return effects.filter((effect) => effect.level == level
-                    && effect.class == form.getInputProps('effect.class').value
-                    && effect.descriptor == form.getInputProps('effect.descriptor').value).map((effect) => effect.details);
-        }
-    }
-
-    const getTaskOptions = (level: 'category' | 'subcategory' | 'characteristic') => {
-        switch (level) {
-            case 'category':
-                return tasks.filter((task) => task.level == level).map((task) => task.category);
-            case 'subcategory':
-                return tasks.filter((task) => task.level == level
-                    && task.category == form.getInputProps('task.category').value).map((task) => task.subcategory);
-            case 'characteristic':
-                return tasks.filter((task) => task.level == level
-                    && task.category == form.getInputProps('task.category').value
-                    && task.subcategory == form.getInputProps('task.subcategory').value).map((task) => task.characteristic);
-        }
-    }
-
-    const getFunctionOptions = (level: 'category' | 'subcategory' | 'characteristic') => {
-        switch (level) {
-            case 'category':
-                return functions.filter((func) => func.level == level).map((func) => func.category);
-            case 'subcategory':
-                return functions.filter((func) => func.level == level
-                    && func.category == form.getInputProps('function.category').value).map((func) => func.subcategory);
-            case 'characteristic':
-                return functions.filter((func) => func.level == level
-                    && func.category == form.getInputProps('function.category').value
-                    && func.subcategory == form.getInputProps('function.subcategory').value).map((func) => func.characteristic);
-        }
-    }
-
     const setAmplitudeValue = (value: number) => {
         form.setFieldValue('stimulation_parameters.amplitude_ma', value);
         form.setFieldValue('stimulation_parameters.amplitude_ma_max', value);
@@ -143,8 +88,15 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     }
     const appendValueToCurrentFormValue = (form_path: string, value: string) => {
         const current_value = form.getInputProps(form_path).value;
-        if (current_value !== '') { form.setFieldValue(form_path, current_value + ';' + value); }
-        else { form.setFieldValue(form_path, value); }
+        const current_values = current_value.split(';');
+        if (current_value === '') {
+            form.setFieldValue(form_path, value);
+        }
+        else {
+            if (!current_values.includes(value)) {
+                form.setFieldValue(form_path, current_value + ';' + value);
+            }
+        }
     }
 
     const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
@@ -170,7 +122,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     return (
         <Box>
             <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-                <Tabs defaultValue="parameters">
+                <Tabs defaultValue="parameters" >
                     <Group position="apart" align='start'>
                         <Tabs.List>
                             <Tabs.Tab value="parameters" icon={<IconSettingsBolt style={iconStyle} />}>
@@ -198,9 +150,9 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         </Group>
                     </Group>
 
-                    <Tabs.Panel value="parameters">
-                        <Divider label="Aplitude" />
-                        <Group position="apart">
+                    <Tabs.Panel value="parameters" mx={"sm"}>
+                        <Divider label="Stimulation" />
+                        <Group align="flex-end">
                             <NumberInput
                                 label="Amplitude (mA)"
                                 precision={1}
@@ -221,21 +173,61 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_max')}
                             />
                         </Group>
-                        <Divider label="Frequency" />
                         <Group position="apart">
-                            <NumberInput
-                                label="Frequency (Hz)"
-                                {...form.getInputProps('stimulation_parameters.frequency_hz')}
-                                onChange={(value) => { setFrequencyValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.frequency_hz').onChange(value); }}
-                            />
-                            <Button.Group>
-                                <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 1 ? "filled" : "default"} onClick={() => setFrequencyValue(1)}>1</Button>
-                                <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 55 ? "filled" : "default"} onClick={() => setFrequencyValue(55)}>55</Button>
-                            </Button.Group>
-                            <NumberInput
-                                label="Frequency Max (Hz)"
-                                {...form.getInputProps('stimulation_parameters.frequency_hz_max')}
-                            />
+                            <Group align="flex-end">
+                                <NumberInput
+                                    label="Frequency (Hz)"
+                                    {...form.getInputProps('stimulation_parameters.frequency_hz')}
+                                    onChange={(value) => { setFrequencyValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.frequency_hz').onChange(value); }}
+                                />
+                                <Button.Group>
+                                    <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 1 ? "filled" : "default"} onClick={() => setFrequencyValue(1)}>1</Button>
+                                    <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 55 ? "filled" : "default"} onClick={() => setFrequencyValue(55)}>55</Button>
+                                </Button.Group>
+                                <NumberInput
+                                    label="Frequency Max (Hz)"
+                                    {...form.getInputProps('stimulation_parameters.frequency_hz_max')}
+                                />
+                            </Group>
+                            <Group align="flex-end">
+                                <NumberInput
+                                    label="Duration (s)"
+                                    {...form.getInputProps('stimulation_parameters.duration_s')}
+                                    onChange={(value) => { setDurationValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.duration_s').onChange(value); }}
+                                />
+                                <Button.Group>
+                                    <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 5 ? "filled" : "default"} onClick={() => setDurationValue(5)}>5</Button>
+                                    <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 10 ? "filled" : "default"} onClick={() => setDurationValue(10)}>10</Button>
+                                </Button.Group>
+                                <NumberInput
+                                    label="Duration Max (s)"
+                                    {...form.getInputProps('stimulation_parameters.duration_s_max')}
+                                />
+                            </Group>
+                        </Group>
+
+                        <Group position="left">
+                            <Group align="flex-end">
+                                <NumberInput
+                                    label="Phase Length"
+                                    precision={1}
+                                    {...form.getInputProps('stimulation_parameters.phase_length')}
+                                />
+                                <Button.Group>
+                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.3 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.3)}>0.3</Button>
+                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.5 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.5)}>0.5</Button>
+                                </Button.Group>
+                            </Group>
+                            <Radio.Group
+                                label="Phase type"
+                                {...form.getInputProps('stimulation_parameters.phase_type')}
+                            >
+                                <Group mt="xs">
+                                    <Radio value="Monophasic" label="Monophasic" />
+                                    <Radio value="Biphasic" label="Biphasic" />
+                                    <Radio value="" label="N/A" />
+                                </Group>
+                            </Radio.Group>
                         </Group>
                         <Divider label="Electrodes" />
                         <Stack>
@@ -253,7 +245,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     }
                                 }}
                             />
-                            <Group position="apart">
+                            <Group position="apart" spacing={"sm"}>
                                 <Radio.Group
                                     label="Implentation type"
                                     {...form.getInputProps('stimulation_parameters.implentation_type')}
@@ -285,47 +277,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 />
                             </Group>
                         </Stack>
-                        <Divider label="Phase" />
-                        <Stack>
-                            <Title order={5}>Phase</Title>
-                            <Group>
-                                <NumberInput
-                                    label="Phase Length"
-                                    precision={1}
-                                    {...form.getInputProps('stimulation_parameters.phase_length')}
-                                />
-                                <Button.Group>
-                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.3 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.3)}>0.3</Button>
-                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.5 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.5)}>0.5</Button>
-                                </Button.Group>
-                            </Group>
-                            <Radio.Group
-                                label="Phase type"
-                                {...form.getInputProps('stimulation_parameters.phase_type')}
-                            >
-                                <Group mt="xs">
-                                    <Radio value="Monophasic" label="Monophasic" />
-                                    <Radio value="Biphasic" label="Biphasic" />
-                                    <Radio value="" label="N/A" />
-                                </Group>
-                            </Radio.Group>
-                        </Stack>
-                        <Divider label="Duration" />
-                        <Group position="apart">
-                            <NumberInput
-                                label="Duration (s)"
-                                {...form.getInputProps('stimulation_parameters.duration_s')}
-                                onChange={(value) => { setDurationValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.duration_s').onChange(value); }}
-                            />
-                            <Button.Group>
-                                <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 5 ? "filled" : "default"} onClick={() => setDurationValue(5)}>5</Button>
-                                <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 10 ? "filled" : "default"} onClick={() => setDurationValue(10)}>10</Button>
-                            </Button.Group>
-                            <NumberInput
-                                label="Duration Max (s)"
-                                {...form.getInputProps('stimulation_parameters.duration_s_max')}
-                            />
-                        </Group>
+
                     </Tabs.Panel>
                     <Tabs.Panel value="roi">
                         <Radio.Group
@@ -338,143 +290,53 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <Radio value="" label="Not stated" />
                             </Group>
                         </Radio.Group>
-
-                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-                            <thead>
-                                <tr>
-                                    <th>Lobe</th>
-                                    <th>Region</th>
-                                    <th>Area</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr key={"options"}>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getRoiOptions('lobe')}
-                                            onChange={(v) => { appendValueToCurrentFormValue('roi.lobe', v); }}
-                                            form={form} form_path='roi.lobe'
+                        <Accordion defaultValue="VEP" variant="contained">
+                            <Accordion.Item value="VEP">
+                                <Accordion.Control>{"VEP Lobe/Region/Area"}</Accordion.Control>
+                                <Accordion.Panel>
+                                    <ROIOptionsTableForm
+                                        form={form}
+                                        onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
+                                        rois={rois}
+                                    />
+                                </Accordion.Panel>
+                            </Accordion.Item>
+                            <Accordion.Item value="MNI">
+                                <Accordion.Control>{"MNI coordinates"}</Accordion.Control>
+                                <Accordion.Panel>
+                                    <Group position="apart">
+                                        <NumberInput
+                                            label="X"
+                                            precision={2}
+                                            {...form.getInputProps('roi.mni_x')}
                                         />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getRoiOptions('region')}
-                                            form={form} form_path="roi.region"
-                                            onChange={(v) => { appendValueToCurrentFormValue('roi.region', v); }}
+                                        <NumberInput
+                                            label="Y"
+                                            precision={2}
+                                            {...form.getInputProps('roi.mni_y')}
                                         />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getRoiOptions('area')}
-                                            form={form} form_path="roi.area"
-                                            onChange={(v) => { appendValueToCurrentFormValue('roi.area', v); }}
+                                        <NumberInput
+                                            label="Z"
+                                            precision={2}
+                                            {...form.getInputProps('roi.mni_z')}
                                         />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('roi.lobe')}
+                                        <Switch
+                                            label="Average?"
+                                            labelPosition="left"
+                                            {...form.getInputProps('roi.mni_average', { type: 'checkbox' })}
                                         />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('roi.region')}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('roi.area')}
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
-
-                        <Divider label="MNI" />
-                        <Group position="apart">
-                            <NumberInput
-                                label="X"
-                                precision={2}
-                                {...form.getInputProps('roi.mni_x')}
-                            />
-                            <NumberInput
-                                label="Y"
-                                precision={2}
-                                {...form.getInputProps('roi.mni_y')}
-                            />
-                            <NumberInput
-                                label="Z"
-                                precision={2}
-                                {...form.getInputProps('roi.mni_z')}
-                            />
-                            <Switch
-                                label="Average?"
-                                labelPosition="left"
-                                {...form.getInputProps('roi.mni_average', { type: 'checkbox' })}
-                            />
-                        </Group>
+                                    </Group>
+                                </Accordion.Panel>
+                            </Accordion.Item>
+                        </Accordion>
 
                     </Tabs.Panel>
                     <Tabs.Panel value="effect">
-                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-                            <thead>
-                                <tr>
-                                    <th>Class</th>
-                                    <th>Descriptor</th>
-                                    <th>Details</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr key={"options"}>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getEffectOptions('class')}
-                                            form={form} form_path="effect.class"
-                                            onChange={(v) => { appendValueToCurrentFormValue('effect.class', v); }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getEffectOptions('descriptor')}
-                                            form={form} form_path="effect.descriptor"
-                                            onChange={(v) => { appendValueToCurrentFormValue('effect.descriptor', v); }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getEffectOptions('details')}
-                                            form={form} form_path="effect.details"
-                                            onChange={(v) => { appendValueToCurrentFormValue('effect.details', v); }}
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('effect.class')}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('effect.descriptor')}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('effect.details')}
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
-
+                        <EffectOptionsTableForm
+                            form={form}
+                            onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
+                            effects={effects}
+                        />
                         <Divider />
                         <Radio.Group
                             label="Post discharge ?"
@@ -519,61 +381,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             {...form.getInputProps('effect.comments')}
                         />
                     </Tabs.Panel>
+
                     <Tabs.Panel value="task">
-                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th>Subcategory</th>
-                                    <th>Characteristic</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr key={"options"}>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getTaskOptions('category')}
-                                            form={form} form_path="task.category"
-                                            onChange={(v) => { appendValueToCurrentFormValue('task.category', v); }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getTaskOptions('subcategory')}
-                                            form={form} form_path="task.subcategory"
-                                            onChange={(v) => { appendValueToCurrentFormValue('task.subcategory', v); }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getTaskOptions('characteristic')}
-                                            form={form} form_path="task.characteristic"
-                                            onChange={(v) => { appendValueToCurrentFormValue('task.characteristic', v); }}
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('task.category')}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('task.subcategory')}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('task.characteristic')}
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                        <Radio.Group
+                            {...form.getInputProps('task.category')}>
+                            <Group mt="xs">
+                                <Radio value="" label="Not stated" />
+                                <Radio value="No task used" label="No task used" />
+                                <Radio value="Task used but not described" label="Task used but not described" />
+                            </Group>
+                        </Radio.Group>
+                        <TaskOptionsTableForm
+                            form={form}
+                            onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
+                            tasks={tasks}
+                        />
                         <Divider />
                         <Textarea
                             label="Comments"
@@ -587,60 +409,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             labelPosition="left"
                             {...form.getInputProps('function.article_designed_for_function', { type: 'checkbox' })}
                         />
-                        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th>Subcategory</th>
-                                    <th>Characteristic</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr key={"options"}>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getFunctionOptions('category')}
-                                            form={form} form_path="function.category"
-                                            onChange={(v) => { appendValueToCurrentFormValue('function.category', v); }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getFunctionOptions('subcategory')}
-                                            form={form} form_path="function.subcategory"
-                                            onChange={(v) => { appendValueToCurrentFormValue('function.subcategory', v); }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ColumnButtonSelect
-                                            data={getFunctionOptions('characteristic')}
-                                            form={form} form_path="function.characteristic"
-                                            onChange={(v) => { appendValueToCurrentFormValue('function.characteristic', v); }}
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('function.category')}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('function.subcategory')}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TextInput
-                                            placeholder="Insert some value here"
-                                            {...form.getInputProps('function.characteristic')}
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                        <FunctionOptionsTableForm
+                            form={form}
+                            onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
+                            functions={functions}
+                        />
                         <Divider />
                         <Textarea
                             label="Comments"
