@@ -1,7 +1,7 @@
 {
   "name": "my-new-app",
   "productName": "CSM-data",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CSM data app",
   "main": ".webpack/main",
   "scripts": {
