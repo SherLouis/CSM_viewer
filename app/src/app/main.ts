@@ -49,9 +49,6 @@ class Main {
 
     // and load the index.html of the app.
     this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
-    // Open the DevTools.
-    this.mainWindow.webContents.openDevTools();
   };
 
   private openDb = () => {
@@ -109,7 +106,18 @@ class Main {
           click: () => this.newDb()
         }
       ]
-    }] as MenuItemConstructorOptions[]
+    },
+    {
+      label: "Help",
+      submenu: [
+        {
+          label: "Toggle Dev Tools",
+          click: () => this.mainWindow.webContents.toggleDevTools()
+        }
+      ]
+    }
+  
+  ] as MenuItemConstructorOptions[]
     Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
   }
 
