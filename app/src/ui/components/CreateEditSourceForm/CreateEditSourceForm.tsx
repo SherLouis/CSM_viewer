@@ -2,6 +2,7 @@ import { Box, TextInput, Group, Flex, Button, Accordion, NativeSelect, NumberInp
 import { useForm } from '@mantine/form';
 const citejs = require('@citation-js/core')
 require('@citation-js/plugin-pubmed')
+require('@citation-js/plugin-doi')
 import { useCallback, useState } from "react";
 import { SourceDdo, SourceSummaryDdo } from "../../models/SourceDdo";
 
@@ -36,12 +37,14 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
           console.log(cite);
           const doi = cite.data[0].DOI;
           const author = cite.data[0].author[0];
+          const publisher = cite.data[0]['publisher'];
           const location = cite.data[0]['publisher-place'];
           const title = cite.data[0].title;
           const _date = cite.data[0].issued['date-parts'][0]
-          const date = String(_date[0]) + '/' + String(_date[1]).padStart(2, '0') + '/' + String(_date[2]).padStart(2, '0')
+          const date = String(_date[0]) + '/' + String(_date[1]).padStart(2, '0')
           form.setFieldValue('reference.doi', doi);
           form.setFieldValue('reference.author', author.family + ',' + author.given);
+          form.setFieldValue('reference.publisher', publisher);
           form.setFieldValue('reference.location', location);
           form.setFieldValue('reference.title', title);
           form.setFieldValue('reference.date', date);
@@ -50,8 +53,33 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
         (reason: any) => { console.error(reason); setLoadingFromPubMed(false) })
   }, [])
 
+  const getInfoFromDoi = useCallback((id: string) => {
+    setLoadingFromDoi(true);
+    citejs.Cite.async(id, { forceType: '@doi/id' })
+      .then(
+        (cite: any) => {
+          console.log(cite);
+          const author = cite.data[0].author[0];
+          const publisher = cite.data[0]['publisher'];
+          const location = cite.data[0]['publisher-place'];
+          const title = cite.data[0].title;
+          const _date = cite.data[0].issued['date-parts'][0]
+          const date = String(_date[0]) + '/' + String(_date[1]).padStart(2, '0')
+          form.setFieldValue('reference.author', author.family + ',' + author.given);
+          form.setFieldValue('reference.publisher', publisher);
+          form.setFieldValue('reference.location', location);
+          form.setFieldValue('reference.title', title);
+          form.setFieldValue('reference.date', date);
+          setLoadingFromDoi(false);
+        },
+        (reason: any) => { console.error(reason); setLoadingFromDoi(false) })
+  }, [])
+
+
   const [pubMedId, setPubMedId] = useState<string>();
   const [loadingFromPubMed, setLoadingFromPubMed] = useState<boolean>(false);
+
+  const [loadingFromDoi, setLoadingFromDoi] = useState<boolean>(false);
 
   const handleSubmit = (values: CreateFormValues) => {
     form.validate();
@@ -91,10 +119,14 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
 
               }
               {form.getInputProps('reference.type').value === 'article' &&
-                <TextInput
-                  label="DOI"
-                  {...form.getInputProps('reference.doi')}
-                />
+                <Flex direction='row' align='flex-end'>
+                  <TextInput
+                    label="DOI"
+                    placeholder="10.nnnnnn/example"
+                    {...form.getInputProps('reference.doi')}
+                  />
+                  <Button onClick={() => getInfoFromDoi(form.values.reference.doi)} loading={loadingFromDoi}>Get from DOI</Button>
+                </Flex>
               }
 
               <TextInput
@@ -131,7 +163,7 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
 
         <NativeSelect
           label="Status"
-          data = {["À Faire", "Fait", "À Discutter"]}
+          data={["À Faire", "Fait", "À Discutter"]}
           {...form.getInputProps('status')}
         />
 
