@@ -358,6 +358,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                         effects={props.effects}
                         tasks={props.tasks}
                         functions={props.functions}
+                        body_parts={props.bodyParts}
                         onSubmit={(values) => handleEdit(values, record.id)}
                     />
                 ),
@@ -373,6 +374,7 @@ type ResultsTableProps = {
     effects: EffectDdo[];
     tasks: TaskDdo[];
     functions: FunctionDdo[];
+    bodyParts: String[];
     onEdit: (result: ResultDdo) => void,
     onCreate: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void

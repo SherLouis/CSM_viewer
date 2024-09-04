@@ -64,4 +64,8 @@ export class ResultService {
     public getFunctions(): Function[] {
         return this.dataRepository.getFunctions();
     }
+
+    public getBodyParts(): String[] {
+        return this.dataRepository.getBodyParts();
+    }
 }

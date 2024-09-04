@@ -8,6 +8,8 @@ import {Function} from "../core/models/Function";
 export default interface IDataRepository {
     setDbLocation(dbLocation: string): boolean
 
+    migrateDb(newDbLocation: string): boolean
+
     // Source
 
     getSource(sourceId: number): Source
@@ -42,6 +44,9 @@ export default interface IDataRepository {
 
     // Functions
     getFunctions(): Function[]
+
+    // Body Parts
+    getBodyParts(): String[]
 
     close(): void
 }

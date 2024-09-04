@@ -34,7 +34,8 @@ export const SourceDetailsPage = () => {
     const [rois, roisHandlers] = useListState<ROIDdo>([]);
     const [effects, effectsHandlers] = useListState<EffectDdo>([]);
     const [tasks, tasksHandlers] = useListState<TaskDdo>([]);
-    const [functions, functionsHandlers] = useListState<FunctionDdo>([])
+    const [functions, functionsHandlers] = useListState<FunctionDdo>([]);
+    const [bodyParts, bodyPartsHandlers] = useListState<String>([]);
 
     // Load current source, results, rois, tasks and functions
     useEffect(() => {
@@ -62,7 +63,12 @@ export const SourceDetailsPage = () => {
                                                 ResultUIService.getFunctions()
                                                     .then((functions) => {
                                                         functionsHandlers.setState(functions);
-                                                        setIsLoading(false);
+                                                        console.debug("getting body parts");
+                                                        ResultUIService.getBodyParts()
+                                                            .then((bodyParts) => {
+                                                                bodyPartsHandlers.setState(bodyParts);
+                                                                setIsLoading(false);
+                                                            })
                                                     })
                                             })
                                     })
@@ -279,6 +285,7 @@ export const SourceDetailsPage = () => {
                                 effects={effects}
                                 tasks={tasks}
                                 functions={functions}
+                                body_parts={bodyParts}
                             />
                         )}
                         <ResultsTable
@@ -287,6 +294,7 @@ export const SourceDetailsPage = () => {
                             effects={effects}
                             tasks={tasks}
                             functions={functions}
+                            bodyParts={bodyParts}
                             onEdit={(result) => editResult(result)}
                             onCreate={(result) => createResult(result)}
                             onDelete={(resultId) => onDeleteResult(resultId)} />

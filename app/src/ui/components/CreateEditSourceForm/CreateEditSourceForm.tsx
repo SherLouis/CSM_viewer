@@ -24,7 +24,7 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
     } as CreateFormValues,
     validate: {
       reference: {
-        date: (value) => (value === '' || /^\d{4}\/\d{2}\/\d{2}$/.test(value) ? null : 'Invalid date format')
+        date: (value) => (value === '' || /^\d{4}\/\d{2}(\/\d{2})?$/.test(value) ? null : 'Invalid date format')
       }
     },
   });
@@ -123,6 +123,7 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
                   <TextInput
                     label="DOI"
                     placeholder="10.nnnnnn/example"
+                    required
                     {...form.getInputProps('reference.doi')}
                   />
                   <Button onClick={() => getInfoFromDoi(form.values.reference.doi)} loading={loadingFromDoi}>Get from DOI</Button>

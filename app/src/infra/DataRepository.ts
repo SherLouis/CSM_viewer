@@ -21,6 +21,7 @@ export default class DataRepository implements IDataRepository {
     private effects: Effect[];
     private tasks: Task[];
     private functions: Function[];
+    private bodyParts: String[];
 
 
     constructor(dbLocation: string) {
@@ -28,6 +29,7 @@ export default class DataRepository implements IDataRepository {
         this.effects = this.readEffectsFromFile();
         this.tasks = this.readTasksFromFile();
         this.functions = this.readFunctionsFromFile();
+        this.bodyParts = this.readBodyPartsFromFile();
         this.dbLocation = dbLocation;
         this.db = new Database(this.dbLocation);
         this.createTablesIfNotExist();
@@ -49,6 +51,65 @@ export default class DataRepository implements IDataRepository {
             return false;
         }
     }
+
+    migrateDb(newDbLocation: string): boolean {
+        interface TableSchema {
+            sql: string;
+        }
+
+        interface TableInfo {
+            name: string;
+        }
+
+        // Open the source and destination databases
+        const srcDb = this.db;
+        const destDb = new Database(newDbLocation);
+
+        try {
+            // Retrieve the schema from the source database
+            const tables = srcDb.prepare("SELECT name FROM sqlite_master WHERE type='table'").all() as TableInfo[];
+
+            for (const table of tables) {
+                const tableName = table.name;  // TypeScript now knows table has a 'name' property
+
+                // Skip the 'sqlite_sequence' table
+                if (tableName === 'sqlite_sequence') {
+                    continue;
+                }
+
+                // Get the schema of each table
+                const schema = srcDb.prepare(`SELECT sql FROM sqlite_master WHERE type='table' AND name=?`).get(tableName) as TableSchema;
+                if (schema && schema.sql) {
+                    // Create the table in the destination database
+                    destDb.exec(schema.sql);
+
+                    // Copy data from the source table to the destination table
+                    const rows: Record<string, any>[] = srcDb.prepare(`SELECT * FROM ${tableName}`).all();
+                    if (rows.length > 0) {
+                        const columns = Object.keys(rows[0]).join(',');
+                        const placeholders = Object.keys(rows[0]).map(() => '?').join(',');
+                        const insertSQL = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
+                        const insertStmt = destDb.prepare(insertSQL);
+
+                        // Insert rows into the new database
+                        for (const row of rows) {
+                            insertStmt.run(Object.values(row));
+                        }
+                    }
+                }
+            }
+
+            console.log(`Database migrated from ${this.dbLocation} to ${newDbLocation}`);
+            this.db.close();
+            this.db = destDb;
+            this.dbLocation = newDbLocation;
+            return true;
+        } catch (error) {
+            console.error('Error migrating database:', error);
+            return false;
+        }
+    }
+
     close(): void {
         this.db.close();
     }
@@ -71,6 +132,11 @@ export default class DataRepository implements IDataRepository {
     // Functions
     getFunctions(): Function[] {
         return this.functions;
+    }
+
+    // Body Parts
+    getBodyParts(): String[] {
+        return this.bodyParts;
     }
 
     // Sources
@@ -402,11 +468,11 @@ export default class DataRepository implements IDataRepository {
 
         let rois: ROI[] = [];
         for (let lobe of base_rois) {
-            rois.push({level: 'lobe', lobe: lobe.name, region: null, area: null});
+            rois.push({ level: 'lobe', lobe: lobe.name, region: null, area: null });
             for (let region of lobe.children) {
-                rois.push({level: 'region', lobe: lobe.name, region: region.name, area: null});
+                rois.push({ level: 'region', lobe: lobe.name, region: region.name, area: null });
                 for (let area of region.children) {
-                    rois.push({level: 'area', lobe: lobe.name, region: region.name, area: area.name});
+                    rois.push({ level: 'area', lobe: lobe.name, region: region.name, area: area.name });
                 }
             }
         }
@@ -426,11 +492,11 @@ export default class DataRepository implements IDataRepository {
 
         let effects: Effect[] = [];
         for (let e_class of base_effects) {
-            effects.push({level: 'class', class: e_class.name, descriptor: null, details: null});
+            effects.push({ level: 'class', class: e_class.name, descriptor: null, details: null });
             for (let descriptor of e_class.children) {
-                effects.push({level: 'descriptor', class: e_class.name, descriptor: descriptor.name, details: null});
+                effects.push({ level: 'descriptor', class: e_class.name, descriptor: descriptor.name, details: null });
                 for (let details of descriptor.children) {
-                    effects.push({level: 'details', class: e_class.name, descriptor: descriptor.name, details: details.name});
+                    effects.push({ level: 'details', class: e_class.name, descriptor: descriptor.name, details: details.name });
                 }
             }
         }
@@ -448,11 +514,11 @@ export default class DataRepository implements IDataRepository {
 
         let tasks: Task[] = [];
         for (let category of base_tasks) {
-            tasks.push({level: 'category', category: category.name, subcategory: null, characteristic: null});
+            tasks.push({ level: 'category', category: category.name, subcategory: null, characteristic: null });
             for (let subcategory of category.children) {
-                tasks.push({level: 'subcategory', category: category.name, subcategory: subcategory.name, characteristic: null});
+                tasks.push({ level: 'subcategory', category: category.name, subcategory: subcategory.name, characteristic: null });
                 for (let characteristic of subcategory.children) {
-                    tasks.push({level: 'characteristic', category: category.name, subcategory: subcategory.name, characteristic: characteristic.name});
+                    tasks.push({ level: 'characteristic', category: category.name, subcategory: subcategory.name, characteristic: characteristic.name });
                 }
             }
         }
@@ -470,15 +536,27 @@ export default class DataRepository implements IDataRepository {
 
         let functions: Function[] = [];
         for (let category of base_functions) {
-            functions.push({level: 'category', category: category.name, subcategory: null, characteristic: null});
+            functions.push({ level: 'category', category: category.name, subcategory: null, characteristic: null });
             for (let subcategory of category.children) {
-                functions.push({level: 'subcategory', category: category.name, subcategory: subcategory.name, characteristic: null});
+                functions.push({ level: 'subcategory', category: category.name, subcategory: subcategory.name, characteristic: null });
                 for (let characteristic of subcategory.children) {
-                    functions.push({level: 'characteristic', category: category.name, subcategory: subcategory.name, characteristic: characteristic.name});
+                    functions.push({ level: 'characteristic', category: category.name, subcategory: subcategory.name, characteristic: characteristic.name });
                 }
             }
         }
         return functions;
+    }
+
+    // Body Parts
+    private readBodyPartsFromFile(): String[] {
+        let file = path.join(app.getAppPath(), '../..', 'resources', 'base_body_parts.json');
+        if (!fs.existsSync(file)) {
+            file = path.join(app.getAppPath(), 'resources', 'base_body_parts.json');
+        }
+        const jsonstring = fs.readFileSync(file, 'utf-8');
+        const base_body_parts = JSON.parse(jsonstring) as String[];
+        console.debug(base_body_parts);
+        return base_body_parts;
     }
 
 

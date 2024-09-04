@@ -11,7 +11,7 @@ import EffectOptionsTableForm from "./EffectOptionsTableForm";
 import TaskOptionsTableForm from "./TaskOptionsTableForm";
 import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
 
-export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions }: CreateEditResultFormProps) => {
+export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts }: CreateEditResultFormProps) => {
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
             roi: {
@@ -111,11 +111,12 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     const ElectrodeOptions = getElectrodeOptions();
 
     const getBodyPartOptions = (): SelectItem[] => {
-        return [
-            { value: "arm", label: "Arm" },
-            { value: "leg", label: "Leg" },
-            { value: "chest", label: "Chest" },
-        ];
+        return body_parts.map(part => (
+            {
+                value: part,
+                label: part.charAt(0).toUpperCase() + part.slice(1)
+            } as SelectItem)
+        )
     }
 
     const iconStyle = { width: rem(12), height: rem(12) };
@@ -516,4 +517,5 @@ interface CreateEditResultFormProps {
     effects: EffectDdo[];
     tasks: TaskDdo[];
     functions: FunctionDdo[];
+    body_parts: String[];
 }
