@@ -16,7 +16,8 @@ const config: ForgeConfig = {
       "./resources/base_effects.json",
       "./resources/base_rois.json",
       "./resources/base_tasks.json",
-      "./resources/base_functions.json"
+      "./resources/base_functions.json",
+      "./resources/base_body_parts.json"
     ]
   },
   rebuildConfig: {},
