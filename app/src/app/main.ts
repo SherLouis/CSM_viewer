@@ -131,9 +131,7 @@ class Main {
               if (!value.canceled) {
                 resultDbLocation = value.filePath;
                 // Merge databases and change db location to result location
-                const okMerged = true;
-                // TODO: do merge and save as
-                // let okMerged = this.dataRepository.mergeWith(mergeWithOtherDbLocation, resultDbLocation);
+                const okMerged = this.dataRepository.mergeWith(mergeWithOtherDbLocation, resultDbLocation);
                 if (okMerged) {
                   this.dbLocation = resultDbLocation;
                   console.log(`Saved merged result as ${this.dbLocation}`)

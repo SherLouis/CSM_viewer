@@ -10,6 +10,8 @@ export default interface IDataRepository {
 
     migrateDb(newDbLocation: string): boolean
 
+    mergeWith(mergeWithDbLocation: string, saveResultInDbLocation: string): boolean
+
     // Source
 
     getSource(sourceId: number): Source

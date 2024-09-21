@@ -110,6 +110,160 @@ export default class DataRepository implements IDataRepository {
         }
     }
 
+    mergeWith(mergeWithDbLocation: string, saveResultInDbLocation: string): boolean {
+        const getFilename = (path: string) => { return path.split('\\').pop().split('/').pop() };
+        try {
+            const resultDb = new Database(saveResultInDbLocation);
+            const otherDb = new Database(mergeWithDbLocation);
+
+            // Create tables in resultDb
+            const createSourcesTableStmt = `
+                    CREATE TABLE IF NOT EXISTS Sources (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        type TEXT,
+                        author TEXT,
+                        date TEXT,
+                        publisher TEXT,
+                        location TEXT,
+                        doi TEXT, 
+                        title TEXT,
+                        cohort INTEGER,
+                        state TEXT
+                    );`;
+            const createResultsTableStmt = `
+                    CREATE TABLE IF NOT EXISTS Results (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        source_id INTEGER NOT NULL,
+                        roi_side TEXT,
+                        roi_lobe TEXT,
+                        roi_region TEXT,
+                        roi_area TEXT,
+                        roi_from_figure INTEGER,
+                        roi_mni_x REAL,
+                        roi_mni_y REAL,
+                        roi_mni_z REAL,
+                        roi_mni_average INTEGER,
+                        stim_amp_ma REAL,
+                        stim_amp_ma_max REAL,
+                        stim_freq INTEGER,
+                        stim_freq_max INTEGER,
+                        stim_duration INTEGER,
+                        stim_duration_max INTEGER,
+                        stim_implentation_type TEXT,
+                        stim_electrode_make TEXT,
+                        stim_contact_separation INTEGER,
+                        stim_contact_diameter INTEGER,
+                        stim_contact_length INTEGER,
+                        stim_phase_length REAL,
+                        stim_phase_type TEXT,
+                        effect_class TEXT,
+                        effect_descriptor TEXT,
+                        effect_details TEXT,
+                        effect_post_discharge INTEGER,
+                        effect_lateralization TEXT,
+                        effect_dominant TEXT,
+                        effect_body_part TEXT,
+                        effect_comments TEXT,
+                        task_category TEXT,
+                        task_subcategory TEXT,
+                        task_characteristic TEXT,
+                        task_comments TEXT,
+                        function_category TEXT,
+                        function_subcategory TEXT,
+                        function_characteristic TEXT,
+                        function_article_designed_for_function INTEGER,
+                        function_comments TEXT,
+                        occurrences INTEGER,
+                        comments TEXT,
+                        comments_2 TEXT,
+                        precision_score REAL,
+                        source_db TEXT
+                    );`;
+            resultDb.prepare(createSourcesTableStmt).run();
+            resultDb.prepare(createResultsTableStmt).run();
+
+            // Maps
+            const doiToFinalSourceIdMap = new Map<string, number>();
+            const sourceIdAToFinalSourceIdMap = new Map<number, number>();
+            const sourceIdBToFinalSourceIdMap = new Map<number, number>();
+
+            // Insert sources from database A into database C
+            const insertSource = resultDb.prepare(`
+        INSERT INTO Sources (type, author, date, publisher, location, doi, title, cohort, state)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+            const sourcesA = this.db.prepare('SELECT * FROM Sources').all() as SourceEntity[];
+            sourcesA.forEach(source => {
+                const info = insertSource.run(source.type, source.author, source.date, source.publisher, source.location, source.doi, source.title, source.cohort, source.state);
+                if (source.doi) {
+                    doiToFinalSourceIdMap.set(source.doi, info.lastInsertRowid as number);
+                }
+                sourceIdAToFinalSourceIdMap.set(source.id, info.lastInsertRowid as number);
+            });
+
+            // Merge Sources from database B into database C
+            const sourcesB = otherDb.prepare('SELECT * FROM Sources').all() as SourceEntity[];
+            sourcesB.forEach(source => {
+                if (source.doi && doiToFinalSourceIdMap.has(source.doi)) {
+                    // If DOI exists, then source already inserted in result db
+                    sourceIdBToFinalSourceIdMap.set(source.id, doiToFinalSourceIdMap.get(source.doi));
+                } else {
+                    // Insert new source into result database and get new ID
+                    const info = insertSource.run(source.type, source.author, source.date, source.publisher, source.location, source.doi, source.title, source.cohort, source.state);
+                    const newSourceId = info.lastInsertRowid as number;
+                    if (source.doi) {
+                        doiToFinalSourceIdMap.set(source.doi, newSourceId);
+                    }
+                    sourceIdBToFinalSourceIdMap.set(source.id, newSourceId);
+                }
+            });
+
+            // Prepare to insert Results into result database
+            const insertResult = resultDb.prepare(`
+        INSERT INTO Results 
+        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, source_db)
+        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @source_db)
+        `);
+            // Merge Results from database A
+            const resultsA = this.db.prepare('SELECT * FROM Results').all() as ReadResultEntity[];
+            resultsA.forEach(result => {
+                const newSourceId = sourceIdAToFinalSourceIdMap.get(result.source_id);
+                const sourceDatabase = getFilename(this.dbLocation);
+                insertResult.run({
+                    ...result,
+                    source_id: newSourceId,
+                    source_db: sourceDatabase
+                })
+            });
+
+            // Merge Results from database B
+            const resultsB = otherDb.prepare('SELECT * FROM Results').all() as ReadResultEntity[];
+            resultsB.forEach(result => {
+                const newSourceId = sourceIdBToFinalSourceIdMap.get(result.source_id);
+                const sourceDatabase = getFilename(mergeWithDbLocation);
+                insertResult.run({
+                    ...result,
+                    source_id: newSourceId,
+                    source_db: sourceDatabase
+                })
+            });
+
+            // Close databases and switch to new one
+            this.db.close();
+            otherDb.close();
+            this.db = resultDb;
+            this.dbLocation = saveResultInDbLocation;
+
+            return true;
+        }
+
+        catch (error) {
+            console.error('Error merging databases');
+            return false;
+        }
+    }
+
     close(): void {
         this.db.close();
     }
@@ -566,11 +720,7 @@ export default class DataRepository implements IDataRepository {
         this._createSourcesTableIfNotExist();
         this._createResultsTableIfNotExist();
     }
-    private _tableExists(table: string) {
-        const stmt = `SELECT count(*) AS count FROM sqlite_master WHERE type='table' AND name=?;`
-        const result = this.db.prepare(stmt).get(table) as { count: number };
-        return (result.count > 0)
-    }
+
     private _createSourcesTableIfNotExist() {
         const createSourcesTableStmt = `
             CREATE TABLE IF NOT EXISTS Sources (
