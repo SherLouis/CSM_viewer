@@ -1,4 +1,4 @@
-import IDataRepository from "../../infra/IDataRepository";
+import IDataRepository from "../IDataRepository";
 import { Effect } from "../models/Effect";
 import { ROI } from "../models/ROI";
 import { Result } from "../models/Result";

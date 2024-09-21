@@ -1,10 +1,10 @@
 import Database from "better-sqlite3";
-import DataRepository from "./DataRepository";
+import SqlDataRepository from "./SqlDataRepository";
 import { Source } from "../core/models/Source";
 import { Result } from "../core/models/Result";
 
 const db_location = './testdb.sqlite';
-const repository = new DataRepository(db_location);
+const repository = new SqlDataRepository(db_location);
 const db = new Database(db_location);
 
 /*

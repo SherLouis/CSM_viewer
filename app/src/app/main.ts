@@ -3,8 +3,8 @@ import { IpcChannelInterface } from '../IPC/IpcChannelInterface';
 import { GetSourcesChannel } from '../IPC/IpcChannels/Source/GetSourcesChannel';
 import { SourceService } from '../core/services/SourceService';
 import { CreateSourceChannel } from '../IPC/IpcChannels/Source/CreateSourceChannel';
-import IDataRepository from '../infra/IDataRepository';
-import DataRepository from '../infra/DataRepository';
+import IDataRepository from '../core/IDataRepository';
+import SqlDataRepository from '../infra/SqlDataRepository';
 import { GetSourceChannel } from '../IPC/IpcChannels/Source/GetSourceChannel';
 import { EditSourceChannel } from '../IPC/IpcChannels/Source/EditSourceChannel';
 import { DeleteSourceChannel } from '../IPC/IpcChannels/Source/DeleteSourceChannel';
@@ -33,7 +33,7 @@ if (require('electron-squirrel-startup')) {
 class Main {
 
   private dbLocation = ":memory:"
-  private dataRepository: IDataRepository = new DataRepository(this.dbLocation);
+  private dataRepository: IDataRepository = new SqlDataRepository(this.dbLocation);
   private sourceService: SourceService = new SourceService(this.dataRepository);
   private resultService: ResultService = new ResultService(this.dataRepository);
 

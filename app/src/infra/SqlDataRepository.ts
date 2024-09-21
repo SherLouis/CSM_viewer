@@ -1,6 +1,6 @@
 import { Result } from "../core/models/Result";
 import { SourceSummary, Source } from "../core/models/Source";
-import IDataRepository from "./IDataRepository";
+import IDataRepository from "../core/IDataRepository";
 import { SourceEntity, SourceEntityToModel, SourceToEntity } from "./entity/SourceEntity";
 import { SourceSummaryEntity, SourceSummaryEntityToModel } from "./entity/SourceSummaryEntity";
 import Database from "better-sqlite3";
@@ -13,7 +13,7 @@ import { app } from "electron";
 import { Task } from "../core/models/Task";
 import { Function } from "../core/models/Function";
 
-export default class DataRepository implements IDataRepository {
+export default class SqlDataRepository implements IDataRepository {
     private dbLocation: string;
     private db: Database.Database;
 

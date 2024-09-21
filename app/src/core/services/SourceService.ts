@@ -1,4 +1,4 @@
-import IDataRepository from "../../infra/IDataRepository";
+import IDataRepository from "../IDataRepository";
 import { SourceSummary, Source } from "../models/Source";
 
 export class SourceService {
