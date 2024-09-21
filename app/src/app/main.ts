@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, MenuItemConstructorOptions, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, MenuItemConstructorOptions, dialog, session } from 'electron';
 import { IpcChannelInterface } from '../IPC/IpcChannelInterface';
 import { GetSourcesChannel } from '../IPC/IpcChannels/Source/GetSourcesChannel';
 import { SourceService } from '../core/services/SourceService';
@@ -106,8 +106,45 @@ class Main {
             this.mainWindow.webContents.send('dbLocation', dbLocation);
           }
           else {
-            console.error('Saving db to new location')
+            console.error('Error saving db to new location')
           }
+        }
+      })
+      .catch((reason) => console.error(reason));
+  }
+
+  private mergeWith = () => {
+    let mergeWithOtherDbLocation: string;
+    let resultDbLocation: string;
+    // Open other db to merge with
+    dialog.showOpenDialog(this.mainWindow, {
+      title: "Select other database to merge with...",
+      filters: [{ "name": "SQLite database files", "extensions": ["db", "sqlite"] }],
+      properties: ["openFile"]
+    })
+      .then((value) => {
+        if (!value.canceled && value.filePaths.length > 0) {
+          mergeWithOtherDbLocation = value.filePaths[0];
+          // Select where to save result
+          dialog.showSaveDialog(this.mainWindow, { title: "Save merge result as", filters: [{ "name": "SQL database files", "extensions": ["db", "sqlite"] }] })
+            .then((value) => {
+              if (!value.canceled) {
+                resultDbLocation = value.filePath;
+                // Merge databases and change db location to result location
+                const okMerged = true;
+                // TODO: do merge and save as
+                // let okMerged = this.dataRepository.mergeWith(mergeWithOtherDbLocation, resultDbLocation);
+                if (okMerged) {
+                  this.dbLocation = resultDbLocation;
+                  console.log(`Saved merged result as ${this.dbLocation}`)
+                  this.mainWindow.webContents.send('dbLocation', resultDbLocation);
+                }
+                else {
+                  console.error('Error merging databases and saving to new location')
+                }
+              }
+            })
+            .catch((reason) => console.error(reason));
         }
       })
       .catch((reason) => console.error(reason));
@@ -128,6 +165,13 @@ class Main {
         {
           label: "Save as",
           click: () => this.saveAs()
+        },
+        {
+          type: "separator"
+        },
+        {
+          label: "Merge with ...",
+          click: () => this.mergeWith()
         }
       ]
     },
@@ -140,8 +184,8 @@ class Main {
         }
       ]
     }
-  
-  ] as MenuItemConstructorOptions[]
+
+    ] as MenuItemConstructorOptions[]
     Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
   }
 
@@ -177,7 +221,6 @@ class Main {
     this.createWindow();
     this.mainWindow.webContents.send('dbLocation', this.dbLocation);
   }
-
 
   public init() {
     // This method will be called when Electron has finished

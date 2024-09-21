@@ -44,9 +44,9 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
           const date = String(_date[0]) + '/' + String(_date[1]).padStart(2, '0')
           form.setFieldValue('reference.doi', doi);
           form.setFieldValue('reference.author', author.family + ',' + author.given);
-          form.setFieldValue('reference.publisher', publisher);
-          form.setFieldValue('reference.location', location);
-          form.setFieldValue('reference.title', title);
+          form.setFieldValue('reference.publisher', publisher != null ? publisher : "");
+          form.setFieldValue('reference.location', location != null ? location : "");
+          form.setFieldValue('reference.title', title != null ? title : "");
           form.setFieldValue('reference.date', date);
           setLoadingFromPubMed(false);
         },
@@ -66,9 +66,9 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
           const _date = cite.data[0].issued['date-parts'][0]
           const date = String(_date[0]) + '/' + String(_date[1]).padStart(2, '0')
           form.setFieldValue('reference.author', author.family + ',' + author.given);
-          form.setFieldValue('reference.publisher', publisher);
-          form.setFieldValue('reference.location', location);
-          form.setFieldValue('reference.title', title);
+          form.setFieldValue('reference.publisher', publisher != null ? publisher : "");
+          form.setFieldValue('reference.location', location != null ? location : "");
+          form.setFieldValue('reference.title', title != null ? title : "");
           form.setFieldValue('reference.date', date);
           setLoadingFromDoi(false);
         },
