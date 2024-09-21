@@ -9,6 +9,7 @@ import { FunctionDdo } from "src/ui/models/FunctionDdo";
 
 export interface IElectronAPI {
   dbLocationChanged: (callback: (event: Event, value: string) => void) => void,
+  useMode : (callback: (event: Event, value: string) => void) => void,
   // Sources
   getSourcesSummary: () => Promise<SourceSummaryDto[]>
   createSource: (source: SourceDto) => CreateResponseDto

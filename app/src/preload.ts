@@ -1,9 +1,11 @@
 import { Event, contextBridge, ipcRenderer } from 'electron'
 import { SourceDto } from './IPC/dtos/SourceDto'
 import { ResultDto } from './IPC/dtos/ResultDto'
+import AppMode from './core/models/AppMode'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   dbLocationChanged: (callback: (event:Event, value:string)=>void) => ipcRenderer.on('dbLocation', callback),
+  useMode: (callback: (event:Event, value:AppMode)=>void) => ipcRenderer.on('useMode', callback),
 
   getSourcesSummary: () => ipcRenderer.invoke('source:getAll'),
   getSource: (sourceId: number) => ipcRenderer.invoke('source:get', { params: { sourceId: sourceId } }),
@@ -22,5 +24,3 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getFunctions: () => ipcRenderer.invoke('results:getFunctions'),
   getBodyParts: () => ipcRenderer.invoke('results:getBodyParts')
 })
-
-// TODO: use typescript to make api respect a type and make validations
