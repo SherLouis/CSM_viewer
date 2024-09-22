@@ -1,17 +1,18 @@
 import { MouseEvent, useEffect, useState } from 'react';
-import { ActionIcon, Group, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Box, Checkbox, Group, MultiSelect, Popover, Text, TextInput } from '@mantine/core';
 import sortBy from 'lodash.sortby';
-import { IconCopy, IconSearch, IconTrash } from '@tabler/icons-react';
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import { IconCopy, IconFilterOff, IconSearch, IconTableOptions, IconTrash } from '@tabler/icons-react';
+import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from 'mantine-datatable';
 import { ResultDdo } from '../../models/ResultDdo';
 import { CreateEditResultForm, CreateEditResultFormValues } from '../CreateEditResultForm/CreateEditResultForm';
 import { ROIDdo } from '../../models/ROIDdo';
 import { EffectDdo } from '../../models/EffectDdo';
 import { TaskDdo } from '../../models/TaskDdo';
 import { FunctionDdo } from '../../models/FunctionDdo';
-import { useDebouncedState } from '@mantine/hooks';
+import { useDebouncedState, useListState } from '@mantine/hooks';
 import { useAppState } from '../../context/AppContext';
 import AppMode from '../../../core/models/AppMode';
+import { DataTableColumnToggle } from 'mantine-datatable/dist/hooks';
 
 const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add pagination
@@ -175,8 +176,180 @@ const ResultsTable = (props: ResultsTableProps) => {
     const [effectQuery, setEffectQuery] = useDebouncedState('', 200);
     const [taskQuery, setTaskQuery] = useDebouncedState('', 200);
     const [functionQuery, setFunctionQuery] = useDebouncedState('', 200);
+    const [sourceDbFilter, setSourceDbFilterHandlers] = useListState<string>([]);
 
     const appMode = useAppState().mode;
+
+    const tableColumns = [
+        {
+            accessor: 'id',
+            title: 'ID',
+            sortable: true
+        },
+        {
+            accessor: 'stimulation_parameters',
+            title: 'Parameters',
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {(result.stimulation_parameters.amplitude_ma ? result.stimulation_parameters.amplitude_ma : '-') + ' mA '
+                            + '| ' + (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s '
+                            + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
+                            + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'stim')}>
+                        <IconCopy size={16} />
+                    </ActionIcon>
+                </Group>)
+        },
+        {
+            accessor: 'roi',
+            title: 'ROI',
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {result.roi.lobe +
+                            (result.roi.region ? ('/' + result.roi.region +
+                                (result.roi.area ? ('/' + result.roi.area) : '')) : '')}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
+                        <IconCopy size={16} />
+                    </ActionIcon>
+                </Group>),
+            filter: (
+                <TextInput
+                    label="ROI"
+                    description="Search for a ROI that includes specified text"
+                    placeholder='Search ROI...'
+                    icon={<IconSearch size={16} />}
+                    defaultValue={roiQuery}
+                    onChange={(e) => setRoiQuery(e.currentTarget.value)}
+                />
+            ),
+            filtering: roiQuery != '',
+        },
+        {
+            accessor: 'effect',
+            title: 'Effect',
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {result.effect.class +
+                            (result.effect.descriptor ? ('/' + result.effect.descriptor
+                                + (result.effect.details ? ('/' + result.effect.details + (
+                                    result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '')}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
+                        <IconCopy size={16} />
+                    </ActionIcon>
+                </Group>),
+            filter: (
+                <TextInput
+                    label="Effect"
+                    description="Search for an Effect that includes specified text"
+                    placeholder='Search Effect...'
+                    icon={<IconSearch size={16} />}
+                    defaultValue={effectQuery}
+                    onChange={(e) => setEffectQuery(e.currentTarget.value)}
+                />
+            ),
+            filtering: effectQuery != '',
+        },
+        {
+            accessor: 'task',
+            title: 'Task',
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {result.task.category +
+                            (result.task.subcategory ? ('/' + result.task.subcategory
+                                + (result.task.characteristic ? ('/' + result.task.characteristic) : '')) : '')}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'task')}>
+                        <IconCopy size={16} />
+                    </ActionIcon>
+                </Group>),
+            filter: (
+                <TextInput
+                    label="Task"
+                    description="Search for a Task that includes specified text"
+                    placeholder='Search Task...'
+                    icon={<IconSearch size={16} />}
+                    defaultValue={taskQuery}
+                    onChange={(e) => setTaskQuery(e.currentTarget.value)}
+                />
+            ),
+            filtering: taskQuery != '',
+        },
+        {
+            accessor: 'function',
+            title: 'Function',
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {result.function.category +
+                            (result.function.subcategory ? ('/' + result.function.subcategory
+                                + (result.function.characteristic ? ('/' + result.function.characteristic) : '')) : '')}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'function')}>
+                        <IconCopy size={16} />
+                    </ActionIcon>
+                </Group>),
+            filter: (
+                <TextInput
+                    label="Function"
+                    description="Search for a Function that includes specified text"
+                    placeholder='Search Function...'
+                    icon={<IconSearch size={16} />}
+                    defaultValue={functionQuery}
+                    onChange={(e) => setFunctionQuery(e.currentTarget.value)}
+                />
+            ),
+            filtering: functionQuery != '',
+        },
+        {
+            accessor: 'occurrences',
+            title: 'Occurrences',
+            sortable: true
+        },
+        {
+            accessor: 'source_db',
+            title: "Source DB",
+            sortable: true,
+            filter: (
+                <MultiSelect
+                    data={Array.from(new Set(props.data.flatMap((r) => r.source_db)))}
+                    placeholder='Select Source DB(s) to include'
+                    value={sourceDbFilter}
+                    label="Source DB"
+                    onChange={(newValues) => setSourceDbFilterHandlers.setState(newValues)}
+                />
+            ),
+            filtering: sourceDbFilter.length !== 0,
+        },
+        {
+            accessor: 'actions',
+            title: <Text mr="xs">Actions</Text>,
+            textAlignment: 'right',
+            width: "10%",
+            render: (result) => (
+                <Group spacing={4} position="right" noWrap>
+                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'all')}>
+                        <IconCopy size={16} />
+                    </ActionIcon>
+                    <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, result.id)}>
+                        <IconTrash size={16} />
+                    </ActionIcon>
+                </Group>
+            ),
+        }
+    ] as DataTableColumn<ResultDdo>[];
+
+    const columnsLocalStorageKey = 'result_table_columns';
+    const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<ResultDdo>({
+        key: columnsLocalStorageKey,
+        columns: tableColumns
+    });
 
     useEffect(() => {
         var data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
@@ -190,191 +363,80 @@ const ResultsTable = (props: ResultsTableProps) => {
             if (effectQuery !== '' && !effectValue.toLowerCase().includes(effectQuery.trim().toLowerCase())) { return false; }
             if (taskQuery !== '' && !taskValue.toLowerCase().includes(taskQuery.trim().toLowerCase())) { return false; }
             if (functionQuery !== '' && !functionValue.toLowerCase().includes(functionQuery.trim().toLowerCase())) { return false; }
+            if (sourceDbFilter.length !== 0 && !sourceDbFilter.includes(result.source_db)) { return false; }
             return true;
         });
         setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [sortStatus, roiQuery, effectQuery, taskQuery, functionQuery, props.data])
+    }, [sortStatus, roiQuery, effectQuery, taskQuery, functionQuery, props.data, sourceDbFilter])
+
+    useEffect(() => {
+        setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => toggle.accessor === 'source_db' ? { ...toggle, toggled: appMode === AppMode.MERGE } : toggle));
+    }, [appMode]);
+
+    const clearAllFilters = () => {
+        setRoiQuery('');
+        setEffectQuery('');
+        setEffectQuery('');
+        setTaskQuery('');
+        setFunctionQuery('');
+        setSourceDbFilterHandlers.setState([]);
+    }
 
     return (
-        <DataTable
-            sortStatus={sortStatus}
-            onSortStatusChange={setSortStatus}
-            withColumnBorders
-            striped
-            highlightOnHover
-            idAccessor={(record) => String(record.id)}
-            records={records}
-            columns={[
-                {
-                    accessor: 'id',
-                    title: 'ID',
-                    sortable: true
-                },
-                {
-                    accessor: 'stimulation_parameters',
-                    title: 'Parameters',
-                    render: (result) => (
-                        <Group position='apart'>
-                            <Text>
-                                {(result.stimulation_parameters.amplitude_ma ? result.stimulation_parameters.amplitude_ma : '-') + ' mA '
-                                    + '| ' + (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s '
-                                    + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
-                                    + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}
-                            </Text>
-                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'stim')}>
-                                <IconCopy size={16} />
-                            </ActionIcon>
-                        </Group>)
-                },
-                {
-                    accessor: 'roi',
-                    title: 'ROI',
-                    render: (result) => (
-                        <Group position='apart'>
-                            <Text>
-                                {result.roi.lobe +
-                                    (result.roi.region ? ('/' + result.roi.region +
-                                        (result.roi.area ? ('/' + result.roi.area) : '')) : '')}
-                            </Text>
-                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
-                                <IconCopy size={16} />
-                            </ActionIcon>
-                        </Group>),
-                    filter: (
-                        <TextInput
-                            label="ROI"
-                            description="Search for a ROI that includes specified text"
-                            placeholder='Search ROI...'
-                            icon={<IconSearch size={16} />}
-                            defaultValue={roiQuery}
-                            onChange={(e) => setRoiQuery(e.currentTarget.value)}
+        <Box h={"100%"}>
+            <Group position='right' h={"4%"}>
+                <ActionIcon title={'Clear all filters'}>
+                    <IconFilterOff onClick={clearAllFilters} />
+                </ActionIcon>
+                <Popover position='bottom-end'>
+                    <Popover.Target>
+                        <ActionIcon title={'Select columns'}>
+                            <IconTableOptions />
+                        </ActionIcon>
+                    </Popover.Target>
+                    <Popover.Dropdown>
+                        <Checkbox.Group
+                            value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
+                            onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
+                            label={'Select columns'}
+                        >
+                            {columnsToggle.map(c =>
+                                <Checkbox
+                                    value={c.accessor}
+                                    key={c.accessor}
+                                    label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
+                            )}
+                        </Checkbox.Group>
+                    </Popover.Dropdown>
+                </Popover>
+            </Group>
+            <DataTable
+                height={'96%'}
+                sortStatus={sortStatus}
+                onSortStatusChange={setSortStatus}
+                withColumnBorders
+                striped
+                highlightOnHover
+                idAccessor={(record) => String(record.id)}
+                records={records}
+                columns={effectiveColumns}
+                rowExpansion={{
+                    allowMultiple: false,
+                    content: ({ record }) => (
+                        <CreateEditResultForm
+                            edit_result={record}
+                            rois={props.rois}
+                            effects={props.effects}
+                            tasks={props.tasks}
+                            functions={props.functions}
+                            body_parts={props.bodyParts}
+                            onSubmit={(values) => handleEdit(values, record.id)}
                         />
                     ),
-                    filtering: roiQuery != '',
-                },
-                {
-                    accessor: 'effect',
-                    title: 'Effect',
-                    render: (result) => (
-                        <Group position='apart'>
-                            <Text>
-                                {result.effect.class +
-                                    (result.effect.descriptor ? ('/' + result.effect.descriptor
-                                        + (result.effect.details ? ('/' + result.effect.details + (
-                                            result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '')}
-                            </Text>
-                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
-                                <IconCopy size={16} />
-                            </ActionIcon>
-                        </Group>),
-                    filter: (
-                        <TextInput
-                            label="Effect"
-                            description="Search for an Effect that includes specified text"
-                            placeholder='Search Effect...'
-                            icon={<IconSearch size={16} />}
-                            defaultValue={effectQuery}
-                            onChange={(e) => setEffectQuery(e.currentTarget.value)}
-                        />
-                    ),
-                    filtering: effectQuery != '',
-                },
-                {
-                    accessor: 'task',
-                    title: 'Task',
-                    render: (result) => (
-                        <Group position='apart'>
-                            <Text>
-                                {result.task.category +
-                                    (result.task.subcategory ? ('/' + result.task.subcategory
-                                        + (result.task.characteristic ? ('/' + result.task.characteristic) : '')) : '')}
-                            </Text>
-                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'task')}>
-                                <IconCopy size={16} />
-                            </ActionIcon>
-                        </Group>),
-                    filter: (
-                        <TextInput
-                            label="Task"
-                            description="Search for a Task that includes specified text"
-                            placeholder='Search Task...'
-                            icon={<IconSearch size={16} />}
-                            defaultValue={taskQuery}
-                            onChange={(e) => setTaskQuery(e.currentTarget.value)}
-                        />
-                    ),
-                    filtering: taskQuery != '',
-                },
-                {
-                    accessor: 'function',
-                    title: 'Function',
-                    render: (result) => (
-                        <Group position='apart'>
-                            <Text>
-                                {result.function.category +
-                                    (result.function.subcategory ? ('/' + result.function.subcategory
-                                        + (result.function.characteristic ? ('/' + result.function.characteristic) : '')) : '')}
-                            </Text>
-                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'function')}>
-                                <IconCopy size={16} />
-                            </ActionIcon>
-                        </Group>),
-                    filter: (
-                        <TextInput
-                            label="Function"
-                            description="Search for a Function that includes specified text"
-                            placeholder='Search Function...'
-                            icon={<IconSearch size={16} />}
-                            defaultValue={functionQuery}
-                            onChange={(e) => setFunctionQuery(e.currentTarget.value)}
-                        />
-                    ),
-                    filtering: functionQuery != '',
-                },
-                {
-                    accessor: 'occurrences',
-                    title: 'Occurrences',
-                    sortable: true
-                },
-                {
-                    accessor: 'source_db',
-                    title: "Source DB",
-                    sortable: true,
-                    hidden: appMode !== AppMode.MERGE
-                },
-                {
-                    accessor: 'actions',
-                    title: <Text mr="xs">Actions</Text>,
-                    textAlignment: 'right',
-                    width: "10%",
-                    render: (result) => (
-                        <Group spacing={4} position="right" noWrap>
-                            <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'all')}>
-                                <IconCopy size={16} />
-                            </ActionIcon>
-                            <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, result.id)}>
-                                <IconTrash size={16} />
-                            </ActionIcon>
-                        </Group>
-                    ),
-                }
-            ]}
-            rowExpansion={{
-                allowMultiple: false,
-                content: ({ record }) => (
-                    <CreateEditResultForm
-                        edit_result={record}
-                        rois={props.rois}
-                        effects={props.effects}
-                        tasks={props.tasks}
-                        functions={props.functions}
-                        body_parts={props.bodyParts}
-                        onSubmit={(values) => handleEdit(values, record.id)}
-                    />
-                ),
-            }}
+                }}
 
-        />
+            />
+        </Box>
     );
 }
 
