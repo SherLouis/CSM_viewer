@@ -404,7 +404,7 @@ export default class SqlDataRepository implements IDataRepository {
 
     // Results
     private _getResultsForSourceId(sourceId: number): ReadResultEntity[] {
-        const stmt = `SELECT Results.id,
+        /*const stmt = `SELECT Results.id,
                              Results.source_id,
                              Results.roi_side,
                              Results.roi_lobe,
@@ -451,6 +451,8 @@ export default class SqlDataRepository implements IDataRepository {
                              Results.precision_score
                         FROM Results 
                         WHERE source_id = ?`;
+                        */
+        const stmt = `SELECT * FROM Results WHERE source_id = ?`;
         const results = this.db.prepare(stmt).all(sourceId) as ReadResultEntity[];
         return results;
     }
@@ -709,7 +711,6 @@ export default class SqlDataRepository implements IDataRepository {
         }
         const jsonstring = fs.readFileSync(file, 'utf-8');
         const base_body_parts = JSON.parse(jsonstring) as String[];
-        console.debug(base_body_parts);
         return base_body_parts;
     }
 

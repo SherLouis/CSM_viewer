@@ -46,6 +46,7 @@ export type ReadResultEntity = {
     comments: string,
     comments_2: string,
     precision_score: number,
+    source_db?: string
 }
 
 export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result => {
@@ -104,6 +105,7 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
         occurrences: readEntity.occurrences,
         comments: readEntity.comments,
         comments_2: readEntity.comments_2,
-        precision_score: readEntity.precision_score
+        precision_score: readEntity.precision_score,
+        source_db: readEntity.source_db
     }
 }

@@ -10,6 +10,8 @@ import { EffectDdo } from '../../models/EffectDdo';
 import { TaskDdo } from '../../models/TaskDdo';
 import { FunctionDdo } from '../../models/FunctionDdo';
 import { useDebouncedState } from '@mantine/hooks';
+import { useAppState } from '../../context/AppContext';
+import AppMode from '../../../core/models/AppMode';
 
 const ResultsTable = (props: ResultsTableProps) => {
     // [ ] add pagination
@@ -174,6 +176,8 @@ const ResultsTable = (props: ResultsTableProps) => {
     const [taskQuery, setTaskQuery] = useDebouncedState('', 200);
     const [functionQuery, setFunctionQuery] = useDebouncedState('', 200);
 
+    const appMode = useAppState().mode;
+
     useEffect(() => {
         var data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
         data = data.filter((result) => {
@@ -331,6 +335,12 @@ const ResultsTable = (props: ResultsTableProps) => {
                     accessor: 'occurrences',
                     title: 'Occurrences',
                     sortable: true
+                },
+                {
+                    accessor: 'source_db',
+                    title: "Source DB",
+                    sortable: true,
+                    hidden: appMode !== AppMode.MERGE
                 },
                 {
                     accessor: 'actions',

@@ -54,4 +54,5 @@ export type Result = {
     comments?: string,
     comments_2?: string,
     precision_score: number,
+    source_db? : string
 }
