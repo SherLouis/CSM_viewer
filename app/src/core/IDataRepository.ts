@@ -12,6 +12,8 @@ export default interface IDataRepository {
 
     mergeWith(mergeWithDbLocation: string, saveResultInDbLocation: string): boolean
 
+    exportToCsv(exportCsvFilePath: string): Promise<void>
+
     // Source
 
     getSource(sourceId: number): Source

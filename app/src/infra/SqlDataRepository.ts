@@ -12,6 +12,7 @@ import * as fs from 'fs'
 import { app } from "electron";
 import { Task } from "../core/models/Task";
 import { Function } from "../core/models/Function";
+import { createObjectCsvWriter } from "csv-writer";
 
 export default class SqlDataRepository implements IDataRepository {
     private dbLocation: string;
@@ -262,6 +263,88 @@ export default class SqlDataRepository implements IDataRepository {
             console.error('Error merging databases');
             return false;
         }
+    }
+
+    async exportToCsv(exportCsvFilePath: string): Promise<void> {
+        // Query to join Results and Sources tables
+        const query = `
+        SELECT S.type, S.author, S.date, S.publisher, S.location, S.doi, S.title, S.cohort, S.state,
+        R.roi_side, R.roi_lobe, R.roi_region, R.roi_area, R.roi_from_figure, R.roi_mni_x, R.roi_mni_y, R.roi_mni_z, R.roi_mni_average, 
+        R.stim_amp_ma, R.stim_amp_ma_max, R.stim_freq, R.stim_freq_max, R.stim_duration, R.stim_duration_max, R.stim_electrode_make, R.stim_implentation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_type, 
+        R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
+        R.task_category, R.task_subcategory, R.task_characteristic, R.task_comments, 
+        R.function_category, R.function_subcategory, R.function_characteristic, R.function_article_designed_for_function, R.function_comments, 
+        R.occurrences, R.comments, R.comments_2, R.precision_score, R.source_db
+        FROM Results R
+        JOIN Sources S ON R.source_id = S.id
+    `;
+
+        // Fetch the results
+        const results = this.db.prepare(query).all();
+
+        // Define CSV writer
+        const csvWriter = createObjectCsvWriter({
+            path: exportCsvFilePath,
+            header: [
+                { id: 'type', title: 'Source type' },
+                { id: 'author', title: 'Source Author' },
+                { id: 'date', title: 'Source date' },
+                { id: 'publisher', title: 'Source publisher' },
+                { id: 'location', title: 'Source location' },
+                { id: 'doi', title: 'Source DOI' },
+                { id: 'cohort', title: 'Cohort' },
+                { id: 'title', title: 'Source Title' },
+                { id: 'state', title: 'Source state' },
+                { id: 'roi_side', title: 'ROI side' },
+                { id: 'roi_lobe', title: 'ROI lobe' },
+                { id: 'roi_region', title: 'ROI region' },
+                { id: 'roi_area', title: 'ROI area' },
+                { id: 'roi_from_figure', title: 'ROI selected from figure' },
+                { id: 'roi_mni_x', title: 'ROI MNI X' },
+                { id: 'roi_mni_y', title: 'ROI MNI Y' },
+                { id: 'roi_mni_z', title: 'ROI MNI Z' },
+                { id: 'roi_mni_average', title: 'ROI MNI is average' },
+                { id: 'stim_amp_ma', title: 'Stimulation Amplitude (mA)' },
+                { id: 'stim_amp_ma_max', title: 'Stimulation Maximum Amplitude (mA)' },
+                { id: 'stim_freq', title: 'Stimulation Frequency (Hz)' },
+                { id: 'stim_freq_max', title: 'Stimulation Maximum Frequency (Hz)' },
+                { id: 'stim_duration', title: 'Stimulation Duration' },
+                { id: 'stim_duration_max', title: 'Stimulation Maximum Duration' },
+                { id: 'stim_electrode_make', title: 'Electrode Make' },
+                { id: 'stim_implentation_type', title: 'Implentation Type' },
+                { id: 'stim_contact_separation', title: 'Contact Separation' },
+                { id: 'stim_contact_diameter', title: 'Contact Diameter' },
+                { id: 'stim_contact_length', title: 'Contact Lenght' },
+                { id: 'stim_phase_length', title: 'Phase Length' },
+                { id: 'stim_phase_type', title: 'Phase Type' },
+                { id: 'effect_class', title: 'Effect class' },
+                { id: 'effect_descriptor', title: 'Effect Descriptor' },
+                { id: 'effect_details', title: 'Effect Details' },
+                { id: 'effect_post_discharge', title: 'Post Discharge' },
+                { id: 'effect_lateralization', title: 'Effect Lateralization' },
+                { id: 'effect_dominant', title: 'Effect Dominance' },
+                { id: 'effect_body_part', title: 'Effect Body Part' },
+                { id: 'effect_comments', title: 'Effect Comments' },
+                { id: 'task_category', title: 'Task Category' },
+                { id: 'task_subcategory', title: 'Task Subcategory' },
+                { id: 'task_characteristic', title: 'Task Characteristic' },
+                { id: 'task_comments', title: 'Task Comments' },
+                { id: 'function_category', title: 'Function Category' },
+                { id: 'function_subcategory', title: 'Function Subcategory' },
+                { id: 'function_characteristic', title: 'Function Characteristic' },
+                { id: 'function_article_designed_for_function', title: 'Article Designed For Function' },
+                { id: 'function_comments', title: 'Function Comments' },
+                { id: 'occurrences', title: 'Occurences' },
+                { id: 'comments', title: 'Comments' },
+                { id: 'comments_2', title: 'Comments 2' },
+                { id: 'precision_score', title: 'Precision Score' },
+                { id: 'source_db', title: 'Source Database' }
+            ],
+        });
+
+        // Write data to CSV
+        await csvWriter.writeRecords(results);
+        console.log(`Exported data to ${exportCsvFilePath}`);
     }
 
     close(): void {

@@ -58,6 +58,7 @@
     "@mantine/notifications": "^6.0.19",
     "@tabler/icons-react": "^2.32.0",
     "better-sqlite3": "8.5.1",
+    "csv-writer": "^1.6.0",
     "electron-squirrel-startup": "^1.0.0",
     "lodash.sortby": "^4.7.0",
     "mantine-datatable": "^6.0.8",

@@ -157,6 +157,17 @@ class Main {
       .catch((reason) => console.error(reason));
   }
 
+  private exportData = () => {
+    dialog.showSaveDialog(this.mainWindow, { title: "Export to", filters: [{ "name": "CSV file", "extensions": ["csv"] }] })
+      .then((value) => {
+        const exportToFilePath = value.filePath;
+        this.dataRepository.exportToCsv(exportToFilePath)
+          .then(() => console.log('Export complete'))
+          .catch(err => console.error('Error during export:', err));
+      })
+      .catch((reason) => console.error(reason));
+  }
+
   private setupApplicationMenu = () => {
     const menuTemplate = [{
       label: "File",
@@ -179,7 +190,11 @@ class Main {
         {
           label: "Merge with ...",
           click: () => this.mergeWith()
-        }
+        },
+        {
+          label: "Export to CSV",
+          click: () => this.exportData()
+        },
       ]
     },
     {
