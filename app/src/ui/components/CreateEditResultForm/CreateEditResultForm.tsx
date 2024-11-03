@@ -1,4 +1,4 @@
-import { Box, Group, Button, NativeSelect, NumberInput, Autocomplete, Switch, Textarea, Tabs, rem, Radio, Stack, Title, Divider, SelectItem, TextInput, Table, Checkbox, Accordion } from "@mantine/core"
+import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
@@ -39,6 +39,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 contact_length: edit_result && edit_result.stimulation_parameters.contact_length != null ? edit_result.stimulation_parameters.contact_length : 0,
                 phase_length: edit_result && edit_result.stimulation_parameters.phase_length != null ? edit_result.stimulation_parameters.phase_length : 0,
                 phase_type: edit_result && edit_result.stimulation_parameters.phase_type != null ? edit_result.stimulation_parameters.phase_type : "",
+                epi_zone: edit_result && edit_result.stimulation_parameters.epi_zone != null ? edit_result.stimulation_parameters.epi_zone : "",
             },
             effect: {
                 class: edit_result && edit_result.effect.class != null ? edit_result.effect.class : "",
@@ -174,6 +175,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_max')}
                             />
                         </Group>
+
                         <Group position="apart">
                             <Group align="flex-end">
                                 <NumberInput
@@ -227,6 +229,19 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     <Radio value="Monophasic" label="Monophasic" />
                                     <Radio value="Biphasic" label="Biphasic" />
                                     <Radio value="" label="N/A" />
+                                </Group>
+                            </Radio.Group>
+                        </Group>
+                        <Group position="left">
+                            <Radio.Group
+                                label="In épileptogenic zone ?"
+                                {...form.getInputProps('stimulation_parameters.epi_zone')}
+                            >
+                                <Group mt="xs">
+                                    <Radio value="yes" label="Yes" />
+                                    <Radio value="no" label="No" />
+                                    <Radio value="unknown" label="Unknown" />
+                                    <Radio value="" label="Not stated" />
                                 </Group>
                             </Radio.Group>
                         </Group>
@@ -479,6 +494,7 @@ export interface CreateEditResultFormValues {
         contact_length: number,
         phase_length: number,
         phase_type: string,
+        epi_zone: string,
     }
     effect: {
         class: string,

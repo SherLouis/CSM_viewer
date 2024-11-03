@@ -26,6 +26,8 @@ export type Result = {
         contact_length: number,
         phase_length: number,
         phase_type: string,
+        epi_zone: string,
+        epi_zone_comments: string,
     }
     effect: {
         class: string,

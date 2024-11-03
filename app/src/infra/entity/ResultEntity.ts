@@ -25,6 +25,8 @@ export type ReadResultEntity = {
     stim_contact_length: number,
     stim_phase_length: number,
     stim_phase_type: string,
+    stim_epi_zone: string,
+    stim_epi_zone_comments: string,
     effect_class: string,
     effect_descriptor: string,
     effect_details: string,
@@ -77,7 +79,9 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
             contact_diameter: readEntity.stim_contact_diameter,
             contact_length: readEntity.stim_contact_length,
             phase_length: readEntity.stim_phase_length,
-            phase_type: readEntity.stim_phase_type
+            phase_type: readEntity.stim_phase_type,
+            epi_zone: readEntity.stim_epi_zone,
+            epi_zone_comments: readEntity.stim_epi_zone_comments,
         },
         effect: {
             class: readEntity.effect_class,

@@ -157,6 +157,8 @@ export default class SqlDataRepository implements IDataRepository {
                         stim_contact_length INTEGER,
                         stim_phase_length REAL,
                         stim_phase_type TEXT,
+                        stim_epi_zone TEXT,
+                        stim_epi_zone_comments TEXT,
                         effect_class TEXT,
                         effect_descriptor TEXT,
                         effect_details TEXT,
@@ -223,8 +225,8 @@ export default class SqlDataRepository implements IDataRepository {
             // Prepare to insert Results into result database
             const insertResult = resultDb.prepare(`
         INSERT INTO Results 
-        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, source_db)
-        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @source_db)
+        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, source_db)
+        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @source_db)
         `);
             // Merge Results from database A
             const resultsA = this.db.prepare('SELECT * FROM Results').all() as ReadResultEntity[];
@@ -270,7 +272,7 @@ export default class SqlDataRepository implements IDataRepository {
         const query = `
         SELECT S.type, S.author, S.date, S.publisher, S.location, S.doi, S.title, S.cohort, S.state,
         R.roi_side, R.roi_lobe, R.roi_region, R.roi_area, R.roi_from_figure, R.roi_mni_x, R.roi_mni_y, R.roi_mni_z, R.roi_mni_average, 
-        R.stim_amp_ma, R.stim_amp_ma_max, R.stim_freq, R.stim_freq_max, R.stim_duration, R.stim_duration_max, R.stim_electrode_make, R.stim_implentation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_type, 
+        R.stim_amp_ma, R.stim_amp_ma_max, R.stim_freq, R.stim_freq_max, R.stim_duration, R.stim_duration_max, R.stim_electrode_make, R.stim_implentation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_type, R.stim_epi_zone, R.stim_epi_zone_comments,
         R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
         R.task_category, R.task_subcategory, R.task_characteristic, R.task_comments, 
         R.function_category, R.function_subcategory, R.function_characteristic, R.function_article_designed_for_function, R.function_comments, 
@@ -317,6 +319,8 @@ export default class SqlDataRepository implements IDataRepository {
                 { id: 'stim_contact_length', title: 'Contact Lenght' },
                 { id: 'stim_phase_length', title: 'Phase Length' },
                 { id: 'stim_phase_type', title: 'Phase Type' },
+                { id: 'stim_epi_zone', title: 'Épileptogenic Zone' },
+                { id: 'stim_epi_zone_comments', title: 'Épileptogenic Zone Comments' },
                 { id: 'effect_class', title: 'Effect class' },
                 { id: 'effect_descriptor', title: 'Effect Descriptor' },
                 { id: 'effect_details', title: 'Effect Details' },
@@ -487,54 +491,6 @@ export default class SqlDataRepository implements IDataRepository {
 
     // Results
     private _getResultsForSourceId(sourceId: number): ReadResultEntity[] {
-        /*const stmt = `SELECT Results.id,
-                             Results.source_id,
-                             Results.roi_side,
-                             Results.roi_lobe,
-                             Results.roi_region,
-                             Results.roi_area,
-                             Results.roi_from_figure,
-                             Results.roi_mni_x,
-                             Results.roi_mni_y,
-                             Results.roi_mni_z,
-                             Results.roi_mni_average,
-                             Results.stim_amp_ma,
-                             Results.stim_amp_ma_max,
-                             Results.stim_freq,
-                             Results.stim_freq_max,
-                             Results.stim_duration,
-                             Results.stim_duration_max,
-                             Results.stim_electrode_make,
-                             Results.stim_implentation_type,
-                             Results.stim_contact_separation,
-                             Results.stim_contact_diameter,
-                             Results.stim_contact_length,
-                             Results.stim_phase_length,
-                             Results.stim_phase_type,
-                             Results.effect_class,
-                             Results.effect_descriptor,
-                             Results.effect_details,
-                             Results.effect_post_discharge,
-                             Results.effect_lateralization,
-                             Results.effect_dominant,
-                             Results.effect_body_part,
-                             Results.effect_comments,
-                             Results.task_category,
-                             Results.task_subcategory,
-                             Results.task_characteristic,
-                             Results.task_comments,
-                             Results.function_category,
-                             Results.function_subcategory,
-                             Results.function_characteristic,
-                             Results.function_article_designed_for_function,
-                             Results.function_comments,
-                             Results.occurrences,
-                             Results.comments,
-                             Results.comments_2,
-                             Results.precision_score
-                        FROM Results 
-                        WHERE source_id = ?`;
-                        */
         const stmt = `SELECT * FROM Results WHERE source_id = ?`;
         const results = this.db.prepare(stmt).all(sourceId) as ReadResultEntity[];
         return results;
@@ -545,8 +501,8 @@ export default class SqlDataRepository implements IDataRepository {
         console.debug(newResult);
 
         const stmt = `INSERT INTO Results 
-        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score)
-        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score)`
+        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score)
+        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score)`
         this.db.prepare(stmt).run({
             source_id: newResult.source_id,
             roi_side: newResult.roi.side,
@@ -571,6 +527,8 @@ export default class SqlDataRepository implements IDataRepository {
             stim_contact_length: newResult.stimulation_parameters.contact_length,
             stim_phase_length: newResult.stimulation_parameters.phase_length,
             stim_phase_type: newResult.stimulation_parameters.phase_type,
+            stim_epi_zone: newResult.stimulation_parameters.epi_zone,
+            stim_epi_zone_comments: newResult.stimulation_parameters.epi_zone_comments,
             effect_class: newResult.effect.class,
             effect_descriptor: newResult.effect.descriptor,
             effect_details: newResult.effect.details,
@@ -621,6 +579,8 @@ export default class SqlDataRepository implements IDataRepository {
             stim_contact_length=@stim_contact_length,
             stim_phase_length=@stim_phase_length,
             stim_phase_type=@stim_phase_type,
+            stim_epi_zone=@stim_epi_zone,
+            stim_epi_zone_comments=@stim_epi_zone_comments,
             effect_class=@effect_class,
             effect_descriptor=@effect_descriptor,
             effect_details=@effect_details,
@@ -666,6 +626,8 @@ export default class SqlDataRepository implements IDataRepository {
             stim_contact_length: newResult.stimulation_parameters.contact_length,
             stim_phase_length: newResult.stimulation_parameters.phase_length,
             stim_phase_type: newResult.stimulation_parameters.phase_type,
+            stim_epi_zone: newResult.stimulation_parameters.epi_zone,
+            stim_epi_zone_comments: newResult.stimulation_parameters.epi_zone_comments,
             effect_class: newResult.effect.class,
             effect_descriptor: newResult.effect.descriptor,
             effect_details: newResult.effect.details,
@@ -848,6 +810,8 @@ export default class SqlDataRepository implements IDataRepository {
                 stim_contact_length INTEGER,
                 stim_phase_length REAL,
                 stim_phase_type TEXT,
+                stim_epi_zone TEXT,
+                stim_epi_zone_comments TEXT,
                 effect_class TEXT,
                 effect_descriptor TEXT,
                 effect_details TEXT,
