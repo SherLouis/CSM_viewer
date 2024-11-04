@@ -69,6 +69,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
             comments: edit_result && edit_result.comments != null ? edit_result.comments : "",
             comments_2: edit_result && edit_result.comments_2 != null ? edit_result.comments_2 : "",
             precision_score: edit_result && edit_result.precision_score != null ? edit_result.precision_score : 0,
+            clinical_semiology: edit_result && edit_result.clinical_semiology != null ? edit_result.clinical_semiology : "",
         } as CreateEditResultFormValues,
     });
 
@@ -462,6 +463,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             precision={2}
                             {...form.getInputProps('precision_score')}
                         />
+                        <Textarea
+                            label="Clinical Semiology"
+                            placeholder="Write here"
+                            {...form.getInputProps('clinical_semiology')}
+                        />
                     </Tabs.Panel>
                 </Tabs>
 
@@ -529,6 +535,7 @@ export interface CreateEditResultFormValues {
     comments?: string,
     comments_2?: string,
     precision_score: number,
+    clinical_semiology: string,
 }
 
 interface CreateEditResultFormProps {

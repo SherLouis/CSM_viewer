@@ -71,10 +71,12 @@ const ResultsTable = (props: ResultsTableProps) => {
                 article_designed_for_function: values.function.article_designed_for_function,
                 comments: values.function.comments
             },
+            
             occurrences: values.occurrences,
             comments: values.comments,
             comments_2: values.comments_2,
-            precision_score: values.precision_score
+            precision_score: values.precision_score,
+            clinical_semiology: values.clinical_semiology,
         } as ResultDdo
         props.onEdit(result);
     }

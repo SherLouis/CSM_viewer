@@ -48,6 +48,7 @@ export type ReadResultEntity = {
     comments: string,
     comments_2: string,
     precision_score: number,
+    clinical_semiology: string,
     source_db?: string
 }
 
@@ -110,6 +111,7 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
         comments: readEntity.comments,
         comments_2: readEntity.comments_2,
         precision_score: readEntity.precision_score,
+        clinical_semiology: readEntity.clinical_semiology,
         source_db: readEntity.source_db
     }
 }

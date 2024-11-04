@@ -56,5 +56,6 @@ export type ResultDdo = {
     comments?: string,
     comments_2?: string,
     precision_score: number,
-    source_db?: string
+    source_db?: string,
+    clinical_semiology: string,
 }

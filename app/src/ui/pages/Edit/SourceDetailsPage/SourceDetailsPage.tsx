@@ -242,7 +242,8 @@ export const SourceDetailsPage = () => {
             occurrences: values.occurrences,
             comments: values.comments,
             comments_2: values.comments_2,
-            precision_score: values.precision_score
+            precision_score: values.precision_score,
+            clinical_semiology: values.clinical_semiology,
         } as ResultDdo
         setShowCreateForm(false);
         createResult(result);

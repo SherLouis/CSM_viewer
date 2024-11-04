@@ -180,6 +180,7 @@ export default class SqlDataRepository implements IDataRepository {
                         comments TEXT,
                         comments_2 TEXT,
                         precision_score REAL,
+                        clinical_semiology TEXT,
                         source_db TEXT
                     );`;
             resultDb.prepare(createSourcesTableStmt).run();
@@ -225,8 +226,8 @@ export default class SqlDataRepository implements IDataRepository {
             // Prepare to insert Results into result database
             const insertResult = resultDb.prepare(`
         INSERT INTO Results 
-        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, source_db)
-        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @source_db)
+        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, clinical_semiology, source_db)
+        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @clinical_semiology, @source_db)
         `);
             // Merge Results from database A
             const resultsA = this.db.prepare('SELECT * FROM Results').all() as ReadResultEntity[];
@@ -276,7 +277,7 @@ export default class SqlDataRepository implements IDataRepository {
         R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
         R.task_category, R.task_subcategory, R.task_characteristic, R.task_comments, 
         R.function_category, R.function_subcategory, R.function_characteristic, R.function_article_designed_for_function, R.function_comments, 
-        R.occurrences, R.comments, R.comments_2, R.precision_score, R.source_db
+        R.occurrences, R.comments, R.comments_2, R.precision_score, R.clinical_semiology, R.source_db
         FROM Results R
         JOIN Sources S ON R.source_id = S.id
     `;
@@ -342,6 +343,7 @@ export default class SqlDataRepository implements IDataRepository {
                 { id: 'comments', title: 'Comments' },
                 { id: 'comments_2', title: 'Comments 2' },
                 { id: 'precision_score', title: 'Precision Score' },
+                { id: 'clinical_semiology', title: 'Clinical Semiology' },
                 { id: 'source_db', title: 'Source Database' }
             ],
         });
@@ -501,8 +503,8 @@ export default class SqlDataRepository implements IDataRepository {
         console.debug(newResult);
 
         const stmt = `INSERT INTO Results 
-        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score)
-        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score)`
+        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, clinical_semiology)
+        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_amp_ma, @stim_amp_ma_max, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implentation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @clinical_semiology)`
         this.db.prepare(stmt).run({
             source_id: newResult.source_id,
             roi_side: newResult.roi.side,
@@ -549,7 +551,8 @@ export default class SqlDataRepository implements IDataRepository {
             occurrences: newResult.occurrences,
             comments: newResult.comments,
             comments_2: newResult.comments_2,
-            precision_score: newResult.precision_score
+            precision_score: newResult.precision_score,
+            clinical_semiology: newResult.clinical_semiology
         })
     }
     private _editResult(resultId: number, newResult: Result): void {
@@ -601,7 +604,8 @@ export default class SqlDataRepository implements IDataRepository {
             occurrences=@occurrences,
             comments=@comments,
             comments_2=@comments_2,
-            precision_score=@precision_score
+            precision_score=@precision_score,
+            clinical_semiology=@clinical_semiology
         WHERE id=@resultIdToEdit`
         this.db.prepare(stmt).run({
             roi_side: newResult.roi.side,
@@ -650,6 +654,7 @@ export default class SqlDataRepository implements IDataRepository {
             resultIdToEdit: resultId,
             comments_2: newResult.comments_2,
             precision_score: newResult.precision_score,
+            clinical_semiology: newResult.clinical_semiology
         });
     }
     private _deleteResult(resultId: number): void {
@@ -832,7 +837,8 @@ export default class SqlDataRepository implements IDataRepository {
                 occurrences INTEGER,
                 comments TEXT,
                 comments_2 TEXT,
-                precision_score REAL
+                precision_score REAL,
+                clinical_semiology TEXT
             );`;
         this.db.prepare(createStmt).run();
     }
