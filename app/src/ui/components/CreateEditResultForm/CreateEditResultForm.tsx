@@ -40,6 +40,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 phase_length: edit_result && edit_result.stimulation_parameters.phase_length != null ? edit_result.stimulation_parameters.phase_length : 0,
                 phase_type: edit_result && edit_result.stimulation_parameters.phase_type != null ? edit_result.stimulation_parameters.phase_type : "",
                 epi_zone: edit_result && edit_result.stimulation_parameters.epi_zone != null ? edit_result.stimulation_parameters.epi_zone : "",
+                epi_zone_comments: edit_result && edit_result.stimulation_parameters.epi_zone_comments != null ? edit_result.stimulation_parameters.epi_zone_comments : "",
             },
             effect: {
                 class: edit_result && edit_result.effect.class != null ? edit_result.effect.class : "",
@@ -244,6 +245,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     <Radio value="" label="Not stated" />
                                 </Group>
                             </Radio.Group>
+                            <TextInput
+                                label="Comments"
+                                {...form.getInputProps('stimulation_parameters.epi_zone_comments')}
+                            />
                         </Group>
                         <Divider label="Electrodes" />
                         <Stack>
@@ -495,6 +500,7 @@ export interface CreateEditResultFormValues {
         phase_length: number,
         phase_type: string,
         epi_zone: string,
+        epi_zone_comments: string,
     }
     effect: {
         class: string,

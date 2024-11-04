@@ -212,7 +212,9 @@ export const SourceDetailsPage = () => {
                 contact_diameter: values.stimulation_parameters.contact_diameter,
                 contact_length: values.stimulation_parameters.contact_length,
                 phase_length: values.stimulation_parameters.phase_length,
-                phase_type: values.stimulation_parameters.phase_type
+                phase_type: values.stimulation_parameters.phase_type,
+                epi_zone: values.stimulation_parameters.epi_zone,
+                epi_zone_comments: values.stimulation_parameters.epi_zone_comments,
             },
             effect: {
                 class: values.effect.class,
