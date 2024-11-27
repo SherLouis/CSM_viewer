@@ -277,7 +277,7 @@ export default class SqlDataRepository implements IDataRepository {
         R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
         R.task_category, R.task_subcategory, R.task_characteristic, R.task_comments, 
         R.function_category, R.function_subcategory, R.function_characteristic, R.function_article_designed_for_function, R.function_comments, 
-        R.occurrences, R.comments, R.comments_2, R.precision_score, R.clinical_semiology, R.source_db
+        R.occurrences, R.comments, R.comments_2, R.precision_score, R.clinical_semiology
         FROM Results R
         JOIN Sources S ON R.source_id = S.id
     `;
@@ -343,8 +343,7 @@ export default class SqlDataRepository implements IDataRepository {
                 { id: 'comments', title: 'Comments' },
                 { id: 'comments_2', title: 'Comments 2' },
                 { id: 'precision_score', title: 'Precision Score' },
-                { id: 'clinical_semiology', title: 'Clinical Semiology' },
-                { id: 'source_db', title: 'Source Database' }
+                { id: 'clinical_semiology', title: 'Clinical Semiology' }
             ],
         });
 
