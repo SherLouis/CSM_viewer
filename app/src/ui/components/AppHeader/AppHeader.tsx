@@ -1,14 +1,19 @@
 import { useMantineColorScheme, ActionIcon, Header, Title, Group, Alert } from "@mantine/core";
-import { IconSun, IconMoonStars, IconAlertCircle } from "@tabler/icons-react";
+import { IconSun, IconMoonStars, IconAlertCircle, IconSettings } from "@tabler/icons-react";
 import { useAppState } from "../../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 export default function AppHeader(props: HeaderProps) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
+  const navigate = useNavigate();
   const appState = useAppState();
 
-  // TODO: Add menu https://mantine.dev/core/menu/
+  const navToSettingsPage = () => {
+    navigate('/settings');
+  }
+
   return (
     <Header height={"5rem"} p="xs">
       <Group position={"apart"}>
@@ -29,6 +34,14 @@ export default function AppHeader(props: HeaderProps) {
             title="Toggle color scheme"
           >
             {dark ? <IconSun size="1rem" /> : <IconMoonStars size="1rem" />}
+          </ActionIcon>
+          <ActionIcon
+            variant='filled'
+            color='teal'
+            onClick={navToSettingsPage}
+            title="Settings & Preferences"
+          >
+            <IconSettings size={"1rem"} />
           </ActionIcon>
         </Group>
       </Group>

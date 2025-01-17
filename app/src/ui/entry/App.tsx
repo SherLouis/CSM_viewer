@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import { Box, ColorScheme, ColorSchemeProvider, Container, MantineProvider, Paper } from '@mantine/core';
+import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
@@ -7,6 +7,7 @@ import BasePage from './BasePage';
 import { SourcesPage } from '../pages/Edit/SourcesPage/SourcesPage';
 import { SourceDetailsPage } from '../pages/Edit/SourceDetailsPage/SourceDetailsPage';
 import { AppContextProvider } from '../context/AppContext';
+import SettingsPage from '../pages/Settings';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -34,6 +35,7 @@ function App() {
               <Route path='*' element={<SourcesPage />} />
               <Route path='/edit/sources' element={<SourcesPage />} />
               <Route path='/edit/sources/:sourceIdParam' element={<SourceDetailsPage />} />
+              <Route path='/settings' element={<SettingsPage />} />
             </Routes>
           </BasePage>
         </AppContextProvider>
