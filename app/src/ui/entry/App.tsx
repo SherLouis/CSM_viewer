@@ -8,6 +8,7 @@ import { SourcesPage } from '../pages/Edit/SourcesPage/SourcesPage';
 import { SourceDetailsPage } from '../pages/Edit/SourceDetailsPage/SourceDetailsPage';
 import { AppContextProvider } from '../context/AppContext';
 import SettingsPage from '../pages/Settings';
+import { PreferencesContextProvider } from '../context/PreferenceContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -29,15 +30,17 @@ function App() {
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
         <AppContextProvider>
-          <Notifications position="top-right" />
-          <BasePage title='CSM data'>
-            <Routes>
-              <Route path='*' element={<SourcesPage />} />
-              <Route path='/edit/sources' element={<SourcesPage />} />
-              <Route path='/edit/sources/:sourceIdParam' element={<SourceDetailsPage />} />
-              <Route path='/settings' element={<SettingsPage />} />
-            </Routes>
-          </BasePage>
+          <PreferencesContextProvider>
+            <Notifications position="top-right" />
+            <BasePage title='CSM data'>
+              <Routes>
+                <Route path='*' element={<SourcesPage />} />
+                <Route path='/edit/sources' element={<SourcesPage />} />
+                <Route path='/edit/sources/:sourceIdParam' element={<SourceDetailsPage />} />
+                <Route path='/settings' element={<SettingsPage />} />
+              </Routes>
+            </BasePage>
+          </PreferencesContextProvider>
         </AppContextProvider>
       </MantineProvider>
     </ColorSchemeProvider>

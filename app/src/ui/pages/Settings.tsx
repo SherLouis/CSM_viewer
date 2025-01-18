@@ -1,9 +1,14 @@
 import { ActionIcon, Container, Group, Stack, Text } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { usePreferences } from "../context/PreferenceContext";
 
 export default function SettingsPage() {
     const navigate = useNavigate();
+    const {preferences, updatePreference} = usePreferences();
+
+    console.debug(preferences.stimulationFormPref);
+    
     return (
         <Container size={"100%"}>
             <Stack>
