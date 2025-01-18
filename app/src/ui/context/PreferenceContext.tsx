@@ -2,13 +2,19 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 
 interface Preferences {
-    stimulationFormPref: {
-        amplitude_presets: number[],
-        frequency_presets: number[],
-        duration_presets: number[],
-        phase_length_presets: number[]
-    }
+    amplitude_presets: number[],
+    frequency_presets: number[],
+    duration_presets: number[],
+    phase_length_presets: number[]
+
 };
+
+const defaultPreferences: Preferences = {
+    amplitude_presets: [0.5, 0.8, 1, 1.2, 1.4, 2],
+    frequency_presets: [1, 55],
+    duration_presets: [5, 10],
+    phase_length_presets: [0.3, 0.5]
+}
 
 interface PreferencesContextType {
     preferences: Preferences;
@@ -19,15 +25,19 @@ const PreferencesContext = createContext<PreferencesContextType | undefined>(und
 
 const loadPreferences = (): Preferences => {
     const storedPreferences = localStorage.getItem('preferences');
-    const defaultPreferences: Preferences = {
-        stimulationFormPref: {
-            amplitude_presets: [],
-            frequency_presets: [],
-            duration_presets: [],
-            phase_length_presets: []
-        }
+    if (storedPreferences === null) {
+        return defaultPreferences;
     }
-    return storedPreferences ? JSON.parse(storedPreferences) : defaultPreferences;
+
+    const parsedPreferences = JSON.parse(storedPreferences) as Preferences;
+
+    // Combinaison des préférences par défaut et des préférences stockées
+    return {
+        amplitude_presets: parsedPreferences.amplitude_presets.length !== 0 ? parsedPreferences.amplitude_presets : defaultPreferences.amplitude_presets,
+        frequency_presets: parsedPreferences.frequency_presets.length !== 0 ? parsedPreferences.frequency_presets : defaultPreferences.frequency_presets,
+        duration_presets: parsedPreferences.duration_presets.length !== 0 ? parsedPreferences.duration_presets : defaultPreferences.duration_presets,
+        phase_length_presets: parsedPreferences.phase_length_presets.length !== 0 ? parsedPreferences.phase_length_presets : defaultPreferences.phase_length_presets
+    };
 };
 
 
