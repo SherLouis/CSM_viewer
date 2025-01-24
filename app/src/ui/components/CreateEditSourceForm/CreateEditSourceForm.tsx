@@ -34,7 +34,6 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
     citejs.Cite.async(id, { forceType: '@pubmed/id' })
       .then(
         (cite: any) => {
-          console.log(cite);
           const doi = cite.data[0].DOI;
           const author = cite.data[0].author[0];
           const publisher = cite.data[0]['publisher'];
@@ -83,7 +82,6 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
 
   const handleSubmit = (values: CreateFormValues) => {
     form.validate();
-    console.debug(values);
     onSubmit(values);
   }
 

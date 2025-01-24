@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 
-interface Preferences {
+export interface Preferences {
     amplitude_presets: number[],
     frequency_presets: number[],
     duration_presets: number[],

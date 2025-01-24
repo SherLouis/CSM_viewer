@@ -105,7 +105,6 @@ export const SourceDetailsPage = () => {
         });
         ResultUIService.createResult(sourceId, result)
             .then((res: CreateResponseDto) => {
-                console.debug(res);
                 if (res.successful) {
                     refreshResults();
                 }
@@ -168,7 +167,6 @@ export const SourceDetailsPage = () => {
         });
         ResultUIService.deleteResult(toDeleteResultId)
             .then((res: EditResponseDto) => {
-                console.debug(res);
                 if (res.successful) {
                     resultsHandlers.filter((a) => a.id != toDeleteResultId);
                 }
@@ -252,8 +250,7 @@ export const SourceDetailsPage = () => {
     const onCreateButton = () => {
         setShowCreateForm(true);
     }
-
-    console.debug(results);
+    
     return (
         <Container size={"100%"}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />

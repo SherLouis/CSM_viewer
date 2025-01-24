@@ -1,17 +1,18 @@
 import { useMantineColorScheme, ActionIcon, Header, Title, Group, Alert } from "@mantine/core";
 import { IconSun, IconMoonStars, IconAlertCircle, IconSettings } from "@tabler/icons-react";
 import { useAppState } from "../../context/AppContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useLinkClickHandler } from "react-router-dom";
 
 export default function AppHeader(props: HeaderProps) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
   const navigate = useNavigate();
+  const location = useLocation();
   const appState = useAppState();
 
   const navToSettingsPage = () => {
-    navigate('/settings');
+    if (location.pathname !== '/settings') { navigate('/settings'); }
   }
 
   return (

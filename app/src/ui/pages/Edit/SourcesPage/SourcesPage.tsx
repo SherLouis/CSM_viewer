@@ -24,7 +24,6 @@ export function SourcesPage() {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   useEffect(() => {
-    console.debug("using effect");
     setIsLoading(true);
     SourceUIService.getAllSourcesSummary()
       .then((res) => {
@@ -59,7 +58,6 @@ export function SourcesPage() {
     });
     SourceUIService.createSource(source)
       .then((res: CreateResponseDto) => {
-        console.debug(res);
         if (res.successful) {
           refreshSources();
         }

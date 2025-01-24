@@ -10,8 +10,11 @@ import ROIOptionsTableForm from "./ROIOptionsTableForm";
 import EffectOptionsTableForm from "./EffectOptionsTableForm";
 import TaskOptionsTableForm from "./TaskOptionsTableForm";
 import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
+import { usePreferences } from "../../context/PreferenceContext";
 
 export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts }: CreateEditResultFormProps) => {
+    const { preferences } = usePreferences();
+
     const form = useForm<CreateEditResultFormValues>({
         initialValues: {
             roi: {
@@ -164,12 +167,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 onChange={(value) => { setAmplitudeValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.amplitude_ma').onChange(value); }}
                             />
                             <Button.Group>
-                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 0.5 ? "filled" : "default"} onClick={() => setAmplitudeValue(0.5)}>0.5</Button>
-                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 0.8 ? "filled" : "default"} onClick={() => setAmplitudeValue(0.8)}>0.8</Button>
-                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 1.0 ? "filled" : "default"} onClick={() => setAmplitudeValue(1.0)}>1.0</Button>
-                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 1.2 ? "filled" : "default"} onClick={() => setAmplitudeValue(1.2)}>1.2</Button>
-                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 1.4 ? "filled" : "default"} onClick={() => setAmplitudeValue(1.4)}>1.4</Button>
-                                <Button variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === 2.0 ? "filled" : "default"} onClick={() => setAmplitudeValue(2.0)}>2.0</Button>
+                                {preferences.amplitude_presets.map((v, i) =>
+                                    <Button
+                                        key={"amp_" + i}
+                                        variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === v ? "filled" : "default"}
+                                        onClick={() => setAmplitudeValue(v)}>
+                                        {v}
+                                    </Button>
+                                )}
                             </Button.Group>
                             <NumberInput
                                 label="Amplitude Max (mA)"
@@ -186,8 +191,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     onChange={(value) => { setFrequencyValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.frequency_hz').onChange(value); }}
                                 />
                                 <Button.Group>
-                                    <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 1 ? "filled" : "default"} onClick={() => setFrequencyValue(1)}>1</Button>
-                                    <Button variant={form.getInputProps('stimulation_parameters.frequency_hz').value === 55 ? "filled" : "default"} onClick={() => setFrequencyValue(55)}>55</Button>
+                                    {preferences.frequency_presets.map((v, i) =>
+                                        <Button
+                                            key={"freq_" + i}
+                                            variant={form.getInputProps('stimulation_parameters.frequency_hz').value === v ? "filled" : "default"}
+                                            onClick={() => setFrequencyValue(v)}>
+                                            {v}
+                                        </Button>
+                                    )}
                                 </Button.Group>
                                 <NumberInput
                                     label="Frequency Max (Hz)"
@@ -201,8 +212,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     onChange={(value) => { setDurationValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.duration_s').onChange(value); }}
                                 />
                                 <Button.Group>
-                                    <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 5 ? "filled" : "default"} onClick={() => setDurationValue(5)}>5</Button>
-                                    <Button variant={form.getInputProps('stimulation_parameters.duration_s').value === 10 ? "filled" : "default"} onClick={() => setDurationValue(10)}>10</Button>
+                                    {preferences.duration_presets.map((v, i) =>
+                                        <Button
+                                            key={"dur_" + i}
+                                            variant={form.getInputProps('stimulation_parameters.duration_s').value === v ? "filled" : "default"}
+                                            onClick={() => setDurationValue(v)}>
+                                            {v}
+                                        </Button>
+                                    )}
                                 </Button.Group>
                                 <NumberInput
                                     label="Duration Max (s)"
@@ -219,8 +236,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     {...form.getInputProps('stimulation_parameters.phase_length')}
                                 />
                                 <Button.Group>
-                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.3 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.3)}>0.3</Button>
-                                    <Button variant={form.getInputProps('stimulation_parameters.phase_length').value === 0.5 ? "filled" : "default"} onClick={() => form.setFieldValue('stimulation_parameters.phase_length', 0.5)}>0.5</Button>
+                                    {preferences.phase_length_presets.map((v, i) =>
+                                        <Button
+                                            key={"pl_" + i}
+                                            variant={form.getInputProps('stimulation_parameters.phase_length').value === v ? "filled" : "default"}
+                                            onClick={() => form.setFieldValue('stimulation_parameters.phase_length', v)}>
+                                            {v}
+                                        </Button>
+                                    )}
                                 </Button.Group>
                             </Group>
                             <Radio.Group
