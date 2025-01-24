@@ -1,411 +1,948 @@
 [
     {
         "name": "Consciousness",
-        "level": "class",
+        "level": "Class",
         "children": [
             {
                 "name": "Imp Awareness",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": []
             },
             {
                 "name": "Imp Responsiveness",
-                "level": "descriptor",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Imp awar & resp",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Other",
+                "level": "Descriptor",
                 "children": []
             }
         ]
     },
     {
         "name": "Sensory",
-        "level": "class",
+        "level": "Class",
         "children": [
             {
                 "name": "Auditory",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Visual",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Vestibular",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Gustatory",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Olfactory",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Somatosensory",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": [
                     {
-                        "name": "Painful",
-                        "level": "details",
+                        "name": "Illusion",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Non Painful",
-                        "level": "details",
+                        "name": "Hallucination",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Combined",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
-                "name": "Body-percetion",
-                "level": "descriptor",
+                "name": "Gustatory",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Illusion",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Hallucination",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Combined",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Olfactory",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Illusion",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Hallucination",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Combined",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Somatosensory",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Dysesthesia",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Thermal",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Combined",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Pain",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Vestibular",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Rotation",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Translation",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Combined",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Visual",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Illusion",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Hallucination",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Combined",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Body illusion",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Autoscopy",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Heautoscopy",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Out of body exp",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Levity",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Other",
+                "level": "Descriptor",
                 "children": []
             }
         ]
     },
     {
         "name": "Affective",
-        "level": "class",
+        "level": "Class",
         "children": [
             {
                 "name": "Anger",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": []
             },
             {
                 "name": "Anxiety",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Ecstatic",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": []
             },
             {
                 "name": "Fear",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Guilt",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Mirth",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Mystic",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": []
             },
             {
                 "name": "Sadness",
-                "level": "descriptor",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Guilt",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Mirth",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Ecstatic",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Mystic",
+                "level": "Descriptor",
                 "children": []
             },
             {
                 "name": "Sexual",
-                "level": "descriptor",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Other",
+                "level": "Descriptor",
                 "children": []
             }
         ]
     },
     {
         "name": "Cognitive",
-        "level": "class",
+        "level": "Class",
         "children": [
             {
-                "name": "Aphasia",
-                "level": "descriptor",
+                "name": "Dysphasic",
+                "level": "Descriptor",
                 "children": [
                     {
                         "name": "Anomia",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Spech arrest",
-                        "level": "details",
+                        "name": "Paraphasia",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Receptive",
-                        "level": "details",
+                        "name": "Imp comprehension",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Semantic imp",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Alexia",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Combined",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Speech arrest",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Dysarthria",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
-                "name": "Alexia",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Dysmnesia",
-                "level": "descriptor",
+                "name": "Dysmnesic",
+                "level": "Descriptor",
                 "children": [
                     {
-                        "name": "Dv/Dv",
-                        "level": "details",
+                        "name": "Amnesia",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "(un)familiarity illusions",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Reminiscence",
-                        "level": "details",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other dysmnesic",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
+                "name": "Dyspraxic",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Time illusion",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
                 "name": "Forced thinking",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": []
             },
             {
                 "name": "Depersonalisation",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": []
             },
             {
-                "name": "Prosopagnosia",
-                "level": "descriptor",
+                "name": "Other",
+                "level": "Descriptor",
                 "children": []
             }
         ]
     },
     {
         "name": "Motor Elementary",
-        "level": "class",
+        "level": "Class",
         "children": [
             {
-                "name": "Tonic",
-                "level": "descriptor",
-                "children": []
+                "name": "Akinetic",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Aphemic",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
             },
             {
-                "name": "Clonic/Myoclonic",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Versive",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Gyratory",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Spasm",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Nystagmus",
-                "level": "descriptor",
-                "children": []
-            },
-            {
-                "name": "Dystonic",
-                "level": "descriptor",
+                "name": "Astatic",
+                "level": "Descriptor",
                 "children": []
             },
             {
                 "name": "Atonic",
-                "level": "descriptor",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Negative myoclonic",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Paretic",
+                "level": "Descriptor",
                 "children": []
             },
             {
-                "name": "Astatic",
-                "level": "descriptor",
+                "name": "Dystonic",
+                "level": "Descriptor",
                 "children": []
             },
             {
-                "name": "Akinetic",
-                "level": "descriptor",
+                "name": "Tonic",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Fencing posture",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Figure-of-4 sign",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Spasms",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Myoclonic",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Rythmic myoclonic",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Asymetric clonic",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Myoclonic-atonic",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Tonic-clonic",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Eye blinking",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Eye & head & dev",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Epileptic nystagmus",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Exploratory gaze",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Head nodding",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Head orientation",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Version",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Gyration",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Ipsilateral",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Controlateral",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Other elementary motor",
+                "level": "Descriptor",
                 "children": []
             }
         ]
     },
     {
         "name": "Motor Complex",
-        "level": "class",
+        "level": "Class",
         "children": [
             {
-                "name": "Automatisms",
-                "level": "descriptor",
+                "name": "Affect related behav",
+                "level": "Descriptor",
                 "children": [
                     {
-                        "name": "Gestual",
-                        "level": "details",
+                        "name": "Laughing",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Crying",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Pouting",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Biting",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Fighting",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Screaming",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Humming",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Kissing",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Copulatory",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Praying",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Getting-up impulse",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Running away",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other affect-R behav",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Axial automatisms",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Body rocking",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Body rolling",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Body turning",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other axial aut",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Distal automatisms",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Purposeful",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Non purposeful",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Genital",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Grasping",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Mimic",
-                        "level": "details",
+                        "name": "Nose-wipping",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Oro-Alimentary",
-                        "level": "details",
+                        "name": "Rinch",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Verbal",
-                        "level": "details",
-                        "children": []
-                    },
-                    {
-                        "name": "Vocal",
-                        "level": "details",
+                        "name": "Other distal aut",
+                        "level": "Details",
                         "children": []
                     }
                 ]
+            },
+            {
+                "name": "Proximal automatisms",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Crawling",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Flying",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Pedaling",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other prox. aut.",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Oral automatisms",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Chewing",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Lip smacking",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Swallowing",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other oral aut.",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Verbal automatisms",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Vocal automatisms",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Wandering",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
+                "name": "Other complex motor",
+                "level": "Descriptor",
+                "children": []
             }
         ]
     },
     {
         "name": "Autonomic",
-        "level": "class",
+        "level": "Class",
         "children": [
             {
-                "name": "Cardio Vascular",
-                "level": "descriptor",
+                "name": "CardioVascular",
+                "level": "Descriptor",
                 "children": [
                     {
+                        "name": "Asystole",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
                         "name": "Bradycardia",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Tachycardia",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Ictal Asystole",
-                        "level": "details",
+                        "name": "Hypotension",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Hypertension",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other cardiovascular",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
                 "name": "Cutaneous",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": [
                     {
                         "name": "Flushing",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Pallor",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Piloerection",
-                        "level": "details",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Anhydrosis",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Sweating",
-                        "level": "details",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other cutaneous",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
                 "name": "GastroIntestinal",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": [
                     {
-                        "name": "Epigastric",
-                        "level": "details",
+                        "name": "Sensation",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Painful sensation",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Flatulence",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
-                        "name": "Hypersalivation",
-                        "level": "details",
-                        "children": []
-                    },
-                    {
-                        "name": "Spitting",
-                        "level": "details",
+                        "name": "Nausea",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Vomiting",
-                        "level": "details",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Hypersalivation",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Spitting",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other gastrointestinal",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
+                "name": "Lacrimatory",
+                "level": "Descriptor",
+                "children": []
+            },
+            {
                 "name": "Pupillary",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": [
                     {
                         "name": "Miosis",
-                        "level": "details",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Mydriasis",
-                        "level": "details",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
                 "name": "Respiratory",
-                "level": "descriptor",
+                "level": "Descriptor",
                 "children": [
                     {
-                        "name": "Apnea",
-                        "level": "details",
-                        "children": []
-                    },
-                    {
-                        "name": "Chocking",
-                        "level": "details",
-                        "children": []
-                    },
-                    {
-                        "name": "Hyerventilation",
-                        "level": "details",
+                        "name": "Hyperventilation",
+                        "level": "Details",
                         "children": []
                     },
                     {
                         "name": "Hypoventilation",
-                        "level": "details",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Apnea",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Chocking",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Coughing",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Other respiratory",
+                        "level": "Details",
                         "children": []
                     }
                 ]
             },
             {
                 "name": "Urinary",
-                "level": "descriptor",
+                "level": "Descriptor",
+                "children": [
+                    {
+                        "name": "Incontinence",
+                        "level": "Details",
+                        "children": []
+                    },
+                    {
+                        "name": "Imperiosity",
+                        "level": "Details",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "name": "Other",
+                "level": "Descriptor",
                 "children": []
             }
         ]
