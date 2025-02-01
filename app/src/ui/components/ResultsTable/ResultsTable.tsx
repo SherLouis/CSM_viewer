@@ -391,6 +391,25 @@ const ResultsTable = (props: ResultsTableProps) => {
         setSourceDbFilterHandlers.setState([]);
     }
 
+    // Editing
+    const [initialEditRecord, setInitialEditRecord] = useState<ResultDdo | undefined>();
+    const handleEditFormValueChanged = (index: number, newValue: CreateEditResultFormValues) => {
+        setRecords(prevRecords => [
+            ...prevRecords.slice(0, index),
+            { ...prevRecords[index], ...newValue },
+            ...prevRecords.slice(index + 1),
+        ]);
+    };
+    const handleCancelEdit = (index: number) => {
+        setRecords(prevRecords => [
+            ...prevRecords.slice(0, index),
+            { ...prevRecords[index], ...initialEditRecord },
+            ...prevRecords.slice(index + 1),
+        ]);
+        setInitialEditRecord(undefined);
+    };
+
+
     return (
         <Box h={"100%"}>
             {/** Table buttons: clear filters & select columns */}
@@ -432,7 +451,6 @@ const ResultsTable = (props: ResultsTableProps) => {
                 records={records}
                 columns={effectiveColumns}
                 onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
-                    console.log("Row " + recordIndex + " column " + columnIndex + " accessor " + column.accessor)
                     event.stopPropagation();
                     setExpandedRecordIds([String(record.id)]);
                     switch (column.accessor) {
@@ -460,11 +478,12 @@ const ResultsTable = (props: ResultsTableProps) => {
                 }}
                 rowExpansion={{
                     allowMultiple: false,
+                    trigger: 'never',
                     expanded: {
                         recordIds: expandedRecordIds,
                         onRecordIdsChange: setExpandedRecordIds,
                     },
-                    content: ({ record }) => (
+                    content: ({ record, recordIndex, collapse }) => (
                         <CreateEditResultForm
                             edit_result={record}
                             rois={props.rois}
@@ -473,7 +492,9 @@ const ResultsTable = (props: ResultsTableProps) => {
                             functions={props.functions}
                             body_parts={props.bodyParts}
                             onSubmit={(values) => handleEdit(values, record.id)}
+                            onCancel={() => { handleCancelEdit(recordIndex); collapse(); }}
                             selected_tab={selectedTabForEdit}
+                            onFormValueChanged={(values) => handleEditFormValueChanged(recordIndex, values)}
                         />
                     ),
                 }}

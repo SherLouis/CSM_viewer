@@ -13,7 +13,7 @@ import TaskOptionsTableForm from "./TaskOptionsTableForm";
 import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
 import { usePreferences } from "../../context/PreferenceContext";
 
-export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts, selected_tab }: CreateEditResultFormProps) => {
+export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts, selected_tab, onFormValueChanged }: CreateEditResultFormProps) => {
     const { preferences } = usePreferences();
 
     const form = useForm<CreateEditResultFormValues>({
@@ -127,12 +127,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     }
 
     // TODO: multiple body parts + free text
+
+    // Handling tab change from parent
     const [selectedTab, setSelectedTab] = useState<string>(selected_tab ? selected_tab : "parameters");
     const handleTabChange = (value: TabsValue) => setSelectedTab(value);
-
     useEffect(() => {
         setSelectedTab(selected_tab);
     }, [selected_tab]);
+
+    // Call onFormValueChanged if specified when form value changes
+    useEffect(() => {
+        if(onFormValueChanged !== undefined) {
+            console.debug("Calling onFormValueChanged");
+            onFormValueChanged(form.values);
+        }
+    }, [form.values])
 
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
@@ -581,4 +590,5 @@ interface CreateEditResultFormProps {
     functions: FunctionDdo[];
     body_parts: String[];
     selected_tab?: "parameters" | "roi" | "effect" | "task" | "function" | "details";
+    onFormValueChanged?: (newValue: CreateEditResultFormValues) => void;
 }
