@@ -15,7 +15,6 @@ import AppMode from '../../../core/models/AppMode';
 import { DataTableColumnToggle } from 'mantine-datatable/dist/hooks';
 
 const ResultsTable = (props: ResultsTableProps) => {
-    // [ ] add pagination
 
     const handleEdit = (values: CreateEditResultFormValues, resultId: number) => {
         const result = {
@@ -71,7 +70,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 article_designed_for_function: values.function.article_designed_for_function,
                 comments: values.function.comments
             },
-            
+
             occurrences: values.occurrences,
             comments: values.comments,
             comments_2: values.comments_2,
@@ -86,6 +85,8 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onDelete(resultId);
     }
 
+    // TODO: change duplicate order
+    // TODO: only duplicate all
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
@@ -181,6 +182,10 @@ const ResultsTable = (props: ResultsTableProps) => {
     const [taskQuery, setTaskQuery] = useDebouncedState('', 200);
     const [functionQuery, setFunctionQuery] = useDebouncedState('', 200);
     const [sourceDbFilter, setSourceDbFilterHandlers] = useListState<string>([]);
+
+    // For table row expansion
+    const [expandedRecordIds, setExpandedRecordIds] = useState<string[]>([]);
+    const [selectedTabForEdit, setSelectedTabForEdit] = useState<"parameters" | "roi" | "effect" | "task" | "function" | "details">("parameters");
 
     const appMode = useAppState().mode;
 
@@ -388,6 +393,7 @@ const ResultsTable = (props: ResultsTableProps) => {
 
     return (
         <Box h={"100%"}>
+            {/** Table buttons: clear filters & select columns */}
             <Group position='right' h={"4%"}>
                 <ActionIcon title={'Clear all filters'}>
                     <IconFilterOff onClick={clearAllFilters} />
@@ -414,6 +420,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                     </Popover.Dropdown>
                 </Popover>
             </Group>
+
             <DataTable
                 height={'96%'}
                 sortStatus={sortStatus}
@@ -424,8 +431,39 @@ const ResultsTable = (props: ResultsTableProps) => {
                 idAccessor={(record) => String(record.id)}
                 records={records}
                 columns={effectiveColumns}
+                onCellClick={({ event, record, recordIndex, column, columnIndex }) => {
+                    console.log("Row " + recordIndex + " column " + columnIndex + " accessor " + column.accessor)
+                    event.stopPropagation();
+                    setExpandedRecordIds([String(record.id)]);
+                    switch (column.accessor) {
+                        case 'stimulation_parameters':
+                            setSelectedTabForEdit("parameters");
+                            break;
+                        case 'roi':
+                            setSelectedTabForEdit("roi");
+                            break;
+                        case 'effect':
+                            setSelectedTabForEdit("effect");
+                            break;
+                        case 'task':
+                            setSelectedTabForEdit("task");
+                            break;
+                        case 'function':
+                            setSelectedTabForEdit("function");
+                            break;
+                        case 'occurrences':
+                            setSelectedTabForEdit("details");
+                            break;
+                        default:
+                            setSelectedTabForEdit("parameters");
+                    }
+                }}
                 rowExpansion={{
                     allowMultiple: false,
+                    expanded: {
+                        recordIds: expandedRecordIds,
+                        onRecordIdsChange: setExpandedRecordIds,
+                    },
                     content: ({ record }) => (
                         <CreateEditResultForm
                             edit_result={record}
@@ -435,6 +473,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                             functions={props.functions}
                             body_parts={props.bodyParts}
                             onSubmit={(values) => handleEdit(values, record.id)}
+                            selected_tab={selectedTabForEdit}
                         />
                     ),
                 }}

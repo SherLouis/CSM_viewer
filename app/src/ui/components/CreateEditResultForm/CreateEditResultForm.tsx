@@ -1,4 +1,5 @@
-import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion } from "@mantine/core"
+import { useState, useEffect } from 'react';
+import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion, TabsValue } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
@@ -12,7 +13,7 @@ import TaskOptionsTableForm from "./TaskOptionsTableForm";
 import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
 import { usePreferences } from "../../context/PreferenceContext";
 
-export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts }: CreateEditResultFormProps) => {
+export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts, selected_tab }: CreateEditResultFormProps) => {
     const { preferences } = usePreferences();
 
     const form = useForm<CreateEditResultFormValues>({
@@ -125,11 +126,19 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         )
     }
 
+    // TODO: multiple body parts + free text
+    const [selectedTab, setSelectedTab] = useState<string>(selected_tab ? selected_tab : "parameters");
+    const handleTabChange = (value: TabsValue) => setSelectedTab(value);
+
+    useEffect(() => {
+        setSelectedTab(selected_tab);
+    }, [selected_tab]);
+
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>
             <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-                <Tabs defaultValue="parameters" >
+                <Tabs value={selectedTab} onTabChange={handleTabChange} >
                     <Group position="apart" align='start'>
                         <Tabs.List>
                             <Tabs.Tab value="parameters" icon={<IconSettingsBolt style={iconStyle} />}>
@@ -469,6 +478,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                     <Tabs.Panel value="details">
                         <NumberInput
                             label="Occurrences"
+                            autoFocus
                             {...form.getInputProps('occurrences')}
                         />
                         <Textarea
@@ -570,4 +580,5 @@ interface CreateEditResultFormProps {
     tasks: TaskDdo[];
     functions: FunctionDdo[];
     body_parts: String[];
+    selected_tab?: "parameters" | "roi" | "effect" | "task" | "function" | "details";
 }
