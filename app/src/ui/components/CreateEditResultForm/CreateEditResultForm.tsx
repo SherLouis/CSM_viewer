@@ -97,8 +97,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     }
     const appendValueToCurrentFormValue = (form_path: string, value: string) => {
         const current_value = form.getInputProps(form_path).value;
-        console.debug(form_path);
-        console.debug(current_value);
         const current_values = current_value.split(';');
         if (current_value === '') {
             form.setFieldValue(form_path, value);
@@ -144,7 +142,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     // Call onFormValueChanged if specified when form value changes
     useEffect(() => {
         if (onFormValueChanged !== undefined) {
-            console.debug("Calling onFormValueChanged");
             onFormValueChanged(form.values);
         }
     }, [form.values])

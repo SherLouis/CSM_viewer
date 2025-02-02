@@ -420,7 +420,6 @@ export default class SqlDataRepository implements IDataRepository {
     private _getSource(sourceId: number): SourceEntity {
         const stmt = 'SELECT * FROM Sources WHERE id = ?';
         const result = this.db.prepare(stmt).get(sourceId) as SourceEntity;
-        console.debug(result);
         return result;
     }
     private _getAllSourcesSummary(): SourceSummaryEntity[] {
@@ -443,8 +442,7 @@ export default class SqlDataRepository implements IDataRepository {
         return results;
     }
     private _insertNewSource(newSource: SourceEntity) {
-        console.debug("Inserting new source: ");
-        console.debug(newSource);
+        console.debug("Inserting new source ");
         const insetStmt = `INSERT INTO Sources (
             type,
             author,
@@ -469,8 +467,7 @@ export default class SqlDataRepository implements IDataRepository {
         this.db.prepare(insetStmt).run(newSource);
     }
     private _editSource(sourceId: number, source: SourceEntity) {
-        console.debug(`Editing source ${sourceId} with new value:`);
-        console.debug(source);
+        console.debug(`Editing source ${sourceId} with new value`);
         const stmt = `
         UPDATE Sources SET 
             type=@type,
@@ -498,8 +495,7 @@ export default class SqlDataRepository implements IDataRepository {
     }
 
     private _insertNewResult(newResult: Result): void {
-        console.debug("Inserting new result: ");
-        console.debug(newResult);
+        console.debug("Inserting new result");
 
         const stmt = `INSERT INTO Results 
         (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_amp_ma, stim_amp_ma_max, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implentation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, clinical_semiology)
@@ -556,8 +552,7 @@ export default class SqlDataRepository implements IDataRepository {
     }
 
     private _editResult(resultId: number, newResult: Result): void {
-        console.debug("Editing result: ");
-        console.debug(newResult);
+        console.debug("Editing result");
 
         const stmt = `
         UPDATE Results SET 
