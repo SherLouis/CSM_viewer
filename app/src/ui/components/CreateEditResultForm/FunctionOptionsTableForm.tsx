@@ -28,15 +28,18 @@ const FunctionOptionsTableForm = ({ form, onSelect, functions }: FunctionOptions
     const handleSelect = (level: 'category' | 'subcategory' | 'characteristic', value: string) => {
         switch (level) {
             case 'category':
+                setCategory(value);
                 onSelect('function.category', value);
                 break;
 
             case 'subcategory':
+                setSubcategory(value);
                 onSelect('function.category', category);
                 onSelect('function.subcategory', value);
                 break;
 
             case 'characteristic':
+                setCharacteristic(value);
                 onSelect('function.category', category);
                 onSelect('function.subcategory', subcategory);
                 onSelect('function.characteristic', value);
@@ -81,22 +84,22 @@ const FunctionOptionsTableForm = ({ form, onSelect, functions }: FunctionOptions
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getFunctionOptions('category')}
-                            onChange={(v) => setCategory(v)}
-                            onSelect={(v) => handleSelect('category', v)}
+                            onChange={(v) => handleSelect('category', v)}
+                            selectedValues={form.values.function.category.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getFunctionOptions('subcategory')}
-                            onChange={(v) => setSubcategory(v)}
-                            onSelect={(v) => handleSelect('subcategory', v)}
+                            onChange={(v) => handleSelect('subcategory', v)}
+                            selectedValues={form.values.function.subcategory.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getFunctionOptions('characteristic')}
-                            onChange={(v) => setCharacteristic(v)}
-                            onSelect={(v) => handleSelect('characteristic', v)}
+                            onChange={(v) => handleSelect('characteristic', v)}
+                            selectedValues={form.values.function.characteristic.split(';')}
                         />
                     </td>
                 </tr>

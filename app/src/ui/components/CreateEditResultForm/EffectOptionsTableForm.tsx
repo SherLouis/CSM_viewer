@@ -30,15 +30,18 @@ const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableF
     const handleSelect = (level: 'class' | 'descriptor' | 'details', value: string) => {
         switch (level) {
             case 'class':
+                setClass(value);
                 onSelect('effect.class', value);
                 break;
 
             case 'descriptor':
+                setDescriptor(value);
                 onSelect('effect.class', eclass);
                 onSelect('effect.descriptor', value);
                 break;
 
             case 'details':
+                setDetails(value);
                 onSelect('effect.class', eclass);
                 onSelect('effect.descriptor', descriptor);
                 onSelect('effect.details', value);
@@ -83,22 +86,22 @@ const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableF
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getEffectOptions('class')}
-                            onChange={(v) => setClass(v)}
-                            onSelect={(v) => handleSelect('class', v)}
+                            onChange={(v) => handleSelect('class', v)}
+                            selectedValues={form.values.effect.class.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getEffectOptions('descriptor')}
-                            onChange={(v) => setDescriptor(v)}
-                            onSelect={(v) => handleSelect('descriptor', v)}
+                            onChange={(v) => handleSelect('descriptor', v)}
+                            selectedValues={form.values.effect.descriptor.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getEffectOptions('details')}
-                            onChange={(v) => setDetails(v)}
-                            onSelect={(v) => handleSelect('details', v)}
+                            onChange={(v) => handleSelect('details', v)}
+                            selectedValues={form.values.effect.details.split(';')}
                         />
                     </td>
                 </tr>

@@ -2,8 +2,7 @@ import { ActionIcon, Button, Flex, Group, Stack, TextInput, Title } from "@manti
 import { useState } from "react";
 import { IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 
-// TODO: Enlever bouton + et ajouter si pas déjà dans sélection (roi, effet, etc.)
-const ColumnButtonSelect = ({ data, onChange, onSelect }: ColumnButtonSelectProps) => {
+const ColumnButtonSelect = ({ data, onChange, onSelect, selectedValues }: ColumnButtonSelectProps) => {
 
     const [currentValue, setValue] = useState<string>();
 
@@ -17,12 +16,14 @@ const ColumnButtonSelect = ({ data, onChange, onSelect }: ColumnButtonSelectProp
             {data.map((value, index) =>
                 <Group key={index} spacing={"xs"}>
                     <Button w={"85%"} m={0} p={0}
-                        variant={currentValue === value ? "filled" : "default"}
+                        variant={currentValue === value || (selectedValues !== undefined && selectedValues.includes(value)) ? "filled" : "default"}
                         onClick={() => handleClick(value)}>{value}</Button>
-                    <ActionIcon m={0} p={0}
-                        onClick={() => onSelect(value)}>
-                        <IconSquareRoundedPlusFilled/>
-                    </ActionIcon>
+                    {onSelect !== undefined &&
+                        <ActionIcon m={0} p={0}
+                            onClick={() => onSelect(value)}>
+                            <IconSquareRoundedPlusFilled />
+                        </ActionIcon>
+                    }
                 </Group>
             )}
         </Stack>
@@ -32,7 +33,8 @@ const ColumnButtonSelect = ({ data, onChange, onSelect }: ColumnButtonSelectProp
 interface ColumnButtonSelectProps {
     data: string[];
     onChange: (newValue: string) => void;
-    onSelect: (newValue: string) => void;
+    onSelect?: (newValue: string) => void;
+    selectedValues?: string[];
 };
 
 export default ColumnButtonSelect;

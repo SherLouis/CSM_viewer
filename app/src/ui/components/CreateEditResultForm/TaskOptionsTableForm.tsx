@@ -29,15 +29,18 @@ const TaskOptionsTableForm = ({ form, onSelect, tasks }: TaskOptionsTableFormPro
     const handleSelect = (level: 'category' | 'subcategory' | 'characteristic', value: string) => {
         switch (level) {
             case 'category':
+                setCategory(value);
                 onSelect('task.category', value);
                 break;
 
             case 'subcategory':
+                setSubcategory(value);
                 onSelect('task.category', category);
                 onSelect('task.subcategory', value);
                 break;
 
             case 'characteristic':
+                setCharacteristic(value);
                 onSelect('task.category', category);
                 onSelect('task.subcategory', subcategory);
                 onSelect('task.characteristic', value);
@@ -82,22 +85,22 @@ const TaskOptionsTableForm = ({ form, onSelect, tasks }: TaskOptionsTableFormPro
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getTaskOptions('category')}
-                            onChange={(v) => setCategory(v)}
-                            onSelect={(v) => handleSelect('category', v)}
+                            onChange={(v) => handleSelect('category', v)}
+                            selectedValues={form.values.task.category.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getTaskOptions('subcategory')}
-                            onChange={(v) => setSubcategory(v)}
-                            onSelect={(v) => handleSelect('subcategory', v)}
+                            onChange={(v) => handleSelect('subcategory', v)}
+                            selectedValues={form.values.task.subcategory.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getTaskOptions('characteristic')}
-                            onChange={(v) => setCharacteristic(v)}
-                            onSelect={(v) => handleSelect('characteristic', v)}
+                            onChange={(v) => handleSelect('characteristic', v)}
+                            selectedValues={form.values.task.characteristic.split(';')}
                         />
                     </td>
                 </tr>

@@ -28,15 +28,18 @@ const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps)
     const handleSelect = (level: 'lobe' | 'region' | 'area', value: string) => {
         switch (level) {
             case 'lobe':
+                setLobe(value)
                 onSelect('roi.lobe', value);
                 break;
 
             case 'region':
+                setRegion(value)
                 onSelect('roi.lobe', lobe);
                 onSelect('roi.region', value);
                 break;
 
             case 'area':
+                setArea(value)
                 onSelect('roi.lobe', lobe);
                 onSelect('roi.region', region);
                 onSelect('roi.area', value);
@@ -81,22 +84,22 @@ const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps)
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getRoiOptions('lobe')}
-                            onChange={(v) => setLobe(v)}
-                            onSelect={(v) => handleSelect('lobe', v)}
+                            onChange={(v) => handleSelect('lobe', v)}
+                            selectedValues={form.values.roi.lobe.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getRoiOptions('region')}
-                            onChange={(v) => setRegion(v)}
-                            onSelect={(v) => handleSelect('region', v)}
+                            onChange={(v) => handleSelect('region', v)}
+                            selectedValues={form.values.roi.region.split(';')}
                         />
                     </td>
                     <td valign="top">
                         <ColumnButtonSelect
                             data={getRoiOptions('area')}
-                            onChange={(v) => setArea(v)}
-                            onSelect={(v) => handleSelect('area', v)}
+                            onChange={(v) => handleSelect('area', v)}
+                            selectedValues={form.values.roi.area.split(';')}
                         />
                     </td>
                 </tr>
