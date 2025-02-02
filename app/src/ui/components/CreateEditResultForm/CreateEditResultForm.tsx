@@ -97,6 +97,8 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     }
     const appendValueToCurrentFormValue = (form_path: string, value: string) => {
         const current_value = form.getInputProps(form_path).value;
+        console.debug(form_path);
+        console.debug(current_value);
         const current_values = current_value.split(';');
         if (current_value === '') {
             form.setFieldValue(form_path, value);
@@ -134,12 +136,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     const [selectedTab, setSelectedTab] = useState<string>(selected_tab ? selected_tab : "parameters");
     const handleTabChange = (value: TabsValue) => setSelectedTab(value);
     useEffect(() => {
-        setSelectedTab(selected_tab);
+        if (selected_tab !== undefined) {
+            setSelectedTab(selected_tab);
+        }
     }, [selected_tab]);
 
     // Call onFormValueChanged if specified when form value changes
     useEffect(() => {
-        if(onFormValueChanged !== undefined) {
+        if (onFormValueChanged !== undefined) {
             console.debug("Calling onFormValueChanged");
             onFormValueChanged(form.values);
         }
@@ -344,6 +348,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         </Stack>
 
                     </Tabs.Panel>
+
                     <Tabs.Panel value="roi">
                         <Radio.Group
                             label="Side"
@@ -468,6 +473,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             {...form.getInputProps('task.comments')}
                         />
                     </Tabs.Panel>
+
                     <Tabs.Panel value="function">
                         <Switch
                             label="Article designed to assess specific function ?"
@@ -486,6 +492,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             {...form.getInputProps('function.comments')}
                         />
                     </Tabs.Panel>
+
                     <Tabs.Panel value="details">
                         <NumberInput
                             label="Occurrences"
