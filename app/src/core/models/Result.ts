@@ -13,8 +13,9 @@ export type Result = {
         mni_average: boolean,
     },
     stimulation_parameters: {
-        amplitude_ma: number,
+        amplitude_ma_min: number,
         amplitude_ma_max: number,
+        amplitude_ma_avg: number,
         frequency_hz: number,
         frequency_hz_max: number,
         duration_s: number,

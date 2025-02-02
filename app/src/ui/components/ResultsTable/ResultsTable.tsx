@@ -31,8 +31,9 @@ const ResultsTable = (props: ResultsTableProps) => {
                 mni_average: values.roi.mni_average,
             },
             stimulation_parameters: {
-                amplitude_ma: values.stimulation_parameters.amplitude_ma,
+                amplitude_ma_min: values.stimulation_parameters.amplitude_ma_min,
                 amplitude_ma_max: values.stimulation_parameters.amplitude_ma_max,
+                amplitude_ma_avg: values.stimulation_parameters.amplitude_ma_avg,
                 frequency_hz: values.stimulation_parameters.frequency_hz,
                 frequency_hz_max: values.stimulation_parameters.frequency_hz_max,
                 duration_s: values.stimulation_parameters.duration_s,
@@ -94,8 +95,9 @@ const ResultsTable = (props: ResultsTableProps) => {
             id: undefined,
             roi: { side: '', lobe: '', region: '', area: '', mni_x: 0, mni_y: 0, mni_z: 0, mni_average: false },
             stimulation_parameters: {
-                amplitude_ma: 0,
+                amplitude_ma_min: 0,
                 amplitude_ma_max: 0,
+                amplitude_ma_avg: 0,
                 frequency_hz: 0,
                 frequency_hz_max: 0,
                 duration_s: 0,
@@ -202,7 +204,8 @@ const ResultsTable = (props: ResultsTableProps) => {
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {(result.stimulation_parameters.amplitude_ma ? result.stimulation_parameters.amplitude_ma : '-') + ' mA '
+                        {/* QUESTION: Display amplitude average or min/max or all 3 ?? */}
+                        {(result.stimulation_parameters.amplitude_ma_avg ? result.stimulation_parameters.amplitude_ma_avg : '-') + ' mA '
                             + '| ' + (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s '
                             + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
                             + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}

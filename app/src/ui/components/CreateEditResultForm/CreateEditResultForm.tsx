@@ -14,7 +14,6 @@ import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
 import { usePreferences } from "../../context/PreferenceContext";
 
 
-// TODO: amplitude moyenne
 export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts, selected_tab, onFormValueChanged }: CreateEditResultFormProps) => {
     const { preferences } = usePreferences();
 
@@ -32,8 +31,9 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 mni_average: edit_result && edit_result.roi.mni_average != null ? edit_result.roi.mni_average : false,
             },
             stimulation_parameters: {
-                amplitude_ma: edit_result && edit_result.stimulation_parameters.amplitude_ma != null ? edit_result.stimulation_parameters.amplitude_ma : 0,
+                amplitude_ma_min: edit_result && edit_result.stimulation_parameters.amplitude_ma_min != null ? edit_result.stimulation_parameters.amplitude_ma_min : 0,
                 amplitude_ma_max: edit_result && edit_result.stimulation_parameters.amplitude_ma_max != null ? edit_result.stimulation_parameters.amplitude_ma_max : 0,
+                amplitude_ma_avg: edit_result && edit_result.stimulation_parameters.amplitude_ma_avg != null ? edit_result.stimulation_parameters.amplitude_ma_avg : 0,
                 frequency_hz: edit_result && edit_result.stimulation_parameters.frequency_hz != null ? edit_result.stimulation_parameters.frequency_hz : 0,
                 frequency_hz_max: edit_result && edit_result.stimulation_parameters.frequency_hz_max != null ? edit_result.stimulation_parameters.frequency_hz_max : 0,
                 duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0,
@@ -83,10 +83,35 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         onSubmit(values);
     }
 
-    const setAmplitudeValue = (value: number) => {
-        form.setFieldValue('stimulation_parameters.amplitude_ma', value);
-        form.setFieldValue('stimulation_parameters.amplitude_ma_max', value);
+    const handleAmplitudeMinChanged = (newAmplitudeMin: number) => {
+        // If new min is > existing max, set new max
+        let amplitudeMax = form.values.stimulation_parameters.amplitude_ma_max;
+        if (newAmplitudeMin > form.values.stimulation_parameters.amplitude_ma_max) {
+            amplitudeMax = newAmplitudeMin;
+            form.setFieldValue('stimulation_parameters.amplitude_ma_max', newAmplitudeMin);
+        }
+
+        form.setFieldValue('stimulation_parameters.amplitude_ma_min', newAmplitudeMin);
+
+        // Compute new average
+        const new_avg = (newAmplitudeMin + amplitudeMax) / 2;
+        form.setFieldValue('stimulation_parameters.amplitude_ma_avg', new_avg);
     }
+    const handleAmplitudeMaxChanged = (newAmplitudeMax: number) => {
+        // If new max is < existing min, set new min
+        let amplitudeMin = form.values.stimulation_parameters.amplitude_ma_min;
+        if (newAmplitudeMax < amplitudeMin) {
+            amplitudeMin = newAmplitudeMax;
+            form.setFieldValue('stimulation_parameters.amplitude_ma_min', newAmplitudeMax);
+        }
+
+        form.setFieldValue('stimulation_parameters.amplitude_ma_max', newAmplitudeMax);
+
+        // Compute new average
+        const new_avg = (amplitudeMin + newAmplitudeMax) / 2;
+        form.setFieldValue('stimulation_parameters.amplitude_ma_avg', new_avg);
+    }
+
     const setFrequencyValue = (value: number) => {
         form.setFieldValue('stimulation_parameters.frequency_hz', value);
         form.setFieldValue('stimulation_parameters.frequency_hz_max', value);
@@ -182,17 +207,24 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         <Divider label="Stimulation" />
                         <Group align="flex-end">
                             <NumberInput
-                                label="Amplitude (mA)"
+                                label="Amplitude Min (mA)"
                                 precision={1}
-                                {...form.getInputProps('stimulation_parameters.amplitude_ma')}
-                                onChange={(value) => { setAmplitudeValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.amplitude_ma').onChange(value); }}
+                                {...form.getInputProps('stimulation_parameters.amplitude_ma_min')}
+                                onChange={(value) => handleAmplitudeMinChanged(value === "" ? 0 : value)}
                             />
+                            <NumberInput
+                                label="Amplitude Avg (mA)"
+                                precision={1}
+                                {...form.getInputProps('stimulation_parameters.amplitude_ma_avg')}
+                            />
+                            {/* QUESTION: Should buttons change min or average ?*/}
                             <Button.Group>
                                 {preferences.amplitude_presets.map((v, i) =>
                                     <Button
                                         key={"amp_" + i}
-                                        variant={form.getInputProps('stimulation_parameters.amplitude_ma').value === v ? "filled" : "default"}
-                                        onClick={() => setAmplitudeValue(v)}>
+                                        variant={form.getInputProps('stimulation_parameters.amplitude_ma_avg').value === v ? "filled" : "default"}
+                                        onClick={() => form.setFieldValue('stimulation_parameters.amplitude_ma_avg', v)}
+                                    >
                                         {v}
                                     </Button>
                                 )}
@@ -201,7 +233,9 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 label="Amplitude Max (mA)"
                                 precision={1}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_max')}
+                                onChange={(value) => handleAmplitudeMaxChanged(value === "" ? 0 : value)}
                             />
+
                         </Group>
 
                         <Group position="apart">
@@ -540,8 +574,9 @@ export interface CreateEditResultFormValues {
         mni_average: boolean,
     },
     stimulation_parameters: {
-        amplitude_ma: number,
+        amplitude_ma_min: number,
         amplitude_ma_max: number,
+        amplitude_ma_avg: number,
         frequency_hz: number,
         frequency_hz_max: number,
         duration_s: number,

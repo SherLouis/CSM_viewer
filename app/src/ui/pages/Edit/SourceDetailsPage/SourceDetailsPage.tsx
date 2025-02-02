@@ -198,8 +198,9 @@ export const SourceDetailsPage = () => {
                 mni_average: values.roi.mni_average,
             },
             stimulation_parameters: {
-                amplitude_ma: values.stimulation_parameters.amplitude_ma,
+                amplitude_ma_min: values.stimulation_parameters.amplitude_ma_min,
                 amplitude_ma_max: values.stimulation_parameters.amplitude_ma_max,
+                amplitude_ma_avg: values.stimulation_parameters.amplitude_ma_avg,
                 frequency_hz: values.stimulation_parameters.frequency_hz,
                 frequency_hz_max: values.stimulation_parameters.frequency_hz_max,
                 duration_s: values.stimulation_parameters.duration_s,
