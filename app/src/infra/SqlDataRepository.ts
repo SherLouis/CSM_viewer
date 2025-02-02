@@ -554,8 +554,10 @@ export default class SqlDataRepository implements IDataRepository {
             clinical_semiology: newResult.clinical_semiology
         })
     }
+
     private _editResult(resultId: number, newResult: Result): void {
         console.debug("Editing result: ");
+        console.debug(newResult);
 
         const stmt = `
         UPDATE Results SET 
@@ -656,6 +658,7 @@ export default class SqlDataRepository implements IDataRepository {
             clinical_semiology: newResult.clinical_semiology
         });
     }
+
     private _deleteResult(resultId: number): void {
         const stmt = 'DELETE FROM Results WHERE id = ?';
         this.db.prepare(stmt).run(resultId);

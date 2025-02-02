@@ -6,7 +6,6 @@ import { useState } from "react";
 import { FunctionDdo } from "../../models/FunctionDdo";
 
 const FunctionOptionsTableForm = ({ form, onSelect, functions }: FunctionOptionsTableFormProps) => {
-    // TODO: make this a generic component
     const [category, setCategory] = useState("");
     const [subcategory, setSubcategory] = useState("");
     const [characteristic, setCharacteristic] = useState("");

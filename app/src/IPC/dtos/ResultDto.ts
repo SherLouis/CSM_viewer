@@ -80,10 +80,10 @@ export class ResultsDtoMapper {
         return {
             ...dto,
             roi: {
-                side: dto.roi.side != '' ? dto.roi.side : null,
-                lobe: dto.roi.lobe != '' ? dto.roi.lobe : null,
-                region: dto.roi.region != '' ? dto.roi.region : null,
-                area: dto.roi.area != '' ? dto.roi.area : null,
+                side: dto.roi.side,
+                lobe: dto.roi.lobe,
+                region: dto.roi.region,
+                area: dto.roi.area,
                 from_figure: dto.roi.from_figure,
                 mni_x: dto.roi.mni_x,
                 mni_y: dto.roi.mni_y,
@@ -91,25 +91,25 @@ export class ResultsDtoMapper {
                 mni_average: dto.roi.mni_average,
             },
             effect: {
-                class: dto.effect.class != '' ? dto.effect.class : null,
-                descriptor: dto.effect.descriptor != '' ? dto.effect.descriptor : null,
-                details: dto.effect.details != '' ? dto.effect.details : null,
-                lateralization: dto.effect.lateralization != '' ? dto.effect.lateralization : null,
-                dominant: dto.effect.dominant != '' ? dto.effect.dominant : null,
-                body_part: dto.effect.body_part != '' ? dto.effect.body_part : null,
-                post_discharge: dto.effect.post_discharge != '' ? dto.effect.post_discharge : null,
+                class: dto.effect.class,
+                descriptor: dto.effect.descriptor,
+                details: dto.effect.details,
+                lateralization: dto.effect.lateralization,
+                dominant: dto.effect.dominant,
+                body_part: dto.effect.body_part,
+                post_discharge: dto.effect.post_discharge,
                 comments: dto.effect.comments
             },
             task: {
-                category: dto.task.category != '' ? dto.task.category : null,
-                subcategory: dto.task.subcategory != '' ? dto.task.subcategory : null,
-                characteristic: dto.task.characteristic != '' ? dto.task.characteristic : null,
+                category: dto.task.category,
+                subcategory: dto.task.subcategory,
+                characteristic: dto.task.characteristic,
                 comments: dto.task.comments
             },
             function: {
-                category: dto.function.category != '' ? dto.function.category : null,
-                subcategory: dto.function.subcategory != '' ? dto.function.subcategory : null,
-                characteristic: dto.function.characteristic != '' ? dto.function.characteristic : null,
+                category: dto.function.category,
+                subcategory: dto.function.subcategory,
+                characteristic: dto.function.characteristic,
                 article_designed_for_function: dto.function.article_designed_for_function,
                 comments: dto.function.comments
             }

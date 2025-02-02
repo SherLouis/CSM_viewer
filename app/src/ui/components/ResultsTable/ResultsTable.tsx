@@ -218,9 +218,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {result.roi.lobe +
-                            (result.roi.region ? ('/' + result.roi.region +
-                                (result.roi.area ? ('/' + result.roi.area) : '')) : '')}
+                        {result.roi.lobe + '/' + result.roi.region + '/' + result.roi.area}
                     </Text>
                     <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
                         <IconCopy size={16} />
@@ -244,10 +242,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {result.effect.class +
-                            (result.effect.descriptor ? ('/' + result.effect.descriptor
-                                + (result.effect.details ? ('/' + result.effect.details + (
-                                    result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '')}
+                        {result.effect.class + '/' + result.effect.descriptor + '/' + result.effect.details}
                     </Text>
                     <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
                         <IconCopy size={16} />
@@ -271,9 +266,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {result.task.category +
-                            (result.task.subcategory ? ('/' + result.task.subcategory
-                                + (result.task.characteristic ? ('/' + result.task.characteristic) : '')) : '')}
+                        {result.task.category + '/' + result.task.subcategory + '/' + result.task.characteristic}
                     </Text>
                     <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'task')}>
                         <IconCopy size={16} />
@@ -297,9 +290,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {result.function.category +
-                            (result.function.subcategory ? ('/' + result.function.subcategory
-                                + (result.function.characteristic ? ('/' + result.function.characteristic) : '')) : '')}
+                        {result.function.category + '/' + result.function.subcategory + '/' + result.function.characteristic}
                     </Text>
                     <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'function')}>
                         <IconCopy size={16} />

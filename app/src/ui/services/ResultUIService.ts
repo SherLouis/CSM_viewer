@@ -20,6 +20,7 @@ export default class ResultUIService {
 
     public static editResult = async (sourceId:number, result: ResultDdo): Promise<EditResponseDto> => {
         console.debug(`Editing result ${result.id} with new value: `);
+        console.debug(result);
         let response = await window.electronAPI.editResult(ResultsDtoMapper.DdotoDto(sourceId, result));
         return response;
     }

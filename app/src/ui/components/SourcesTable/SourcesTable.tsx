@@ -7,8 +7,6 @@ import { SourceSummaryDdo } from "../../models/SourceDdo";
 import { useDebouncedState, useListState } from '@mantine/hooks';
 
 const SourcesTable = (props: SourcesTableProps) => {
-  // [ ] add pagination
-
   const handleView = (event: MouseEvent, sourceId: number) => {
     event.stopPropagation();
     props.onRowClick(sourceId);

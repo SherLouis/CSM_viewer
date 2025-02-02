@@ -6,7 +6,6 @@ import { useState } from "react";
 import { ROIDdo } from "../../models/ROIDdo";
 
 const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps) => {
-    // TODO: make this a generic component
     const [lobe, setLobe] = useState("");
     const [region, setRegion] = useState("");
     const [area, setArea] = useState("");

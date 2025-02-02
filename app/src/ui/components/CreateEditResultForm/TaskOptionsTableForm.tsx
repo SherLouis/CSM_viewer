@@ -6,7 +6,6 @@ import { useState } from "react";
 import { TaskDdo } from "../../models/TaskDdo";
 
 const TaskOptionsTableForm = ({ form, onSelect, tasks }: TaskOptionsTableFormProps) => {
-    // TODO: make this a generic component
     const [category, setCategory] = useState("");
     const [subcategory, setSubcategory] = useState("");
     const [characteristic, setCharacteristic] = useState("");
