@@ -13,6 +13,8 @@ import TaskOptionsTableForm from "./TaskOptionsTableForm";
 import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
 import { usePreferences } from "../../context/PreferenceContext";
 
+
+// TODO: amplitude moyenne
 export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts, selected_tab, onFormValueChanged }: CreateEditResultFormProps) => {
     const { preferences } = usePreferences();
 

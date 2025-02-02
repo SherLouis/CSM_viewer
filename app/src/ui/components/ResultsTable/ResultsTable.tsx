@@ -85,7 +85,8 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onDelete(resultId);
     }
 
-    // TODO: change duplicate order
+    // TODO: change columns order (here + in CreateEditResultForm)
+    // TODO: cell button to clear (roi, parameters, effect, task, function, details)
     // TODO: only duplicate all
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();

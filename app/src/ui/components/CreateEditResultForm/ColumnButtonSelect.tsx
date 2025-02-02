@@ -2,6 +2,7 @@ import { ActionIcon, Button, Flex, Group, Stack, TextInput, Title } from "@manti
 import { useState } from "react";
 import { IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 
+// TODO: Enlever bouton + et ajouter si pas déjà dans sélection (roi, effet, etc.)
 const ColumnButtonSelect = ({ data, onChange, onSelect }: ColumnButtonSelectProps) => {
 
     const [currentValue, setValue] = useState<string>();

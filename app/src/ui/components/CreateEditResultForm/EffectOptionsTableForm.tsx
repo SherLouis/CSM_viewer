@@ -5,6 +5,8 @@ import ColumnButtonSelect from "./ColumnButtonSelect";
 import { useState } from "react";
 import { EffectDdo } from "../../models/EffectDdo";
 
+// TODO: pouvoir avoir effet class "", descriptor "" (mais pas afficher dans les choix)
+// TODO: choix classe Effective .... (?? demander à Olivier)
 const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableFormProps) => {
     // TODO: make this a generic component
     const [eclass, setClass] = useState("");
