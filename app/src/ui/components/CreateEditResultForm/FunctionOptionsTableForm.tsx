@@ -1,9 +1,10 @@
 import { UseFormReturnType } from "@mantine/form";
 import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { Table, TextInput } from "@mantine/core";
+import { ActionIcon, Table, TextInput } from "@mantine/core";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { useState } from "react";
 import { FunctionDdo } from "../../models/FunctionDdo";
+import { IconX } from "@tabler/icons-react";
 
 const FunctionOptionsTableForm = ({ form, onSelect, functions }: FunctionOptionsTableFormProps) => {
     const [category, setCategory] = useState("");
@@ -62,6 +63,12 @@ const FunctionOptionsTableForm = ({ form, onSelect, functions }: FunctionOptions
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.function.category !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('function.category', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('function.category')}
                         />
                     </td>
@@ -69,6 +76,12 @@ const FunctionOptionsTableForm = ({ form, onSelect, functions }: FunctionOptions
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.function.subcategory !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('function.subcategory', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('function.subcategory')}
                         />
                     </td>
@@ -76,6 +89,12 @@ const FunctionOptionsTableForm = ({ form, onSelect, functions }: FunctionOptions
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.function.characteristic !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('function.characteristic', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('function.characteristic')}
                         />
                     </td>

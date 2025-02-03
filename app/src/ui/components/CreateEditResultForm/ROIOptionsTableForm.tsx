@@ -1,9 +1,10 @@
 import { UseFormReturnType } from "@mantine/form";
 import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { Table, TextInput } from "@mantine/core";
+import { ActionIcon, Table, TextInput } from "@mantine/core";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { useState } from "react";
 import { ROIDdo } from "../../models/ROIDdo";
+import { IconX } from "@tabler/icons-react";
 
 const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps) => {
     const [lobe, setLobe] = useState("");
@@ -62,6 +63,12 @@ const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps)
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.roi.lobe !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('roi.lobe', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('roi.lobe')}
                         />
                     </td>
@@ -69,6 +76,12 @@ const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps)
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.roi.region !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('roi.region', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('roi.region')}
                         />
                     </td>
@@ -76,6 +89,12 @@ const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps)
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.roi.area !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('roi.area', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('roi.area')}
                         />
                     </td>

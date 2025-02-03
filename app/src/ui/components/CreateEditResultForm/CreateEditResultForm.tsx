@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion, TabsValue, MultiSelect } from "@mantine/core"
+import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion, TabsValue, MultiSelect, ActionIcon } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
-import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
+import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction, IconX } from "@tabler/icons-react";
 import { ROIDdo } from "../../models/ROIDdo";
 import { EffectDdo } from "../../models/EffectDdo";
 import { TaskDdo } from "../../models/TaskDdo";
@@ -430,6 +430,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         </Accordion>
 
                     </Tabs.Panel>
+
                     <Tabs.Panel value="effect">
                         <EffectOptionsTableForm
                             form={form}

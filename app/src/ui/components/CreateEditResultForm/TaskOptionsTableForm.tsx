@@ -1,9 +1,10 @@
 import { UseFormReturnType } from "@mantine/form";
 import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { Table, TextInput } from "@mantine/core";
+import { ActionIcon, Table, TextInput } from "@mantine/core";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { useState } from "react";
 import { TaskDdo } from "../../models/TaskDdo";
+import { IconX } from "@tabler/icons-react";
 
 const TaskOptionsTableForm = ({ form, onSelect, tasks }: TaskOptionsTableFormProps) => {
     const [category, setCategory] = useState("");
@@ -63,6 +64,12 @@ const TaskOptionsTableForm = ({ form, onSelect, tasks }: TaskOptionsTableFormPro
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.task.category !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('task.category', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('task.category')}
                         />
                     </td>
@@ -70,6 +77,12 @@ const TaskOptionsTableForm = ({ form, onSelect, tasks }: TaskOptionsTableFormPro
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.task.subcategory !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('task.subcategory', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('task.subcategory')}
                         />
                     </td>
@@ -77,6 +90,12 @@ const TaskOptionsTableForm = ({ form, onSelect, tasks }: TaskOptionsTableFormPro
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.task.characteristic !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('task.characteristic', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('task.characteristic')}
                         />
                     </td>

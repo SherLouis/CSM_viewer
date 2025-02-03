@@ -1,9 +1,10 @@
 import { UseFormReturnType } from "@mantine/form";
 import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { Table, TextInput } from "@mantine/core";
+import { ActionIcon, Table, TextInput } from "@mantine/core";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { useState } from "react";
 import { EffectDdo } from "../../models/EffectDdo";
+import { IconX } from "@tabler/icons-react";
 
 // TODO: choix classe Effective .... (?? demander à Olivier)
 const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableFormProps) => {
@@ -64,6 +65,12 @@ const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableF
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.effect.class !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('effect.class', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('effect.class')}
                         />
                     </td>
@@ -71,6 +78,12 @@ const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableF
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.effect.descriptor !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('effect.descriptor', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('effect.descriptor')}
                         />
                     </td>
@@ -78,6 +91,12 @@ const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableF
                         <TextInput
                             size="md"
                             placeholder="Insert some value here"
+                            rightSection={
+                                form.values.effect.details !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('effect.details', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('effect.details')}
                         />
                     </td>
