@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion, TabsValue } from "@mantine/core"
+import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion, TabsValue, MultiSelect } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction } from "@tabler/icons-react";
@@ -144,16 +144,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     }
     const ElectrodeOptions = getElectrodeOptions();
 
-    const getBodyPartOptions = (): SelectItem[] => {
+    const getBaseBodyPartOptions = (): SelectItem[] => {
         return body_parts.map(part => (
             {
                 value: part,
                 label: part.charAt(0).toUpperCase() + part.slice(1)
             } as SelectItem)
         )
-    }
-
-    // TODO: multiple body parts + free text
+    };
 
     // Handling tab change from parent
     const [selectedTab, setSelectedTab] = useState<string>(selected_tab ? selected_tab : "parameters");
@@ -470,10 +468,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <Radio value="" label="Not stated" />
                             </Group>
                         </Radio.Group>
-                        <NativeSelect
-                            label="Body part"
-                            data={[{ value: '', label: 'Pick One' }, ...getBodyPartOptions()]}
-                            {...form.getInputProps('effect.body_part')}
+                        <MultiSelect
+                            label="Body part(s)"
+                            data={getBaseBodyPartOptions()}
+                            placeholder="Select body part(s)"
+                            onChange={(values) => form.setFieldValue('effect.body_part', values.join(';'))}
+                            searchable
+                            creatable
+                            getCreateLabel={(query) => `(Create new) ${query}`}
                         />
                         <Divider />
                         <Textarea
