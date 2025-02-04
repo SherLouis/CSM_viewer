@@ -83,6 +83,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         onSubmit(values);
     }
 
+    // Amplitude
     const handleAmplitudeMinChanged = (newAmplitudeMin: number) => {
         // If new min is > existing max, set new max
         let amplitudeMax = form.values.stimulation_parameters.amplitude_ma_max;
@@ -112,14 +113,39 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         form.setFieldValue('stimulation_parameters.amplitude_ma_avg', new_avg);
     }
 
-    const setFrequencyValue = (value: number) => {
-        form.setFieldValue('stimulation_parameters.frequency_hz', value);
-        form.setFieldValue('stimulation_parameters.frequency_hz_max', value);
+    // Frequency
+    const handleFrequencyMinChanged = (newMin: number) => {
+        // If new min is > existing max, set new max
+        if (newMin > form.values.stimulation_parameters.frequency_hz_max) {
+            form.setFieldValue('stimulation_parameters.frequency_hz_max', newMin);
+        }
+        form.setFieldValue('stimulation_parameters.frequency_hz', newMin);
     }
-    const setDurationValue = (value: number) => {
-        form.setFieldValue('stimulation_parameters.duration_s', value);
-        form.setFieldValue('stimulation_parameters.duration_s_max', value);
+    const handleFrequencyMaxChanged = (newMax: number) => {
+        // If new max is < existing min, set new min
+        if (newMax < form.values.stimulation_parameters.frequency_hz) {
+            form.setFieldValue('stimulation_parameters.frequency_hz', newMax);
+        }
+        form.setFieldValue('stimulation_parameters.frequency_hz_max', newMax);
     }
+
+    // Duration
+    const handleDurationMinChanged = (newMin: number) => {
+        // If new min is > existing max, set new max
+        if (newMin > form.values.stimulation_parameters.duration_s_max) {
+            form.setFieldValue('stimulation_parameters.duration_s_max', newMin);
+        }
+        form.setFieldValue('stimulation_parameters.duration_s', newMin);
+    }
+    const handleDurationMaxChanged = (newMax: number) => {
+        // If new max is < existing min, set new min
+        if (newMax < form.values.stimulation_parameters.duration_s) {
+            form.setFieldValue('stimulation_parameters.duration_s', newMax);
+        }
+        form.setFieldValue('stimulation_parameters.duration_s_max', newMax);
+    }
+
+
     const appendValueToCurrentFormValue = (form_path: string, value: string) => {
         const current_value = form.getInputProps(form_path).value;
         const current_values = current_value.split(';');
@@ -241,14 +267,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <NumberInput
                                     label="Frequency (Hz)"
                                     {...form.getInputProps('stimulation_parameters.frequency_hz')}
-                                    onChange={(value) => { setFrequencyValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.frequency_hz').onChange(value); }}
+                                    onChange={(value) => handleFrequencyMinChanged(value === "" ? 0 : value)}
                                 />
                                 <Button.Group>
                                     {preferences.frequency_presets.map((v, i) =>
                                         <Button
                                             key={"freq_" + i}
                                             variant={form.getInputProps('stimulation_parameters.frequency_hz').value === v ? "filled" : "default"}
-                                            onClick={() => setFrequencyValue(v)}>
+                                            onClick={() => handleFrequencyMinChanged(v)}>
                                             {v}
                                         </Button>
                                     )}
@@ -256,20 +282,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <NumberInput
                                     label="Frequency Max (Hz)"
                                     {...form.getInputProps('stimulation_parameters.frequency_hz_max')}
+                                    onChange={(value) => handleFrequencyMaxChanged(value === "" ? 0 : value)}
                                 />
                             </Group>
                             <Group align="flex-end">
                                 <NumberInput
                                     label="Duration (s)"
                                     {...form.getInputProps('stimulation_parameters.duration_s')}
-                                    onChange={(value) => { setDurationValue(value === "" ? 0 : value); form.getInputProps('stimulation_parameters.duration_s').onChange(value); }}
+                                    onChange={(value) => handleDurationMinChanged(value === "" ? 0 : value)}
                                 />
                                 <Button.Group>
                                     {preferences.duration_presets.map((v, i) =>
                                         <Button
                                             key={"dur_" + i}
                                             variant={form.getInputProps('stimulation_parameters.duration_s').value === v ? "filled" : "default"}
-                                            onClick={() => setDurationValue(v)}>
+                                            onClick={() => handleDurationMinChanged(v)}>
                                             {v}
                                         </Button>
                                     )}
@@ -277,6 +304,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <NumberInput
                                     label="Duration Max (s)"
                                     {...form.getInputProps('stimulation_parameters.duration_s_max')}
+                                    onChange={(value) => handleDurationMaxChanged(value === "" ? 0 : value)}
                                 />
                             </Group>
                         </Group>

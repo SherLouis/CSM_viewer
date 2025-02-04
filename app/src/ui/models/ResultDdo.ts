@@ -1,5 +1,6 @@
 // ddo = data display object
 export type ResultDdo = {
+    newResult: { amplitude_ma_min: number; amplitude_ma_max: number; amplitude_ma_avg: number; frequency_hz: number; frequency_hz_max: number; duration_s: number; duration_s_max: number; implentation_type: string; contact_separation: number; contact_diameter: number; contact_length: number; phase_length: number; phase_type: string }
     id: number,
     roi: {
         side: string,
@@ -28,7 +29,7 @@ export type ResultDdo = {
         phase_length: number,
         phase_type: string,
         epi_zone: string,
-        epi_zone_comments:string,
+        epi_zone_comments: string,
     }
     effect: {
         class: string,

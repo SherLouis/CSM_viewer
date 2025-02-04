@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useState } from 'react';
 import { ActionIcon, Box, Checkbox, Group, MultiSelect, Popover, Text, TextInput } from '@mantine/core';
 import sortBy from 'lodash.sortby';
-import { IconCopy, IconFilterOff, IconSearch, IconTableOptions, IconTrash } from '@tabler/icons-react';
+import { IconCopy, IconFilterOff, IconSearch, IconTableOptions, IconTrash, IconX } from '@tabler/icons-react';
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from 'mantine-datatable';
 import { ResultDdo } from '../../models/ResultDdo';
 import { CreateEditResultForm, CreateEditResultFormValues } from '../CreateEditResultForm/CreateEditResultForm';
@@ -87,8 +87,6 @@ const ResultsTable = (props: ResultsTableProps) => {
     }
 
     // TODO: change columns order (here + in CreateEditResultForm)
-    // TODO: cell button to clear (roi, parameters, effect, task, function, details)
-    // TODO: only duplicate all
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
@@ -177,6 +175,87 @@ const ResultsTable = (props: ResultsTableProps) => {
         }
     }
 
+    const handleClearSectionValues = (event: MouseEvent, originalResult: ResultDdo, section: "parameters" | "roi" | "effect" | "task" | "function" | "details") => {
+        event.stopPropagation();
+        let newResult = originalResult;
+        switch (section) {
+            case "parameters":
+                newResult = {
+                    ...originalResult,
+                    stimulation_parameters: {
+                        amplitude_ma_min: 0,
+                        amplitude_ma_max: 0,
+                        amplitude_ma_avg: 0,
+                        frequency_hz: 0,
+                        frequency_hz_max: 0,
+                        duration_s: 0,
+                        duration_s_max: 0,
+                        implentation_type: '',
+                        contact_separation: 0,
+                        contact_diameter: 0,
+                        contact_length: 0,
+                        phase_length: 0,
+                        phase_type: ''
+                    }
+                } as ResultDdo;
+                break;
+            case "roi":
+                newResult = {
+                    ...originalResult,
+                    roi: { side: '', lobe: '', region: '', area: '', mni_x: 0, mni_y: 0, mni_z: 0, mni_average: false }
+                } as ResultDdo;
+                break;
+            case "effect":
+                newResult = {
+                    ...originalResult,
+                    effect: {
+                        class: '',
+                        descriptor: '',
+                        details: '',
+                        post_discharge: '',
+                        lateralization: '',
+                        dominant: '',
+                        body_part: '',
+                        comments: '',
+                    }
+                } as ResultDdo;
+                break;
+            case "task":
+                newResult = {
+                    ...originalResult,
+                    task: {
+                        category: '',
+                        subcategory: '',
+                        characteristic: '',
+                        comments: '',
+                    }
+                } as ResultDdo;
+                break;
+            case "function":
+                newResult = {
+                    ...originalResult,
+                    function: {
+                        category: '',
+                        subcategory: '',
+                        characteristic: '',
+                        article_designed_for_function: false,
+                        comments: '',
+                    }
+                }
+                break;
+            case "details":
+                newResult = {
+                    ...originalResult,
+                    occurrences: 0,
+                    comments: '',
+                    comments_2: '',
+                    precision_score: 0
+                }
+                break;
+        }
+        props.onEdit(newResult);
+    }
+
     // sorting & filtering
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
     const [records, setRecords] = useState(sortBy(props.data, 'id'));
@@ -210,8 +289,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                             + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
                             + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'stim')}>
-                        <IconCopy size={16} />
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'parameters')}>
+                        <IconX size={16} />
                     </ActionIcon>
                 </Group>)
         },
@@ -223,8 +302,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.roi.lobe + '/' + result.roi.region + '/' + result.roi.area}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
-                        <IconCopy size={16} />
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'roi')}>
+                        <IconX size={16} />
                     </ActionIcon>
                 </Group>),
             filter: (
@@ -247,8 +326,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.effect.class + '/' + result.effect.descriptor + '/' + result.effect.details}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
-                        <IconCopy size={16} />
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'effect')}>
+                        <IconX size={16} />
                     </ActionIcon>
                 </Group>),
             filter: (
@@ -271,8 +350,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.task.category + '/' + result.task.subcategory + '/' + result.task.characteristic}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'task')}>
-                        <IconCopy size={16} />
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'task')}>
+                        <IconX size={16} />
                     </ActionIcon>
                 </Group>),
             filter: (
@@ -295,8 +374,8 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.function.category + '/' + result.function.subcategory + '/' + result.function.characteristic}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'function')}>
-                        <IconCopy size={16} />
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'function')}>
+                        <IconX size={16} />
                     </ActionIcon>
                 </Group>),
             filter: (
@@ -314,7 +393,16 @@ const ResultsTable = (props: ResultsTableProps) => {
         {
             accessor: 'occurrences',
             title: 'Occurrences',
-            sortable: true
+            sortable: true,
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {result.occurrences}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'details')}>
+                        <IconX size={16} />
+                    </ActionIcon>
+                </Group>)
         },
         {
             accessor: 'source_db',
