@@ -200,8 +200,8 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         <Box>
             <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
                 <Tabs value={selectedTab} onTabChange={handleTabChange} >
-                    <Group position="apart" align='start'>
-                        <Tabs.List>
+                    <Group position="apart" align='start' w={"100%"} spacing={"md"} noWrap>
+                        <Tabs.List grow w={"85%"}>
                             <Tabs.Tab value="parameters" icon={<IconSettingsBolt style={iconStyle} />}>
                                 Parameters
                             </Tabs.Tab>

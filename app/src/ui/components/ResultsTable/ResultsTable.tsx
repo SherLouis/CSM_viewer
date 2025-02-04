@@ -86,7 +86,10 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onDelete(resultId);
     }
 
+    // QUESTION: add option to resize columns ?
+
     // TODO: change columns order (here + in CreateEditResultForm)
+    // QUESTION: what should be the order ?
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
