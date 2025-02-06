@@ -88,8 +88,7 @@ const ResultsTable = (props: ResultsTableProps) => {
 
     // QUESTION: add option to resize columns ?
 
-    // TODO: change columns order (here + in CreateEditResultForm)
-    // QUESTION: what should be the order ?
+    // TODO: change columns order (here + in CreateEditResultForm) : Parameters / Task / Function / ROI / Effects / Occurrences
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
@@ -286,11 +285,14 @@ const ResultsTable = (props: ResultsTableProps) => {
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {/* QUESTION: Display amplitude average or min/max or all 3 ?? */}
-                        {(result.stimulation_parameters.amplitude_ma_avg ? result.stimulation_parameters.amplitude_ma_avg : '-') + ' mA '
-                            + '| ' + (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s '
-                            + '| ' + (result.stimulation_parameters.contact_separation ? result.stimulation_parameters.contact_separation : '-') + ' mm '
-                            + '| ' + (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz'}
+                        {
+                            (result.stimulation_parameters.amplitude_ma_avg ? result.stimulation_parameters.amplitude_ma_avg : '-') +
+                            ' (' + (result.stimulation_parameters.amplitude_ma_min ? result.stimulation_parameters.amplitude_ma_min : '-') + '-' + 
+                            (result.stimulation_parameters.amplitude_ma_max ? result.stimulation_parameters.amplitude_ma_max : '-') + ') mA ' + '| ' +
+                            (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz' + '| ' +
+                            (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s ' + '| ' +
+                            (result.stimulation_parameters.contact_length ? result.stimulation_parameters.contact_length : '-') + ' mm '
+                        }
                     </Text>
                     <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'parameters')}>
                         <IconX size={16} />
