@@ -88,7 +88,6 @@ const ResultsTable = (props: ResultsTableProps) => {
 
     // QUESTION: add option to resize columns ?
 
-    // TODO: change columns order (here + in CreateEditResultForm) : Parameters / Task / Function / ROI / Effects / Occurrences
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
@@ -142,30 +141,30 @@ const ResultsTable = (props: ResultsTableProps) => {
                 newResult.stimulation_parameters = result.stimulation_parameters;
                 props.onCreate(newResult);
                 break;
-            case "roi":
-                newResult.stimulation_parameters = result.stimulation_parameters;
-                newResult.roi = result.roi;
-                props.onCreate(newResult);
-                break;
-            case "effect":
-                newResult.stimulation_parameters = result.stimulation_parameters;
-                newResult.roi = result.roi;
-                newResult.effect = result.effect;
-                props.onCreate(newResult);
-                break;
             case "task":
                 newResult.stimulation_parameters = result.stimulation_parameters;
-                newResult.roi = result.roi;
-                newResult.effect = result.effect;
                 newResult.task = result.task;
                 props.onCreate(newResult);
                 break;
             case "function":
                 newResult.stimulation_parameters = result.stimulation_parameters;
-                newResult.roi = result.roi;
-                newResult.effect = result.effect;
                 newResult.task = result.task;
                 newResult.function = result.function;
+                props.onCreate(newResult);
+                break;
+            case "roi":
+                newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.task = result.task;
+                newResult.function = result.function;
+                newResult.roi = result.roi;
+                props.onCreate(newResult);
+                break;
+            case "effect":
+                newResult.stimulation_parameters = result.stimulation_parameters;
+                newResult.task = result.task;
+                newResult.function = result.function;
+                newResult.roi = result.roi;
+                newResult.effect = result.effect;
                 props.onCreate(newResult);
                 break;
             case "all":
@@ -287,7 +286,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {
                             (result.stimulation_parameters.amplitude_ma_avg ? result.stimulation_parameters.amplitude_ma_avg : '-') +
-                            ' (' + (result.stimulation_parameters.amplitude_ma_min ? result.stimulation_parameters.amplitude_ma_min : '-') + '-' + 
+                            ' (' + (result.stimulation_parameters.amplitude_ma_min ? result.stimulation_parameters.amplitude_ma_min : '-') + '-' +
                             (result.stimulation_parameters.amplitude_ma_max ? result.stimulation_parameters.amplitude_ma_max : '-') + ') mA ' + '| ' +
                             (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz' + '| ' +
                             (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s ' + '| ' +
@@ -298,54 +297,6 @@ const ResultsTable = (props: ResultsTableProps) => {
                         <IconX size={16} />
                     </ActionIcon>
                 </Group>)
-        },
-        {
-            accessor: 'roi',
-            title: 'ROI',
-            render: (result) => (
-                <Group position='apart'>
-                    <Text>
-                        {result.roi.lobe + '/' + result.roi.region + '/' + result.roi.area}
-                    </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'roi')}>
-                        <IconX size={16} />
-                    </ActionIcon>
-                </Group>),
-            filter: (
-                <TextInput
-                    label="ROI"
-                    description="Search for a ROI that includes specified text"
-                    placeholder='Search ROI...'
-                    icon={<IconSearch size={16} />}
-                    defaultValue={roiQuery}
-                    onChange={(e) => setRoiQuery(e.currentTarget.value)}
-                />
-            ),
-            filtering: roiQuery != '',
-        },
-        {
-            accessor: 'effect',
-            title: 'Effect',
-            render: (result) => (
-                <Group position='apart'>
-                    <Text>
-                        {result.effect.class + '/' + result.effect.descriptor + '/' + result.effect.details}
-                    </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'effect')}>
-                        <IconX size={16} />
-                    </ActionIcon>
-                </Group>),
-            filter: (
-                <TextInput
-                    label="Effect"
-                    description="Search for an Effect that includes specified text"
-                    placeholder='Search Effect...'
-                    icon={<IconSearch size={16} />}
-                    defaultValue={effectQuery}
-                    onChange={(e) => setEffectQuery(e.currentTarget.value)}
-                />
-            ),
-            filtering: effectQuery != '',
         },
         {
             accessor: 'task',
@@ -394,6 +345,54 @@ const ResultsTable = (props: ResultsTableProps) => {
                 />
             ),
             filtering: functionQuery != '',
+        },
+        {
+            accessor: 'roi',
+            title: 'ROI',
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {result.roi.lobe + '/' + result.roi.region + '/' + result.roi.area}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'roi')}>
+                        <IconX size={16} />
+                    </ActionIcon>
+                </Group>),
+            filter: (
+                <TextInput
+                    label="ROI"
+                    description="Search for a ROI that includes specified text"
+                    placeholder='Search ROI...'
+                    icon={<IconSearch size={16} />}
+                    defaultValue={roiQuery}
+                    onChange={(e) => setRoiQuery(e.currentTarget.value)}
+                />
+            ),
+            filtering: roiQuery != '',
+        },
+        {
+            accessor: 'effect',
+            title: 'Effect',
+            render: (result) => (
+                <Group position='apart'>
+                    <Text>
+                        {result.effect.class + '/' + result.effect.descriptor + '/' + result.effect.details}
+                    </Text>
+                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'effect')}>
+                        <IconX size={16} />
+                    </ActionIcon>
+                </Group>),
+            filter: (
+                <TextInput
+                    label="Effect"
+                    description="Search for an Effect that includes specified text"
+                    placeholder='Search Effect...'
+                    icon={<IconSearch size={16} />}
+                    defaultValue={effectQuery}
+                    onChange={(e) => setEffectQuery(e.currentTarget.value)}
+                />
+            ),
+            filtering: effectQuery != '',
         },
         {
             accessor: 'occurrences',

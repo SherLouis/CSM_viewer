@@ -205,17 +205,17 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             <Tabs.Tab value="parameters" icon={<IconSettingsBolt style={iconStyle} />}>
                                 Parameters
                             </Tabs.Tab>
-                            <Tabs.Tab value="roi" icon={<IconTargetArrow style={iconStyle} />}>
-                                ROI
-                            </Tabs.Tab>
-                            <Tabs.Tab value="effect" icon={<IconReportMedical style={iconStyle} />}>
-                                Effect
-                            </Tabs.Tab>
                             <Tabs.Tab value="task" icon={<IconSubtask style={iconStyle} />}>
                                 Task
                             </Tabs.Tab>
                             <Tabs.Tab value="function" icon={<IconMathFunction style={iconStyle} />}>
                                 Function
+                            </Tabs.Tab>
+                            <Tabs.Tab value="roi" icon={<IconTargetArrow style={iconStyle} />}>
+                                ROI
+                            </Tabs.Tab>
+                            <Tabs.Tab value="effect" icon={<IconReportMedical style={iconStyle} />}>
+                                Effect
                             </Tabs.Tab>
                             <Tabs.Tab value="details" icon={<IconChartPie style={iconStyle} />}>
                                 Details
@@ -406,7 +406,48 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="roi">
+                    <Tabs.Panel value="task" mx={"sm"}>
+                        <Radio.Group
+                            {...form.getInputProps('task.category')}>
+                            <Group mt="xs">
+                                <Radio value="" label="Not stated" />
+                                <Radio value="No task used" label="No task used" />
+                                <Radio value="Task used but not described" label="Task used but not described" />
+                            </Group>
+                        </Radio.Group>
+                        <TaskOptionsTableForm
+                            form={form}
+                            onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
+                            tasks={tasks}
+                        />
+                        <Divider />
+                        <Textarea
+                            label="Comments"
+                            placeholder="Write your comments here"
+                            {...form.getInputProps('task.comments')}
+                        />
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="function" mx={"sm"}>
+                        <Switch
+                            label="Article designed to assess specific function ?"
+                            labelPosition="left"
+                            {...form.getInputProps('function.article_designed_for_function', { type: 'checkbox' })}
+                        />
+                        <FunctionOptionsTableForm
+                            form={form}
+                            onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
+                            functions={functions}
+                        />
+                        <Divider />
+                        <Textarea
+                            label="Comments"
+                            placeholder="Write your comments here"
+                            {...form.getInputProps('function.comments')}
+                        />
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="roi" mx={"sm"}>
                         <Radio.Group
                             label="Side"
                             {...form.getInputProps('roi.side')}
@@ -459,7 +500,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="effect">
+                    <Tabs.Panel value="effect" mx={"sm"}>
                         <EffectOptionsTableForm
                             form={form}
                             onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
@@ -514,48 +555,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         />
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="task">
-                        <Radio.Group
-                            {...form.getInputProps('task.category')}>
-                            <Group mt="xs">
-                                <Radio value="" label="Not stated" />
-                                <Radio value="No task used" label="No task used" />
-                                <Radio value="Task used but not described" label="Task used but not described" />
-                            </Group>
-                        </Radio.Group>
-                        <TaskOptionsTableForm
-                            form={form}
-                            onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
-                            tasks={tasks}
-                        />
-                        <Divider />
-                        <Textarea
-                            label="Comments"
-                            placeholder="Write your comments here"
-                            {...form.getInputProps('task.comments')}
-                        />
-                    </Tabs.Panel>
-
-                    <Tabs.Panel value="function">
-                        <Switch
-                            label="Article designed to assess specific function ?"
-                            labelPosition="left"
-                            {...form.getInputProps('function.article_designed_for_function', { type: 'checkbox' })}
-                        />
-                        <FunctionOptionsTableForm
-                            form={form}
-                            onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
-                            functions={functions}
-                        />
-                        <Divider />
-                        <Textarea
-                            label="Comments"
-                            placeholder="Write your comments here"
-                            {...form.getInputProps('function.comments')}
-                        />
-                    </Tabs.Panel>
-
-                    <Tabs.Panel value="details">
+                    <Tabs.Panel value="details" mx={"sm"}>
                         <NumberInput
                             label="Occurrences"
                             autoFocus
