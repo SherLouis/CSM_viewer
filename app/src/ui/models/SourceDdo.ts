@@ -12,7 +12,7 @@ export type SourceDdo = {
     state: "À Faire" | "Fait" | "À Discutter"
 }
 
-export type SourceSummaryDdo = {
+export interface SourceSummaryDdo {
     id: number,
     title: string,
     nb_results: number,

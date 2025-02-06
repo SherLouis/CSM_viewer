@@ -1,5 +1,5 @@
 // ddo = data display object
-export type ResultDdo = {
+export interface ResultDdo {
     id: number,
     roi: {
         side: string,

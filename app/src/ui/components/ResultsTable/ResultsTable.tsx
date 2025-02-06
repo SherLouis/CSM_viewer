@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { ActionIcon, Box, Checkbox, Group, MultiSelect, Popover, Text, TextInput } from '@mantine/core';
 import sortBy from 'lodash.sortby';
 import { IconCopy, IconFilterOff, IconSearch, IconTableOptions, IconTrash, IconX } from '@tabler/icons-react';
@@ -257,9 +257,16 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onEdit(newResult);
     }
 
+    // Prepare records for the table
+    const enhancedDataWithOrder = useMemo(() => {
+        // Sort records by ID
+        const sortedData = sortBy(props.data, 'id');
+        // Assign chronological order based on the order
+        return sortedData.map((record, index) => { return { ...record, chronologicalOrder: index + 1 } as ResultTableRecord });
+    }, [props.data]);
     // sorting & filtering
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
-    const [records, setRecords] = useState(sortBy(props.data, 'id'));
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'chronologicalOrder', direction: 'desc' });
+    const [records, setRecords] = useState(enhancedDataWithOrder);
     const [roiQuery, setRoiQuery] = useDebouncedState('', 200);
     const [effectQuery, setEffectQuery] = useDebouncedState('', 200);
     const [taskQuery, setTaskQuery] = useDebouncedState('', 200);
@@ -274,8 +281,8 @@ const ResultsTable = (props: ResultsTableProps) => {
 
     const tableColumns = [
         {
-            accessor: 'id',
-            title: 'ID',
+            accessor: 'chronologicalOrder',
+            title: '#',
             sortable: true
         },
         {
@@ -464,16 +471,16 @@ const ResultsTable = (props: ResultsTableProps) => {
                 </Group>
             ),
         }
-    ] as DataTableColumn<ResultDdo>[];
+    ] as DataTableColumn<ResultTableRecord>[];
 
     const columnsLocalStorageKey = 'result_table_columns';
-    const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<ResultDdo>({
+    const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<ResultTableRecord>({
         key: columnsLocalStorageKey,
         columns: tableColumns
     });
 
     useEffect(() => {
-        var data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
+        var data = sortBy(enhancedDataWithOrder, sortStatus.columnAccessor) as ResultTableRecord[];
         data = data.filter((result) => {
             const roiValue = result.roi.lobe + (result.roi.region ? ('/' + result.roi.region + (result.roi.area ? ('/' + result.roi.area) : '')) : '');
             const effectValue = result.effect.class + (result.effect.descriptor ? ('/' + result.effect.descriptor + (result.effect.details ? ('/' + result.effect.details + (result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '');
@@ -488,7 +495,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             return true;
         });
         setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [sortStatus, roiQuery, effectQuery, taskQuery, functionQuery, props.data, sourceDbFilter])
+    }, [sortStatus, roiQuery, effectQuery, taskQuery, functionQuery, enhancedDataWithOrder, sourceDbFilter])
 
     useEffect(() => {
         setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => toggle.accessor === 'source_db' ? { ...toggle, toggled: appMode === AppMode.MERGE } : toggle));
@@ -525,36 +532,39 @@ const ResultsTable = (props: ResultsTableProps) => {
     return (
         <Box h={"100%"}>
             {/** Table buttons: clear filters & select columns */}
-            <Group position='right' h={"4%"}>
-                <ActionIcon title={'Clear all filters'}>
-                    <IconFilterOff onClick={clearAllFilters} />
-                </ActionIcon>
-                <Popover position='bottom-end'>
-                    <Popover.Target>
-                        <ActionIcon title={'Select columns'}>
-                            <IconTableOptions />
-                        </ActionIcon>
-                    </Popover.Target>
-                    <Popover.Dropdown>
-                        <Checkbox.Group
-                            value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
-                            onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
-                            label={'Select columns'}
-                        >
-                            {columnsToggle.map(c =>
-                                <Checkbox
-                                    value={c.accessor}
-                                    key={c.accessor}
-                                    label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
-                            )}
-                        </Checkbox.Group>
-                    </Popover.Dropdown>
-                </Popover>
+            <Group position='apart' h={"4%"}>
+                <Text>{"Total records displayed: " + records.length}</Text>
+                <Group position='right' h={"100%"} p={0} m={0}>
+                    <ActionIcon title={'Clear all filters'}>
+                        <IconFilterOff onClick={clearAllFilters} />
+                    </ActionIcon>
+                    <Popover position='bottom-end'>
+                        <Popover.Target>
+                            <ActionIcon title={'Select columns'}>
+                                <IconTableOptions />
+                            </ActionIcon>
+                        </Popover.Target>
+                        <Popover.Dropdown>
+                            <Checkbox.Group
+                                value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
+                                onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
+                                label={'Select columns'}
+                            >
+                                {columnsToggle.map(c =>
+                                    <Checkbox
+                                        value={c.accessor}
+                                        key={c.accessor}
+                                        label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
+                                )}
+                            </Checkbox.Group>
+                        </Popover.Dropdown>
+                    </Popover>
+                </Group>
             </Group>
 
             <DataTable
                 height={'96%'}
-                scrollAreaProps={{type: 'auto', scrollbarSize: 15, offsetScrollbars: true}}
+                scrollAreaProps={{ type: 'auto', scrollbarSize: 15, offsetScrollbars: true }}
                 sortStatus={sortStatus}
                 onSortStatusChange={setSortStatus}
                 withColumnBorders
@@ -629,5 +639,8 @@ type ResultsTableProps = {
     onDelete: (resultId: number) => void
 }
 
+interface ResultTableRecord extends ResultDdo {
+    chronologicalOrder: number;
+}
 
 export default ResultsTable;

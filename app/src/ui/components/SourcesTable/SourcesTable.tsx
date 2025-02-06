@@ -22,9 +22,17 @@ const SourcesTable = (props: SourcesTableProps) => {
     props.onDelete(sourceId);
   }
 
+  // Prepare records for the table
+  const enhancedDataWithOrder = useMemo(() => {
+    // Sort records by ID
+    const sortedData = sortBy(props.data, 'id');
+    // Assign chronological order based on the order
+    return sortedData.map((record, index) => { return { ...record, chronologicalOrder: index + 1 } as SourceTableRecord });
+  }, [props.data]);
+
   // sorting & filtering
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
-  const [records, sourceRecordsHandlers] = useListState(props.data);
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'chronologicalOrder', direction: 'desc' });
+  const [records, sourceRecordsHandlers] = useListState(enhancedDataWithOrder);
   const [titleQuery, setTitleQuery] = useDebouncedState('', 200);
   const [selectedStates, selectedStatesHandler] = useListState<string>([]);
   const states = useMemo(() => {
@@ -33,20 +41,20 @@ const SourcesTable = (props: SourcesTableProps) => {
   }, [props.data])
 
   useEffect(() => {
-    var data = sortBy(props.data, sortStatus.columnAccessor) as SourceSummaryDdo[];
+    var data = sortBy(props.data, sortStatus.columnAccessor) as SourceTableRecord[];
     data = data.filter((sourceSummary) => {
       if (titleQuery !== '' && !sourceSummary.title.toLowerCase().includes(titleQuery.trim().toLowerCase())) { return false; }
       if (selectedStates.length !== 0 && !selectedStates.some((s) => s === sourceSummary.state)) { return false; }
       return true;
     });
     sourceRecordsHandlers.setState(sortStatus.direction === 'desc' ? data.reverse() : data);
-  }, [sortStatus, titleQuery, selectedStates, props.data])
+  }, [sortStatus, titleQuery, selectedStates, enhancedDataWithOrder])
 
   return (
     <DataTable
       withColumnBorders
       height={"100%"}
-      scrollAreaProps={{type: 'auto', scrollbarSize: 15, offsetScrollbars: true}}
+      scrollAreaProps={{ type: 'auto', scrollbarSize: 15, offsetScrollbars: true }}
       sortStatus={sortStatus}
       onSortStatusChange={setSortStatus}
       striped
@@ -129,6 +137,10 @@ type SourcesTableProps = {
   onRowClick: (sourceId: number) => void,
   onEdit: (sourceId: number) => void,
   onDelete: (sourceId: number) => void
+}
+
+interface SourceTableRecord extends SourceSummaryDdo {
+  chronologicalOrder: number;
 }
 
 
