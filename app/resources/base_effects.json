@@ -1,5 +1,10 @@
 [
     {
+        "name": "[Responsive rate]",
+        "level": "Class",
+        "children": []
+    },
+    {
         "name": "Consciousness",
         "level": "Class",
         "children": [
