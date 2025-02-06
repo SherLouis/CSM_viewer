@@ -293,9 +293,14 @@ const ResultsTable = (props: ResultsTableProps) => {
                             (result.stimulation_parameters.contact_length ? result.stimulation_parameters.contact_length : '-') + ' mm '
                         }
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'parameters')}>
-                        <IconX size={16} />
-                    </ActionIcon>
+                    <Group spacing={0}>
+                        <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'stim')}>
+                            <IconCopy size={16} />
+                        </ActionIcon>
+                        <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'parameters')}>
+                            <IconX size={16} />
+                        </ActionIcon>
+                    </Group>
                 </Group>)
         },
         {
@@ -306,9 +311,14 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.task.category + '/' + result.task.subcategory + '/' + result.task.characteristic}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'task')}>
-                        <IconX size={16} />
-                    </ActionIcon>
+                    <Group spacing={0}>
+                        <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'task')}>
+                            <IconCopy size={16} />
+                        </ActionIcon>
+                        <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'task')}>
+                            <IconX size={16} />
+                        </ActionIcon>
+                    </Group>
                 </Group>),
             filter: (
                 <TextInput
@@ -330,9 +340,14 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.function.category + '/' + result.function.subcategory + '/' + result.function.characteristic}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'function')}>
-                        <IconX size={16} />
-                    </ActionIcon>
+                    <Group spacing={0}>
+                        <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'function')}>
+                            <IconCopy size={16} />
+                        </ActionIcon>
+                        <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'function')}>
+                            <IconX size={16} />
+                        </ActionIcon>
+                    </Group>
                 </Group>),
             filter: (
                 <TextInput
@@ -354,9 +369,14 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.roi.lobe + '/' + result.roi.region + '/' + result.roi.area}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'roi')}>
-                        <IconX size={16} />
-                    </ActionIcon>
+                    <Group spacing={0}>
+                        <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
+                            <IconCopy size={16} />
+                        </ActionIcon>
+                        <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'roi')}>
+                            <IconX size={16} />
+                        </ActionIcon>
+                    </Group>
                 </Group>),
             filter: (
                 <TextInput
@@ -378,9 +398,14 @@ const ResultsTable = (props: ResultsTableProps) => {
                     <Text>
                         {result.effect.class + '/' + result.effect.descriptor + '/' + result.effect.details}
                     </Text>
-                    <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'effect')}>
-                        <IconX size={16} />
-                    </ActionIcon>
+                    <Group spacing={0}>
+                        <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'effect')}>
+                            <IconCopy size={16} />
+                        </ActionIcon>
+                        <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'effect')}>
+                            <IconX size={16} />
+                        </ActionIcon>
+                    </Group>
                 </Group>),
             filter: (
                 <TextInput
