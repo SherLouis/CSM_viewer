@@ -554,6 +554,7 @@ const ResultsTable = (props: ResultsTableProps) => {
 
             <DataTable
                 height={'96%'}
+                scrollAreaProps={{type: 'auto', scrollbarSize: 15, offsetScrollbars: true}}
                 sortStatus={sortStatus}
                 onSortStatusChange={setSortStatus}
                 withColumnBorders

@@ -45,6 +45,8 @@ const SourcesTable = (props: SourcesTableProps) => {
   return (
     <DataTable
       withColumnBorders
+      height={"100%"}
+      scrollAreaProps={{type: 'auto', scrollbarSize: 15, offsetScrollbars: true}}
       sortStatus={sortStatus}
       onSortStatusChange={setSortStatus}
       striped
