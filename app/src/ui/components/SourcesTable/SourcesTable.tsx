@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import sortBy from 'lodash.sortby';
-import { ActionIcon, Group, MultiSelect, Text, TextInput } from '@mantine/core';
-import { IconEye, IconEdit, IconTrash, IconSearch } from '@tabler/icons-react';
+import { ActionIcon, Box, Checkbox, Group, MultiSelect, Popover, Text, TextInput } from '@mantine/core';
+import { IconEye, IconEdit, IconTrash, IconSearch, IconFilterOff, IconTableOptions } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { SourceSummaryDdo } from "../../models/SourceDdo";
 import { useDebouncedState, useListState } from '@mantine/hooks';
@@ -35,6 +35,12 @@ const SourcesTable = (props: SourcesTableProps) => {
   const [records, sourceRecordsHandlers] = useListState(enhancedDataWithOrder);
   const [titleQuery, setTitleQuery] = useDebouncedState('', 200);
   const [selectedStates, selectedStatesHandler] = useListState<string>([]);
+
+  const clearAllFilters = () => {
+    setTitleQuery('');
+    selectedStatesHandler.setState([]);
+  }
+
   const states = useMemo(() => {
     const states = new Set(props.data.map((source) => source.state));
     return [...states];
@@ -51,84 +57,95 @@ const SourcesTable = (props: SourcesTableProps) => {
   }, [sortStatus, titleQuery, selectedStates, enhancedDataWithOrder])
 
   return (
-    <DataTable
-      withColumnBorders
-      height={"100%"}
-      scrollAreaProps={{ type: 'auto', scrollbarSize: 15, offsetScrollbars: true }}
-      sortStatus={sortStatus}
-      onSortStatusChange={setSortStatus}
-      striped
-      highlightOnHover
-      idAccessor={(record) => String(record.id)}
-      records={records}
-      columns={[
-        {
-          accessor: 'id',
-          title: 'ID',
-          sortable: true
-        },
-        {
-          accessor: 'title',
-          title: 'Title',
-          sortable: true,
-          filter: (
-            <TextInput
-              label="Title"
-              description="Search for a title that includes specified text"
-              placeholder='Search title...'
-              icon={<IconSearch size={16} />}
-              defaultValue={titleQuery}
-              onChange={(e) => setTitleQuery(e.currentTarget.value)}
-            />
-          ),
-          filtering: titleQuery != '',
-        },
-        {
-          accessor: 'nb_results',
-          title: "# results",
-          sortable: true
-        },
-        {
-          accessor: 'state',
-          title: "Status",
-          sortable: true,
-          filter: (
-            <MultiSelect
-              label="Status "
-              description="Show all with selected status"
-              data={states}
-              value={selectedStates}
-              placeholder="Select state(s)"
-              onChange={selectedStatesHandler.setState}
-              icon={<IconSearch size={16} />}
-              clearable
-              searchable
-            />
-          ),
-          filtering: selectedStates.length > 0,
-        },
-        {
-          accessor: 'actions',
-          title: <Text mr="xs">Actions</Text>,
-          textAlignment: 'right',
-          width: "10%",
-          render: (source) => (
-            <Group spacing={4} position="right" noWrap>
-              <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, source.id)}>
-                <IconEye size={16} />
-              </ActionIcon>
-              <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, source.id)}>
-                <IconEdit size={16} />
-              </ActionIcon>
-              <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, source.id)}>
-                <IconTrash size={16} />
-              </ActionIcon>
-            </Group>
-          ),
-        }
-      ]}
-      onRowClick={(source) => { props.onRowClick(source.id) }}
-    />
+    <Box h={"100%"}>
+      {/** Table buttons: clear filters & select columns */}
+      <Group position='apart' h={"4%"} pr={15}>
+        <Text>{"Total records displayed: " + records.length}</Text>
+        <Group position='right' h={"100%"} p={0} m={0}>
+          <ActionIcon title={'Clear all filters'}>
+            <IconFilterOff onClick={clearAllFilters} />
+          </ActionIcon>
+        </Group>
+      </Group>
+      <DataTable
+        withColumnBorders
+        height={"96%"}
+        scrollAreaProps={{ type: 'auto', scrollbarSize: 15, offsetScrollbars: true }}
+        sortStatus={sortStatus}
+        onSortStatusChange={setSortStatus}
+        striped
+        highlightOnHover
+        idAccessor={(record) => String(record.id)}
+        records={records}
+        columns={[
+          {
+            accessor: 'id',
+            title: 'ID',
+            sortable: true
+          },
+          {
+            accessor: 'title',
+            title: 'Title',
+            sortable: true,
+            filter: (
+              <TextInput
+                label="Title"
+                description="Search for a title that includes specified text"
+                placeholder='Search title...'
+                icon={<IconSearch size={16} />}
+                defaultValue={titleQuery}
+                onChange={(e) => setTitleQuery(e.currentTarget.value)}
+              />
+            ),
+            filtering: titleQuery != '',
+          },
+          {
+            accessor: 'nb_results',
+            title: "# results",
+            sortable: true
+          },
+          {
+            accessor: 'state',
+            title: "Status",
+            sortable: true,
+            filter: (
+              <MultiSelect
+                label="Status "
+                description="Show all with selected status"
+                data={states}
+                value={selectedStates}
+                placeholder="Select state(s)"
+                onChange={selectedStatesHandler.setState}
+                icon={<IconSearch size={16} />}
+                clearable
+                searchable
+              />
+            ),
+            filtering: selectedStates.length > 0,
+          },
+          {
+            accessor: 'actions',
+            title: <Text mr="xs">Actions</Text>,
+            textAlignment: 'right',
+            width: "10%",
+            render: (source) => (
+              <Group spacing={4} position="right" noWrap>
+                <ActionIcon color="green" onClick={(e: MouseEvent) => handleView(e, source.id)}>
+                  <IconEye size={16} />
+                </ActionIcon>
+                <ActionIcon color="blue" onClick={(e: MouseEvent) => handleEdit(e, source.id)}>
+                  <IconEdit size={16} />
+                </ActionIcon>
+                <ActionIcon color="red" onClick={(e: MouseEvent) => handleDelete(e, source.id)}>
+                  <IconTrash size={16} />
+                </ActionIcon>
+              </Group>
+            ),
+          }
+        ]}
+        onRowClick={(source) => { props.onRowClick(source.id) }}
+      />
+    </Box>
   );
 }
 

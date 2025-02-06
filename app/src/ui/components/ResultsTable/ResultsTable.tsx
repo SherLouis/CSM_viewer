@@ -532,7 +532,7 @@ const ResultsTable = (props: ResultsTableProps) => {
     return (
         <Box h={"100%"}>
             {/** Table buttons: clear filters & select columns */}
-            <Group position='apart' h={"4%"}>
+            <Group position='apart' h={"4%"} pr={15}>
                 <Text>{"Total records displayed: " + records.length}</Text>
                 <Group position='right' h={"100%"} p={0} m={0}>
                     <ActionIcon title={'Clear all filters'}>
