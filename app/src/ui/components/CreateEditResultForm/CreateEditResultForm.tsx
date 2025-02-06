@@ -39,7 +39,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0,
                 duration_s_max: edit_result && edit_result.stimulation_parameters.duration_s_max != null ? edit_result.stimulation_parameters.duration_s_max : 0,
                 electrode_make: edit_result && edit_result.stimulation_parameters.electrode_make != null ? edit_result.stimulation_parameters.electrode_make : "",
-                implentation_type: edit_result && edit_result.stimulation_parameters.implentation_type != null ? edit_result.stimulation_parameters.implentation_type : "",
+                implantation_type: edit_result && edit_result.stimulation_parameters.implantation_type != null ? edit_result.stimulation_parameters.implantation_type : "",
                 contact_separation: edit_result && edit_result.stimulation_parameters.contact_separation != null ? edit_result.stimulation_parameters.contact_separation : 0,
                 contact_diameter: edit_result && edit_result.stimulation_parameters.contact_diameter != null ? edit_result.stimulation_parameters.contact_diameter : 0,
                 contact_length: edit_result && edit_result.stimulation_parameters.contact_length != null ? edit_result.stimulation_parameters.contact_length : 0,
@@ -363,7 +363,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 onChange={(event) => {
                                     if (ElectrodeOptions.has(event.target.value)) {
                                         var option = ElectrodeOptions.get(event.target.value);
-                                        form.setFieldValue('stimulation_parameters.implentation_type', option.implantationType);
+                                        form.setFieldValue('stimulation_parameters.implantation_type', option.implantationType);
                                         form.setFieldValue('stimulation_parameters.electrode_make', option.make);
                                         form.setFieldValue('stimulation_parameters.contact_diameter', option.diameter);
                                         form.setFieldValue('stimulation_parameters.contact_separation', option.separation);
@@ -374,7 +374,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             <Group position="apart" spacing={"sm"}>
                                 <Radio.Group
                                     label="Implentation type"
-                                    {...form.getInputProps('stimulation_parameters.implentation_type')}
+                                    {...form.getInputProps('stimulation_parameters.implantation_type')}
                                 >
                                     <Group mt="xs">
                                         <Radio value="SEEG" label="SEEG" />
@@ -612,7 +612,7 @@ export interface CreateEditResultFormValues {
         frequency_hz_max: number,
         duration_s: number,
         duration_s_max: number,
-        implentation_type: string,
+        implantation_type: string,
         electrode_make: string,
         contact_separation: number,
         contact_diameter: number,

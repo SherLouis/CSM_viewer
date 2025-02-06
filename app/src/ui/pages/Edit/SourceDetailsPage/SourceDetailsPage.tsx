@@ -206,7 +206,7 @@ export const SourceDetailsPage = () => {
                 duration_s: values.stimulation_parameters.duration_s,
                 duration_s_max: values.stimulation_parameters.duration_s_max,
                 electrode_make: values.stimulation_parameters.electrode_make,
-                implentation_type: values.stimulation_parameters.implentation_type,
+                implantation_type: values.stimulation_parameters.implantation_type,
                 contact_separation: values.stimulation_parameters.contact_separation,
                 contact_diameter: values.stimulation_parameters.contact_diameter,
                 contact_length: values.stimulation_parameters.contact_length,

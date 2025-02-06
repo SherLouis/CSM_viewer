@@ -21,7 +21,7 @@ export type ResultDdo = {
         duration_s: number,
         duration_s_max: number,
         electrode_make: string,
-        implentation_type: string,
+        implantation_type: string,
         contact_separation: number,
         contact_diameter: number,
         contact_length: number,
