@@ -241,13 +241,12 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 precision={1}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_avg')}
                             />
-                            {/* QUESTION: Should buttons change min or average ?*/}
                             <Button.Group>
                                 {preferences.amplitude_presets.map((v, i) =>
                                     <Button
                                         key={"amp_" + i}
-                                        variant={form.getInputProps('stimulation_parameters.amplitude_ma_avg').value === v ? "filled" : "default"}
-                                        onClick={() => form.setFieldValue('stimulation_parameters.amplitude_ma_avg', v)}
+                                        variant={form.getInputProps('stimulation_parameters.amplitude_ma_min').value === v ? "filled" : "default"}
+                                        onClick={() => handleAmplitudeMinChanged(v)}
                                     >
                                         {v}
                                     </Button>
