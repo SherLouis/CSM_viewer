@@ -26,7 +26,7 @@ export interface IElectronAPI {
   getEffects: () => Promise<EffectDdo[]>
   getTasks: () => Promise<TaskDdo[]>
   getFunctions: () => Promise<FunctionDdo[]>
-  getBodyParts: () => Promise<String[]>
+  getBodyParts: () => Promise<string[]>
 }
 
 declare global {

@@ -22,7 +22,7 @@ export default class SqlDataRepository implements IDataRepository {
     private effects: Effect[];
     private tasks: Task[];
     private functions: Function[];
-    private bodyParts: String[];
+    private bodyParts: string[];
 
 
     constructor(dbLocation: string) {
@@ -379,7 +379,7 @@ export default class SqlDataRepository implements IDataRepository {
     }
 
     // Body Parts
-    getBodyParts(): String[] {
+    getBodyParts(): string[] {
         return this.bodyParts;
     }
 
@@ -756,13 +756,13 @@ export default class SqlDataRepository implements IDataRepository {
     }
 
     // Body Parts
-    private readBodyPartsFromFile(): String[] {
+    private readBodyPartsFromFile(): string[] {
         let file = path.join(app.getAppPath(), '../..', 'resources', 'base_body_parts.json');
         if (!fs.existsSync(file)) {
             file = path.join(app.getAppPath(), 'resources', 'base_body_parts.json');
         }
         const jsonstring = fs.readFileSync(file, 'utf-8');
-        const base_body_parts = JSON.parse(jsonstring) as String[];
+        const base_body_parts = JSON.parse(jsonstring) as string[];
         return base_body_parts;
     }
 

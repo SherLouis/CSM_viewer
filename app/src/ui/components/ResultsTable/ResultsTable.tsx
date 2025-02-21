@@ -86,8 +86,6 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onDelete(resultId);
     }
 
-    // QUESTION: add option to resize columns ?
-
     const handleDuplicate = (event: MouseEvent, result: ResultDdo, level: "stim" | "roi" | "effect" | "task" | "function" | "all") => {
         event.stopPropagation();
         let newResult = {
@@ -633,7 +631,7 @@ type ResultsTableProps = {
     effects: EffectDdo[];
     tasks: TaskDdo[];
     functions: FunctionDdo[];
-    bodyParts: String[];
+    bodyParts: string[];
     onEdit: (result: ResultDdo) => void,
     onCreate: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void

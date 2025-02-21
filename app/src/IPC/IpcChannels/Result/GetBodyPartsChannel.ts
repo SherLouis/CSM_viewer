@@ -12,7 +12,7 @@ export class GetBodyPartsChannel implements IpcChannelInterface {
     return 'results:getBodyParts';
   }
 
-  handle(_event: IpcMainEvent, request: IpcRequest): String[] {
+  handle(_event: IpcMainEvent, request: IpcRequest): string[] {
     console.log('Handling request on channel %s', this.getName())
     var bodyParts = this.service.getBodyParts();
     return bodyParts;

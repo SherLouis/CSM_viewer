@@ -61,7 +61,7 @@ export default class ResultUIService {
         return response.map((dto) => FunctionDtoMapper.DtoToDdo(dto))
     }
 
-    public static getBodyParts = async () : Promise<String[]> => {
+    public static getBodyParts = async () : Promise<string[]> => {
         console.debug('Getting Body Parts');
         let response = await window.electronAPI.getBodyParts();
         return response;

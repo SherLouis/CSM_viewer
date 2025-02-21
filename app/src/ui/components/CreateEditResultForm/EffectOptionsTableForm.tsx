@@ -6,7 +6,6 @@ import { useState } from "react";
 import { EffectDdo } from "../../models/EffectDdo";
 import { IconX } from "@tabler/icons-react";
 
-// TODO: choix classe Effective .... (?? demander à Olivier)
 const EffectOptionsTableForm = ({ form, onSelect, effects }: EffectOptionsTableFormProps) => {
     const [eclass, setClass] = useState("");
     const [descriptor, setDescriptor] = useState("");

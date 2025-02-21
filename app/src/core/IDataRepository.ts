@@ -50,7 +50,7 @@ export default interface IDataRepository {
     getFunctions(): Function[]
 
     // Body Parts
-    getBodyParts(): String[]
+    getBodyParts(): string[]
 
     close(): void
 }

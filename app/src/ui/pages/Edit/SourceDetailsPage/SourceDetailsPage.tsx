@@ -35,7 +35,7 @@ export const SourceDetailsPage = () => {
     const [effects, effectsHandlers] = useListState<EffectDdo>([]);
     const [tasks, tasksHandlers] = useListState<TaskDdo>([]);
     const [functions, functionsHandlers] = useListState<FunctionDdo>([]);
-    const [bodyParts, bodyPartsHandlers] = useListState<String>([]);
+    const [bodyParts, bodyPartsHandlers] = useListState<string>([]);
 
     // Load current source, results, rois, tasks and functions
     useEffect(() => {

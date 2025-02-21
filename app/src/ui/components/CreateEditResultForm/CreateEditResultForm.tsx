@@ -12,6 +12,7 @@ import EffectOptionsTableForm from "./EffectOptionsTableForm";
 import TaskOptionsTableForm from "./TaskOptionsTableForm";
 import FunctionOptionsTableForm from "./FunctionOptionsTableForm";
 import { usePreferences } from "../../context/PreferenceContext";
+import BodyPartSelection from './BodyPartSelection';
 
 
 export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, effects, tasks, functions, body_parts, selected_tab, onFormValueChanged }: CreateEditResultFormProps) => {
@@ -537,15 +538,12 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <Radio value="" label="Not stated" />
                             </Group>
                         </Radio.Group>
-                        <MultiSelect
-                            label="Body part(s)"
-                            data={getBaseBodyPartOptions()}
-                            placeholder="Select body part(s)"
-                            onChange={(values) => form.setFieldValue('effect.body_part', values.join(';'))}
-                            searchable
-                            creatable
-                            getCreateLabel={(query) => `(Create new) ${query}`}
+
+                        <BodyPartSelection
+                            bodyPartsOptions={body_parts}
+                            form={form}
                         />
+                        
                         <Divider />
                         <Textarea
                             label="Comments"
@@ -659,7 +657,7 @@ interface CreateEditResultFormProps {
     effects: EffectDdo[];
     tasks: TaskDdo[];
     functions: FunctionDdo[];
-    body_parts: String[];
+    body_parts: string[];
     selected_tab?: "parameters" | "roi" | "effect" | "task" | "function" | "details";
     onFormValueChanged?: (newValue: CreateEditResultFormValues) => void;
 }

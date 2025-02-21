@@ -7,7 +7,6 @@ import { useCallback, useState } from "react";
 import { SourceDdo, SourceSummaryDdo } from "../../models/SourceDdo";
 
 export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSourceFormProps) => {
-  // TODO: Ajouter validations
   const form = useForm<CreateFormValues>({
     initialValues: {
       reference: {
