@@ -121,11 +121,9 @@ export default class SqlDataRepository implements IDataRepository {
             const createSourcesTableStmt = `
                     CREATE TABLE IF NOT EXISTS Sources (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        type TEXT,
                         author TEXT,
                         date TEXT,
                         publisher TEXT,
-                        location TEXT,
                         doi TEXT, 
                         title TEXT,
                         cohort INTEGER,
@@ -194,13 +192,13 @@ export default class SqlDataRepository implements IDataRepository {
 
             // Insert sources from database A into database C
             const insertSource = resultDb.prepare(`
-        INSERT INTO Sources (type, author, date, publisher, location, doi, title, cohort, state)
+        INSERT INTO Sources (author, date, publisher, doi, title, cohort, state)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
             const sourcesA = this.db.prepare('SELECT * FROM Sources').all() as SourceEntity[];
             sourcesA.forEach(source => {
-                const info = insertSource.run(source.type, source.author, source.date, source.publisher, source.location, source.doi, source.title, source.cohort, source.state);
+                const info = insertSource.run(source.author, source.date, source.publisher, source.doi, source.title, source.cohort, source.state);
                 if (source.doi) {
                     doiToFinalSourceIdMap.set(source.doi, info.lastInsertRowid as number);
                 }
@@ -215,7 +213,7 @@ export default class SqlDataRepository implements IDataRepository {
                     sourceIdBToFinalSourceIdMap.set(source.id, doiToFinalSourceIdMap.get(source.doi));
                 } else {
                     // Insert new source into result database and get new ID
-                    const info = insertSource.run(source.type, source.author, source.date, source.publisher, source.location, source.doi, source.title, source.cohort, source.state);
+                    const info = insertSource.run(source.author, source.date, source.publisher, source.doi, source.title, source.cohort, source.state);
                     const newSourceId = info.lastInsertRowid as number;
                     if (source.doi) {
                         doiToFinalSourceIdMap.set(source.doi, newSourceId);
@@ -272,7 +270,7 @@ export default class SqlDataRepository implements IDataRepository {
     async exportToCsv(exportCsvFilePath: string): Promise<void> {
         // Query to join Results and Sources tables
         const query = `
-        SELECT S.type, S.author, S.date, S.publisher, S.location, S.doi, S.title, S.cohort, S.state,
+        SELECT S.author, S.date, S.publisher, S.doi, S.title, S.cohort, S.state,
         R.roi_side, R.roi_lobe, R.roi_region, R.roi_area, R.roi_from_figure, R.roi_mni_x, R.roi_mni_y, R.roi_mni_z, R.roi_mni_average, 
         R.stim_amp_ma_min, R.stim_amp_ma_max, R.stim_amp_ma_avg, R.stim_freq, R.stim_freq_max, R.stim_duration, R.stim_duration_max, R.stim_electrode_make, R.stim_implantation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_type, R.stim_epi_zone, R.stim_epi_zone_comments,
         R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
@@ -290,11 +288,9 @@ export default class SqlDataRepository implements IDataRepository {
         const csvWriter = createObjectCsvWriter({
             path: exportCsvFilePath,
             header: [
-                { id: 'type', title: 'Source type' },
                 { id: 'author', title: 'Source Author' },
                 { id: 'date', title: 'Source date' },
                 { id: 'publisher', title: 'Source publisher' },
-                { id: 'location', title: 'Source location' },
                 { id: 'doi', title: 'Source DOI' },
                 { id: 'cohort', title: 'Cohort' },
                 { id: 'title', title: 'Source Title' },
@@ -446,21 +442,17 @@ export default class SqlDataRepository implements IDataRepository {
     private _insertNewSource(newSource: SourceEntity) {
         console.debug("Inserting new source ");
         const insetStmt = `INSERT INTO Sources (
-            type,
             author,
             date,
             publisher,
-            location,
             doi, 
             title,
             cohort,
             state
             ) VALUES (
-                @type,
                 @author,
                 @date,
                 @publisher,
-                @location,
                 @doi, 
                 @title,
                 @cohort,
@@ -472,11 +464,9 @@ export default class SqlDataRepository implements IDataRepository {
         console.debug(`Editing source ${sourceId} with new value`);
         const stmt = `
         UPDATE Sources SET 
-            type=@type,
             author=@author,
             date=@date,
             publisher=@publisher,
-            location=@location,
             doi=@doi,
             title=@title,
             cohort=@cohort,
@@ -778,11 +768,9 @@ export default class SqlDataRepository implements IDataRepository {
         const createSourcesTableStmt = `
             CREATE TABLE IF NOT EXISTS Sources (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                type TEXT,
                 author TEXT,
                 date TEXT,
                 publisher TEXT,
-                location TEXT,
                 doi TEXT, 
                 title TEXT,
                 cohort INTEGER,

@@ -84,11 +84,9 @@ export function SourcesPage() {
     });
     const source = {
       id: currentSource.id,
-      type: values.reference.type,
       author: values.reference.author,
       date: values.reference.date,
       publisher: values.reference.publisher,
-      location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
       cohort: values.reference.cohort,
@@ -178,11 +176,9 @@ export function SourcesPage() {
 
   const createNewSource = (values: CreateFormValues) => {
     const source = {
-      type: values.reference.type,
       author: values.reference.author,
       date: values.reference.date,
       publisher: values.reference.publisher,
-      location: values.reference.location,
       doi: values.reference.doi,
       title: values.reference.title,
       cohort: values.reference.cohort,

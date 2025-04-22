@@ -3,11 +3,9 @@ import { SourceDdo, SourceSummaryDdo } from "../../ui/models/SourceDdo";
 
 export type SourceDto = {
     id: number,
-    type: "article" | "experimental" | "other",
     author: string,
     date: string,
     publisher: string,
-    location: string,
     doi: string,
     title: string,
     cohort: number,

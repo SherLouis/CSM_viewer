@@ -77,8 +77,8 @@ const deleteAllRecords = () => {
 }
 
 const insertSource = () => {
-    db.prepare(`INSERT INTO Sources (id,type,author,date,publisher,location,doi, title) 
-                            VALUES (@id,@type,@author,@date,@publisher,@location,@doi, @title)`)
+    db.prepare(`INSERT INTO Sources (id,author,date,publisher,doi, title) 
+                            VALUES (@id,@author,@date,@publisher,@doi, @title)`)
         .run({ id: 1, type: 'article', author: 'me', date: '2023-01-01', publisher: null, location: null, doi: null, title: 'test' });
 }
 
