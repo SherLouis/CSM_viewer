@@ -1,5 +1,5 @@
 import { Source } from "../../core/models/Source"
-import { SourceDdo, SourceSummaryDdo } from "../../ui/models/SourceDdo";
+import { SourceDdo } from "../../ui/models/SourceDdo";
 
 export type SourceDto = {
     id: number,
@@ -9,7 +9,19 @@ export type SourceDto = {
     doi: string,
     title: string,
     cohort: number,
-    state: "À Faire" | "Fait" | "À Discutter"
+    state: "À Faire" | "Fait" | "À Discutter",
+    validity: {
+        roi_nomenclature: string;
+        null_effects: boolean;
+        sham_stimulation: boolean;
+        control_for_after_discharge: boolean;
+        response_characterization: {
+            cat_methodology: boolean;
+            replicability_of_response: boolean;
+            dose_responsiveness: boolean;
+            dissection_of_response: boolean;
+        }
+    }
 }
 
 export const SourceDtoFromDdo = (ddo: SourceDdo): SourceDto => { return ddo as SourceDto }

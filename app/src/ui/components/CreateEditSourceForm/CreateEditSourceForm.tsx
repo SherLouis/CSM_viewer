@@ -1,4 +1,4 @@
-import { Box, TextInput, Group, Flex, Button, Accordion, NativeSelect, NumberInput } from "@mantine/core"
+import { Box, TextInput, Group, Flex, Button, Accordion, NativeSelect, NumberInput, Switch, Stack } from "@mantine/core"
 import { useForm } from '@mantine/form';
 const citejs = require('@citation-js/core')
 require('@citation-js/plugin-pubmed')
@@ -17,7 +17,19 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
         title: edit_source != null ? edit_source.title : '',
         cohort: edit_source != null ? edit_source.cohort : 0,
       },
-      status: edit_source != null ? edit_source.state : "À Faire"
+      status: edit_source != null ? edit_source.state : "À Faire",
+      validity: {
+        roi_nomenclature: edit_source != null ? edit_source.validity.roi_nomenclature : '',
+        null_effects: edit_source != null ? edit_source.validity.null_effects : false,
+        sham_stimulation: edit_source != null ? edit_source.validity.sham_stimulation : false,
+        control_for_after_discharge: edit_source != null ? edit_source.validity.control_for_after_discharge : false,
+        response_characterization: {
+          cat_methodology: edit_source != null ? edit_source.validity.response_characterization.cat_methodology : false,
+          replicability_of_response: edit_source != null ? edit_source.validity.response_characterization.replicability_of_response : false,
+          dose_responsiveness: edit_source != null ? edit_source.validity.response_characterization.dose_responsiveness : false,
+          dissection_of_response: edit_source != null ? edit_source.validity.response_characterization.dissection_of_response : false,
+        }
+      }
     } as CreateFormValues,
     validate: {
       reference: {
@@ -81,7 +93,7 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
   return (
     <Box>
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-        <Accordion defaultValue="reference">
+        <Accordion multiple defaultValue={['reference', 'validity']}>
           <Accordion.Item value="reference">
             <Accordion.Control>Reference</Accordion.Control>
             <Accordion.Panel>
@@ -129,6 +141,54 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
               />
             </Accordion.Panel>
           </Accordion.Item>
+
+          <Accordion.Item value="validity">
+            <Accordion.Control>Reference</Accordion.Control>
+            <Accordion.Panel>
+              <Flex direction='row' align='flex-end'>
+                <TextInput
+                  label="ROI Nomenclature"
+                  required
+                  {...form.getInputProps('validity.roi_nomenclature')}
+                />
+                <Button onClick={() => form.setFieldValue('validity.roi_nomenclature', 'NS')}>NS</Button>
+              </Flex>
+              <Stack>
+                <Switch
+                  label="Null Effects"
+                  labelPosition="left"
+                  {...form.getInputProps('validity.null_effects', { type: 'checkbox' })}
+                />
+                <Switch
+                  label="Sham stimulation"
+                  labelPosition="left"
+                  {...form.getInputProps('validity.sham_stimulation', { type: 'checkbox' })}
+                />
+                <Switch
+                  label="Control for After Discharge"
+                  labelPosition="left"
+                  {...form.getInputProps('validity.control_for_after_discharge', { type: 'checkbox' })}
+                />
+              </Stack>
+
+              <label>Response characterization</label>
+              <Stack>
+                <Switch
+                  label="Categorization methodology"
+                  description="Is there a specific reference to a classification that was used?"
+                  {...form.getInputProps('validity.response_characterization.cat_methodology', { type: 'checkbox' })} />
+                <Switch
+                  label="Replicability of response"
+                  {...form.getInputProps('validity.response_characterization.replicability_of_response', { type: 'checkbox' })} />
+                <Switch
+                  label="Dose responsiveness"
+                  {...form.getInputProps('validity.response_characterization.dose_responsiveness', { type: 'checkbox' })} />
+                <Switch
+                  label="Dissection of response category for each individual contacts sites (in bipolar stimulation)"
+                  {...form.getInputProps('validity.response_characterization.dissection_of_response', { type: 'checkbox' })} />
+              </Stack>
+            </Accordion.Panel>
+          </Accordion.Item>
         </Accordion>
 
         <NativeSelect
@@ -154,7 +214,19 @@ export interface CreateFormValues {
     title: string
     cohort: number
   },
-  status: "À Faire" | "Fait" | "À Discutter"
+  status: "À Faire" | "Fait" | "À Discutter",
+  validity: {
+    roi_nomenclature: string;
+    null_effects: boolean;
+    sham_stimulation: boolean;
+    control_for_after_discharge: boolean;
+    response_characterization: {
+      cat_methodology: boolean;
+      replicability_of_response: boolean;
+      dose_responsiveness: boolean;
+      dissection_of_response: boolean;
+    }
+  }
 }
 
 interface CreateSourceFormProps {

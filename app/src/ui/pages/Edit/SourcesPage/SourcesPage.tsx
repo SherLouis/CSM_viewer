@@ -91,6 +91,18 @@ export function SourcesPage() {
       title: values.reference.title,
       cohort: values.reference.cohort,
       state: values.status,
+      validity: {
+        roi_nomenclature: values.validity.roi_nomenclature,
+        null_effects: values.validity.null_effects,
+        sham_stimulation: values.validity.sham_stimulation,
+        control_for_after_discharge: values.validity.control_for_after_discharge,
+        response_characterization: {
+          cat_methodology: values.validity.response_characterization.cat_methodology,
+          replicability_of_response: values.validity.response_characterization.replicability_of_response,
+          dose_responsiveness: values.validity.response_characterization.dose_responsiveness,
+          dissection_of_response: values.validity.response_characterization.dissection_of_response,
+        }
+      }
     } as SourceDdo;
     SourceUIService.editSource(currentSource.id, SourceDtoFromDdo(source))
       .then((res: EditResponseDto) => {
@@ -182,7 +194,19 @@ export function SourcesPage() {
       doi: values.reference.doi,
       title: values.reference.title,
       cohort: values.reference.cohort,
-      state: values.status
+      state: values.status,
+      validity: {
+        roi_nomenclature: values.validity.roi_nomenclature,
+        null_effects: values.validity.null_effects,
+        sham_stimulation: values.validity.sham_stimulation,
+        control_for_after_discharge: values.validity.control_for_after_discharge,
+        response_characterization: {
+          cat_methodology: values.validity.response_characterization.cat_methodology,
+          replicability_of_response: values.validity.response_characterization.replicability_of_response,
+          dose_responsiveness: values.validity.response_characterization.dose_responsiveness,
+          dissection_of_response: values.validity.response_characterization.dissection_of_response,
+        }
+      }
     } as SourceDdo;
     createSource(source);
     createEditModalHandlers.close();
