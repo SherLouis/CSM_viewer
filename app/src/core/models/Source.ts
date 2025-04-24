@@ -25,5 +25,18 @@ export type Source = {
             dose_responsiveness: boolean;
             dissection_of_response: boolean;
         }
+    },
+    details: {
+        paper_role: {
+            cartography_sec_only: boolean;
+            cartography_sec_compare_to_other_techniques: boolean;
+            research_technical_parameters_sec: boolean;
+            research_cognitive_functions: boolean;
+        },
+        age_limits: {
+            min: number;
+            max: number;
+            avg: number;
+        }
     }
 }

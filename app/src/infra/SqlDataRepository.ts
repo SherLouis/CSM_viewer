@@ -135,7 +135,14 @@ export default class SqlDataRepository implements IDataRepository {
                         validity_response_charact_cat_methodology INTEGER,
                         validity_response_charact_replicability_of_response INTEGER,
                         validity_response_charact_dose_responsiveness INTEGER,
-                        validity_response_charact_dissection_of_response INTEGER
+                        validity_response_charact_dissection_of_response INTEGER,
+                        details_paper_role_cartography_sec_only INTEGER,
+                        details_paper_role_cartography_sec_compare_to_other_techniques INTEGER,
+                        details_paper_role_research_technical_parameters_sec INTEGER,
+                        details_paper_role_research_cognitive_functions INTEGER,
+                        details_age_limits_min INTEGER,
+                        details_age_limits_max INTEGER,
+                        details_age_limits_avg INTEGER
                     );`;
             const createResultsTableStmt = `
                     CREATE TABLE IF NOT EXISTS Results (
@@ -200,13 +207,13 @@ export default class SqlDataRepository implements IDataRepository {
 
             // Insert sources from database A into database C
             const insertSource = resultDb.prepare(`
-        INSERT INTO Sources (author, date, publisher, doi, title, cohort, state, validity_roi_nomenclature, validity_null_effects, validity_sham_stimulation, validity_control_for_after_discharge, validity_response_charact_cat_methodology, validity_response_charact_replicability_of_response, validity_response_charact_dose_responsiveness, validity_response_charact_dissection_of_response)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO Sources (author, date, publisher, doi, title, cohort, state, validity_roi_nomenclature, validity_null_effects, validity_sham_stimulation, validity_control_for_after_discharge, validity_response_charact_cat_methodology, validity_response_charact_replicability_of_response, validity_response_charact_dose_responsiveness, validity_response_charact_dissection_of_response, details_paper_role_cartography_sec_only, details_paper_role_cartography_sec_compare_to_other_techniques, details_paper_role_research_technical_parameters_sec, details_paper_role_research_cognitive_functions, details_age_limits_min, details_age_limits_max, details_age_limits_avg)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
             const sourcesA = this.db.prepare('SELECT * FROM Sources').all() as SourceEntity[];
             sourcesA.forEach(source => {
-                const info = insertSource.run(source.author, source.date, source.publisher, source.doi, source.title, source.cohort, source.state, source.validity_roi_nomenclature, source.validity_null_effects, source.validity_sham_stimulation, source.validity_control_for_after_discharge, source.validity_response_charact_cat_methodology, source.validity_response_charact_replicability_of_response, source.validity_response_charact_dose_responsiveness, source.validity_response_charact_dissection_of_response);
+                const info = insertSource.run(source.author, source.date, source.publisher, source.doi, source.title, source.cohort, source.state, source.validity_roi_nomenclature, source.validity_null_effects, source.validity_sham_stimulation, source.validity_control_for_after_discharge, source.validity_response_charact_cat_methodology, source.validity_response_charact_replicability_of_response, source.validity_response_charact_dose_responsiveness, source.validity_response_charact_dissection_of_response, source.details_paper_role_cartography_sec_only, source.details_paper_role_cartography_sec_compare_to_other_techniques, source.details_paper_role_research_technical_parameters_sec, source.details_paper_role_research_cognitive_functions, source.details_age_limits_min, source.details_age_limits_max, source.details_age_limits_avg);
                 if (source.doi) {
                     doiToFinalSourceIdMap.set(source.doi, info.lastInsertRowid as number);
                 }
@@ -221,7 +228,7 @@ export default class SqlDataRepository implements IDataRepository {
                     sourceIdBToFinalSourceIdMap.set(source.id, doiToFinalSourceIdMap.get(source.doi));
                 } else {
                     // Insert new source into result database and get new ID
-                    const info = insertSource.run(source.author, source.date, source.publisher, source.doi, source.title, source.cohort, source.state, source.validity_roi_nomenclature, source.validity_null_effects, source.validity_sham_stimulation, source.validity_control_for_after_discharge, source.validity_response_charact_cat_methodology, source.validity_response_charact_replicability_of_response, source.validity_response_charact_dose_responsiveness, source.validity_response_charact_dissection_of_response);
+                    const info = insertSource.run(source.author, source.date, source.publisher, source.doi, source.title, source.cohort, source.state, source.validity_roi_nomenclature, source.validity_null_effects, source.validity_sham_stimulation, source.validity_control_for_after_discharge, source.validity_response_charact_cat_methodology, source.validity_response_charact_replicability_of_response, source.validity_response_charact_dose_responsiveness, source.validity_response_charact_dissection_of_response, source.details_paper_role_cartography_sec_only, source.details_paper_role_cartography_sec_compare_to_other_techniques, source.details_paper_role_research_technical_parameters_sec, source.details_paper_role_research_cognitive_functions, source.details_age_limits_min, source.details_age_limits_max, source.details_age_limits_avg);
                     const newSourceId = info.lastInsertRowid as number;
                     if (source.doi) {
                         doiToFinalSourceIdMap.set(source.doi, newSourceId);
@@ -278,7 +285,7 @@ export default class SqlDataRepository implements IDataRepository {
     async exportToCsv(exportCsvFilePath: string): Promise<void> {
         // Query to join Results and Sources tables
         const query = `
-        SELECT S.author, S.date, S.publisher, S.doi, S.title, S.cohort, S.state, S.validity_roi_nomenclature, S.validity_null_effects, S.validity_sham_stimulation, S.validity_control_for_after_discharge, S.validity_response_charact_cat_methodology, S.validity_response_charact_replicability_of_response, S.validity_response_charact_dose_responsiveness, S.validity_response_charact_dissection_of_response,
+        SELECT S.author, S.date, S.publisher, S.doi, S.title, S.cohort, S.state, S.validity_roi_nomenclature, S.validity_null_effects, S.validity_sham_stimulation, S.validity_control_for_after_discharge, S.validity_response_charact_cat_methodology, S.validity_response_charact_replicability_of_response, S.validity_response_charact_dose_responsiveness, S.validity_response_charact_dissection_of_response, S.details_paper_role_cartography_sec_only, S.details_paper_role_cartography_sec_compare_to_other_techniques, S.details_paper_role_research_technical_parameters_sec, S.details_paper_role_research_cognitive_functions, S.details_age_limits_min, S.details_age_limits_max, S.details_age_limits_avg,
         R.roi_side, R.roi_lobe, R.roi_region, R.roi_area, R.roi_from_figure, R.roi_mni_x, R.roi_mni_y, R.roi_mni_z, R.roi_mni_average, 
         R.stim_amp_ma_min, R.stim_amp_ma_max, R.stim_amp_ma_avg, R.stim_freq, R.stim_freq_max, R.stim_duration, R.stim_duration_max, R.stim_electrode_make, R.stim_implantation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_type, R.stim_epi_zone, R.stim_epi_zone_comments,
         R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
@@ -311,6 +318,13 @@ export default class SqlDataRepository implements IDataRepository {
                 { id: 'validity_response_charact_replicability_of_response', title: 'Response characterization - Replicability of response' },
                 { id: 'validity_response_charact_dose_responsiveness', title: 'Response characterization - Dose responsiveness' },
                 { id: 'validity_response_charact_dissection_of_response', title: 'Response characterization - Bipolar dissection of response category' },
+                { id: 'details_paper_role_cartography_sec_only', title: 'Paper role - functional cartography only'},
+                { id: 'details_paper_role_cartography_sec_compare_to_other_techniques', title: 'Paper role - functional cartography compared to other techniques'},
+                { id: 'details_paper_role_research_technical_parameters_sec', title: 'Paper role - research on technical parameters'},
+                { id: 'details_paper_role_research_cognitive_functions', title: 'Paper role - research on fundamental cognitive functions'},
+                { id: 'details_age_limits_min', title: 'Minimum age limit'},
+                { id: 'details_age_limits_max', title: 'Maximum age limit'},
+                { id: 'details_age_limits_avg', title: 'Average age limit'},
                 { id: 'roi_side', title: 'ROI side' },
                 { id: 'roi_lobe', title: 'ROI lobe' },
                 { id: 'roi_region', title: 'ROI region' },
@@ -456,8 +470,7 @@ export default class SqlDataRepository implements IDataRepository {
         return results;
     }
     private _insertNewSource(newSource: SourceEntity) {
-        console.debug("Inserting new source ");
-        console.debug(newSource);
+        console.debug("Inserting new source");
         const insetStmt = `INSERT INTO Sources (
             author,
             date,
@@ -473,7 +486,14 @@ export default class SqlDataRepository implements IDataRepository {
             validity_response_charact_cat_methodology,
             validity_response_charact_replicability_of_response,
             validity_response_charact_dose_responsiveness,
-            validity_response_charact_dissection_of_response
+            validity_response_charact_dissection_of_response,
+            details_paper_role_cartography_sec_only,
+            details_paper_role_cartography_sec_compare_to_other_techniques,
+            details_paper_role_research_technical_parameters_sec,
+            details_paper_role_research_cognitive_functions,
+            details_age_limits_min,
+            details_age_limits_max,
+            details_age_limits_avg
             ) VALUES (
                 @author,
                 @date,
@@ -489,7 +509,14 @@ export default class SqlDataRepository implements IDataRepository {
                 @validity_response_charact_cat_methodology,
                 @validity_response_charact_replicability_of_response,
                 @validity_response_charact_dose_responsiveness,
-                @validity_response_charact_dissection_of_response
+                @validity_response_charact_dissection_of_response,
+                @details_paper_role_cartography_sec_only,
+                @details_paper_role_cartography_sec_compare_to_other_techniques,
+                @details_paper_role_research_technical_parameters_sec,
+                @details_paper_role_research_cognitive_functions,
+                @details_age_limits_min,
+                @details_age_limits_max,
+                @details_age_limits_avg
             )`;
         this.db.prepare(insetStmt).run(newSource);
     }
@@ -511,7 +538,14 @@ export default class SqlDataRepository implements IDataRepository {
             validity_response_charact_cat_methodology=@validity_response_charact_cat_methodology,
             validity_response_charact_replicability_of_response=@validity_response_charact_replicability_of_response,
             validity_response_charact_dose_responsiveness=@validity_response_charact_dose_responsiveness,
-            validity_response_charact_dissection_of_response=@validity_response_charact_dissection_of_response
+            validity_response_charact_dissection_of_response=@validity_response_charact_dissection_of_response,
+            details_paper_role_cartography_sec_only=@details_paper_role_cartography_sec_only,
+            details_paper_role_cartography_sec_compare_to_other_techniques=@details_paper_role_cartography_sec_compare_to_other_techniques,
+            details_paper_role_research_technical_parameters_sec=@details_paper_role_research_technical_parameters_sec,
+            details_paper_role_research_cognitive_functions=@details_paper_role_research_cognitive_functions,
+            details_age_limits_min=@details_age_limits_min,
+            details_age_limits_max=@details_age_limits_max,
+            details_age_limits_avg=@details_age_limits_avg
         WHERE id=@sourceId`
         const result = this.db.prepare(stmt).run({ ...source, sourceId: sourceId });
     }
@@ -823,7 +857,14 @@ export default class SqlDataRepository implements IDataRepository {
                 validity_response_charact_cat_methodology INTEGER,
                 validity_response_charact_replicability_of_response INTEGER,
                 validity_response_charact_dose_responsiveness INTEGER,
-                validity_response_charact_dissection_of_response INTEGER
+                validity_response_charact_dissection_of_response INTEGER,
+                details_paper_role_cartography_sec_only INTEGER,
+                details_paper_role_cartography_sec_compare_to_other_techniques INTEGER,
+                details_paper_role_research_technical_parameters_sec INTEGER,
+                details_paper_role_research_cognitive_functions INTEGER,
+                details_age_limits_min INTEGER,
+                details_age_limits_max INTEGER,
+                details_age_limits_avg INTEGER
             );`;
         this.db.prepare(createSourcesTableStmt).run();
     }

@@ -17,6 +17,13 @@ export type SourceEntity = {
     validity_response_charact_replicability_of_response: number;
     validity_response_charact_dose_responsiveness: number;
     validity_response_charact_dissection_of_response: number;
+    details_paper_role_cartography_sec_only: number;
+    details_paper_role_cartography_sec_compare_to_other_techniques: number;
+    details_paper_role_research_technical_parameters_sec: number;
+    details_paper_role_research_cognitive_functions: number;
+    details_age_limits_min: number;
+    details_age_limits_max: number;
+    details_age_limits_avg: number;
 }
 
 export const SourceToEntity = (model: Source): SourceEntity => {
@@ -36,7 +43,14 @@ export const SourceToEntity = (model: Source): SourceEntity => {
         validity_response_charact_cat_methodology: model.validity.response_characterization.cat_methodology ? 1 : 0,
         validity_response_charact_replicability_of_response: model.validity.response_characterization.replicability_of_response ? 1 : 0,
         validity_response_charact_dose_responsiveness: model.validity.response_characterization.dose_responsiveness ? 1 : 0,
-        validity_response_charact_dissection_of_response: model.validity.response_characterization.dissection_of_response ? 1 : 0
+        validity_response_charact_dissection_of_response: model.validity.response_characterization.dissection_of_response ? 1 : 0,
+        details_paper_role_cartography_sec_only: model.details.paper_role.cartography_sec_only ? 1 : 0,
+        details_paper_role_cartography_sec_compare_to_other_techniques: model.details.paper_role.cartography_sec_compare_to_other_techniques ? 1 : 0,
+        details_paper_role_research_technical_parameters_sec: model.details.paper_role.research_technical_parameters_sec ? 1 : 0,
+        details_paper_role_research_cognitive_functions: model.details.paper_role.research_cognitive_functions ? 1 : 0,
+        details_age_limits_min: model.details.age_limits.min,
+        details_age_limits_max: model.details.age_limits.max,
+        details_age_limits_avg: model.details.age_limits.avg,
     }
 }
 
@@ -60,6 +74,19 @@ export const SourceEntityToModel = (entity: SourceEntity): Source => {
                 replicability_of_response: entity.validity_response_charact_replicability_of_response > 0,
                 dose_responsiveness: entity.validity_response_charact_dose_responsiveness > 0,
                 dissection_of_response: entity.validity_response_charact_dissection_of_response > 0,
+            }
+        },
+        details: {
+            paper_role: {
+                cartography_sec_only: entity.details_paper_role_cartography_sec_only > 0,
+                cartography_sec_compare_to_other_techniques: entity.details_paper_role_cartography_sec_compare_to_other_techniques > 0,
+                research_technical_parameters_sec: entity.details_paper_role_research_technical_parameters_sec > 0,
+                research_cognitive_functions: entity.details_paper_role_research_cognitive_functions > 0,
+            },
+            age_limits: {
+                min: entity.details_age_limits_min,
+                max: entity.details_age_limits_max,
+                avg: entity.details_age_limits_avg,
             }
         }
     }

@@ -29,6 +29,19 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
           dose_responsiveness: edit_source != null ? edit_source.validity.response_characterization.dose_responsiveness : false,
           dissection_of_response: edit_source != null ? edit_source.validity.response_characterization.dissection_of_response : false,
         }
+      },
+      details: {
+        paper_role: {
+          cartography_sec_only: edit_source !== null ? edit_source.details.paper_role.cartography_sec_only : false,
+          cartography_sec_compare_to_other_techniques: edit_source !== null ? edit_source.details.paper_role.cartography_sec_compare_to_other_techniques : false,
+          research_technical_parameters_sec: edit_source !== null ? edit_source.details.paper_role.research_technical_parameters_sec : false,
+          research_cognitive_functions: edit_source !== null ? edit_source.details.paper_role.research_cognitive_functions : false,
+        },
+        age_limits: {
+          min: edit_source !== null ? edit_source.details.age_limits.min : 0,
+          max: edit_source !== null ? edit_source.details.age_limits.max : 0,
+          avg: edit_source !== null ? edit_source.details.age_limits.avg : 0,
+        }
       }
     } as CreateFormValues,
     validate: {
@@ -93,7 +106,7 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
   return (
     <Box>
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-        <Accordion multiple defaultValue={['reference', 'validity']}>
+        <Accordion multiple defaultValue={['reference', 'validity', 'details']}>
           <Accordion.Item value="reference">
             <Accordion.Control>Reference</Accordion.Control>
             <Accordion.Panel>
@@ -189,6 +202,50 @@ export const CreateEditSourceForm = ({ onSubmit, mode, edit_source }: CreateSour
               </Stack>
             </Accordion.Panel>
           </Accordion.Item>
+
+          <Accordion.Item value="details">
+            <Accordion.Control>Details</Accordion.Control>
+            <Accordion.Panel>
+              <label>Paper role</label>
+              <Group>
+                <Button
+                  variant={form.values.details.paper_role.cartography_sec_only ? "filled" : "default"}
+                  onClick={() => form.setFieldValue('details.paper_role.cartography_sec_only', !form.values.details.paper_role.cartography_sec_only)}
+                >Functional cartography only</Button>
+                <Button
+                  variant={form.values.details.paper_role.cartography_sec_compare_to_other_techniques ? "filled" : "default"}
+                  onClick={() => form.setFieldValue('details.paper_role.cartography_sec_compare_to_other_techniques', !form.values.details.paper_role.cartography_sec_compare_to_other_techniques)}
+                >Functional cartography compared to other techniques</Button>
+                <Button
+                  variant={form.values.details.paper_role.research_technical_parameters_sec ? "filled" : "default"}
+                  onClick={() => form.setFieldValue('details.paper_role.research_technical_parameters_sec', !form.values.details.paper_role.research_technical_parameters_sec)}
+                >Research on technical parameters</Button>
+                <Button
+                  variant={form.values.details.paper_role.research_cognitive_functions ? "filled" : "default"}
+                  onClick={() => form.setFieldValue('details.paper_role.research_cognitive_functions', !form.values.details.paper_role.research_cognitive_functions)}
+                >Research on fundamental cognitive functions</Button>
+              </Group>
+
+              <label>Age limits</label>
+              <Group>
+                <NumberInput
+                  label="Minimum"
+                  hideControls
+                  {...form.getInputProps('details.age_limits.min')}
+                />
+                <NumberInput
+                  label="Maximum"
+                  hideControls
+                  {...form.getInputProps('details.age_limits.max')}
+                />
+                <NumberInput
+                  label="Average"
+                  hideControls
+                  {...form.getInputProps('details.age_limits.avg')}
+                />
+              </Group>
+            </Accordion.Panel>
+          </Accordion.Item>
         </Accordion>
 
         <NativeSelect
@@ -225,6 +282,19 @@ export interface CreateFormValues {
       replicability_of_response: boolean;
       dose_responsiveness: boolean;
       dissection_of_response: boolean;
+    }
+  },
+  details: {
+    paper_role: {
+      cartography_sec_only: boolean;
+      cartography_sec_compare_to_other_techniques: boolean;
+      research_technical_parameters_sec: boolean;
+      research_cognitive_functions: boolean;
+    },
+    age_limits: {
+      min: number;
+      max: number;
+      avg: number;
     }
   }
 }

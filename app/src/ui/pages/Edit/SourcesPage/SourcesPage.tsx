@@ -102,6 +102,19 @@ export function SourcesPage() {
           dose_responsiveness: values.validity.response_characterization.dose_responsiveness,
           dissection_of_response: values.validity.response_characterization.dissection_of_response,
         }
+      },
+      details: {
+        paper_role: {
+          cartography_sec_only: values.details.paper_role.cartography_sec_only,
+          cartography_sec_compare_to_other_techniques: values.details.paper_role.cartography_sec_compare_to_other_techniques,
+          research_technical_parameters_sec: values.details.paper_role.research_technical_parameters_sec,
+          research_cognitive_functions: values.details.paper_role.research_cognitive_functions,
+        },
+        age_limits: {
+          min: values.details.age_limits.min,
+          max: values.details.age_limits.max,
+          avg: values.details.age_limits.avg,
+        }
       }
     } as SourceDdo;
     SourceUIService.editSource(currentSource.id, SourceDtoFromDdo(source))
@@ -205,6 +218,19 @@ export function SourcesPage() {
           replicability_of_response: values.validity.response_characterization.replicability_of_response,
           dose_responsiveness: values.validity.response_characterization.dose_responsiveness,
           dissection_of_response: values.validity.response_characterization.dissection_of_response,
+        }
+      },
+      details: {
+        paper_role: {
+          cartography_sec_only: values.details.paper_role.cartography_sec_only,
+          cartography_sec_compare_to_other_techniques: values.details.paper_role.cartography_sec_compare_to_other_techniques,
+          research_technical_parameters_sec: values.details.paper_role.research_technical_parameters_sec,
+          research_cognitive_functions: values.details.paper_role.research_cognitive_functions,
+        },
+        age_limits: {
+          min: values.details.age_limits.min,
+          max: values.details.age_limits.max,
+          avg: values.details.age_limits.avg,
         }
       }
     } as SourceDdo;
