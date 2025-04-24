@@ -255,16 +255,9 @@ const ResultsTable = (props: ResultsTableProps) => {
         props.onEdit(newResult);
     }
 
-    // Prepare records for the table
-    const enhancedDataWithOrder = useMemo(() => {
-        // Sort records by ID
-        const sortedData = sortBy(props.data, 'id');
-        // Assign chronological order based on the order
-        return sortedData.map((record, index) => { return { ...record, chronologicalOrder: index + 1 } as ResultTableRecord });
-    }, [props.data]);
     // sorting & filtering
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'chronologicalOrder', direction: 'desc' });
-    const [records, setRecords] = useState(enhancedDataWithOrder);
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
+    const [records, setRecords] = useState(props.data);
     const [roiQuery, setRoiQuery] = useDebouncedState('', 200);
     const [effectQuery, setEffectQuery] = useDebouncedState('', 200);
     const [taskQuery, setTaskQuery] = useDebouncedState('', 200);
@@ -279,8 +272,8 @@ const ResultsTable = (props: ResultsTableProps) => {
 
     const tableColumns = [
         {
-            accessor: 'chronologicalOrder',
-            title: '#',
+            accessor: 'id',
+            title: 'ID',
             sortable: true
         },
         {
@@ -469,16 +462,16 @@ const ResultsTable = (props: ResultsTableProps) => {
                 </Group>
             ),
         }
-    ] as DataTableColumn<ResultTableRecord>[];
+    ] as DataTableColumn<ResultDdo>[];
 
     const columnsLocalStorageKey = 'result_table_columns';
-    const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<ResultTableRecord>({
+    const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<ResultDdo>({
         key: columnsLocalStorageKey,
         columns: tableColumns
     });
 
     useEffect(() => {
-        var data = sortBy(enhancedDataWithOrder, sortStatus.columnAccessor) as ResultTableRecord[];
+        var data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
         data = data.filter((result) => {
             const roiValue = result.roi.lobe + (result.roi.region ? ('/' + result.roi.region + (result.roi.area ? ('/' + result.roi.area) : '')) : '');
             const effectValue = result.effect.class + (result.effect.descriptor ? ('/' + result.effect.descriptor + (result.effect.details ? ('/' + result.effect.details + (result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '');
@@ -493,7 +486,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             return true;
         });
         setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [sortStatus, roiQuery, effectQuery, taskQuery, functionQuery, enhancedDataWithOrder, sourceDbFilter])
+    }, [sortStatus, roiQuery, effectQuery, taskQuery, functionQuery, props.data, sourceDbFilter])
 
     useEffect(() => {
         setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => toggle.accessor === 'source_db' ? { ...toggle, toggled: appMode === AppMode.MERGE } : toggle));
@@ -635,10 +628,6 @@ type ResultsTableProps = {
     onEdit: (result: ResultDdo) => void,
     onCreate: (result: ResultDdo) => void,
     onDelete: (resultId: number) => void
-}
-
-interface ResultTableRecord extends ResultDdo {
-    chronologicalOrder: number;
 }
 
 export default ResultsTable;
