@@ -233,21 +233,20 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         <Group align="flex-end">
                             <NumberInput
                                 label="Amplitude Min (mA)"
-                                precision={1}
+                                precision={2}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_min')}
-                                onChange={(value) => handleAmplitudeMinChanged(value === "" ? 0 : value)}
                             />
                             <NumberInput
                                 label="Amplitude Avg (mA)"
-                                precision={1}
+                                precision={2}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_avg')}
                             />
                             <Button.Group>
                                 {preferences.amplitude_presets.map((v, i) =>
                                     <Button
                                         key={"amp_" + i}
-                                        variant={form.getInputProps('stimulation_parameters.amplitude_ma_min').value === v ? "filled" : "default"}
-                                        onClick={() => handleAmplitudeMinChanged(v)}
+                                        variant={form.values.stimulation_parameters.amplitude_ma_avg === v ? "filled" : "default"}
+                                        onClick={() => form.setFieldValue('stimulation_parameters.amplitude_ma_avg', v)}
                                     >
                                         {v}
                                     </Button>
@@ -255,9 +254,8 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             </Button.Group>
                             <NumberInput
                                 label="Amplitude Max (mA)"
-                                precision={1}
+                                precision={2}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_max')}
-                                onChange={(value) => handleAmplitudeMaxChanged(value === "" ? 0 : value)}
                             />
 
                         </Group>
@@ -273,7 +271,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     {preferences.frequency_presets.map((v, i) =>
                                         <Button
                                             key={"freq_" + i}
-                                            variant={form.getInputProps('stimulation_parameters.frequency_hz').value === v ? "filled" : "default"}
+                                            variant={form.values.stimulation_parameters.frequency_hz === v ? "filled" : "default"}
                                             onClick={() => handleFrequencyMinChanged(v)}>
                                             {v}
                                         </Button>
@@ -543,7 +541,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             bodyPartsOptions={body_parts}
                             form={form}
                         />
-                        
+
                         <Divider />
                         <Textarea
                             label="Comments"

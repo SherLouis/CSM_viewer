@@ -83,7 +83,7 @@ const PresetsPreferenceRow = ({ title, values, onAdd, onRemove }: PresetsPrefere
                         onChange={v => { v !== "" ? setNewPresetValue(v) : {} }}
                         placeholder="Enter number"
                         type="number"
-                        precision={1}
+                        precision={2}
                         w={"8rem"}
                     />
                     <ActionIcon color="blue" onClick={() => onAdd(newPresetValue)}>
