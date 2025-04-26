@@ -13,6 +13,7 @@ import { app } from "electron";
 import { Task } from "../core/models/Task";
 import { Function } from "../core/models/Function";
 import { createObjectCsvWriter } from "csv-writer";
+import { RoiEntity, RoiEntityToRoiModel } from "./entity/ROIEntity";
 
 export default class SqlDataRepository implements IDataRepository {
     private dbLocation: string;
@@ -376,8 +377,8 @@ export default class SqlDataRepository implements IDataRepository {
 
     // ROIs
     getROIs(): ROI[] {
-        // TODO: SQL query to have all ROI description to mask options
-        return [];
+        const rois = this._getRoiOptions();
+        return rois.map(r => RoiEntityToRoiModel(r));
     }
 
     // Effects
@@ -407,7 +408,7 @@ export default class SqlDataRepository implements IDataRepository {
     }
     getSources(): SourceSummary[] {
         const sources = this._getAllSourcesSummary();
-        return sources.map((a) => SourceSummaryEntityToModel(a))
+        return sources.map((a) => SourceSummaryEntityToModel(a));
     }
     createSource(newSource: Source): void {
         this._insertNewSource(SourceToEntity(newSource));
@@ -710,7 +711,15 @@ export default class SqlDataRepository implements IDataRepository {
 
 
     // ROIs
-    // TODO: get ROI description to mask options
+    private _getRoiOptions(): RoiEntity[] {
+        const stmt = `
+            SELECT roi_description, roi_mask, COUNT(*) as count
+            FROM Results
+            GROUP BY roi_description, roi_mask
+            ORDER BY count DESC`;
+        const rois = this.db.prepare(stmt).all() as RoiEntity[];
+        return rois;
+    }
 
 
 

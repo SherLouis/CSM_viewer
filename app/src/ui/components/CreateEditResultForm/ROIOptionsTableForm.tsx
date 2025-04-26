@@ -12,6 +12,10 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
         { label: "Exact (MNI)", value: "exact" }
     ];
 
+    // TODO: searchable description + show options with count
+    // TODO: mask options from choices if exist
+    // TODO: update roi options if inserted or updated result roi is not in existing ...
+    console.debug(rois);
     return (
         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
             <thead>

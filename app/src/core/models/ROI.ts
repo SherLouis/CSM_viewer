@@ -1,4 +1,5 @@
 export type ROI = {
     description: string,
-    mask: string
+    mask: string,
+    count: number,
 }

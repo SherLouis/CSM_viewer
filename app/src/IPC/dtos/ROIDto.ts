@@ -3,7 +3,8 @@ import { ROI } from "../../core/models/ROI";
 
 export type ROIDto = {
     description: string,
-    mask: string
+    mask: string,
+    count: number,
 }
 
 export class ROIDtoMapper {

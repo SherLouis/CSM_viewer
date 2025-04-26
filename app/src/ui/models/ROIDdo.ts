@@ -1,4 +1,5 @@
 export type ROIDdo = {
     description: string,
-    mask: string
+    mask: string,
+    count: number,
 }
