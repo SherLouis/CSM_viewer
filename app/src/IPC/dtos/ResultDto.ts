@@ -16,6 +16,7 @@ export type ResultDto = {
         mni_average: boolean,
     },
     stimulation_parameters: {
+        stated: boolean,
         amplitude_ma_min: number,
         amplitude_ma_max: number,
         amplitude_ma_avg: number,

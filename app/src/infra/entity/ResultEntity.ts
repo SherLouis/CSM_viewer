@@ -12,6 +12,7 @@ export type ReadResultEntity = {
     roi_mni_y: number,
     roi_mni_z: number,
     roi_mni_average: number,
+    stim_params_stated: number,
     stim_amp_ma_min: number,
     stim_amp_ma_max: number,
     stim_amp_ma_avg: number,
@@ -69,6 +70,7 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
             mni_average: readEntity.roi_mni_average > 0,
         },
         stimulation_parameters: {
+            stated: readEntity.stim_params_stated > 0,
             amplitude_ma_min: readEntity.stim_amp_ma_min,
             amplitude_ma_max: readEntity.stim_amp_ma_max,
             amplitude_ma_avg: readEntity.stim_amp_ma_avg,

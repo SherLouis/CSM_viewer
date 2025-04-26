@@ -32,6 +32,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 mni_average: edit_result && edit_result.roi.mni_average != null ? edit_result.roi.mni_average : false,
             },
             stimulation_parameters: {
+                stated: edit_result && edit_result.stimulation_parameters.stated !== null ? edit_result.stimulation_parameters.stated : true,
                 amplitude_ma_min: edit_result && edit_result.stimulation_parameters.amplitude_ma_min != null ? edit_result.stimulation_parameters.amplitude_ma_min : 0,
                 amplitude_ma_max: edit_result && edit_result.stimulation_parameters.amplitude_ma_max != null ? edit_result.stimulation_parameters.amplitude_ma_max : 0,
                 amplitude_ma_avg: edit_result && edit_result.stimulation_parameters.amplitude_ma_avg != null ? edit_result.stimulation_parameters.amplitude_ma_avg : 0,
@@ -82,36 +83,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
     const handleSubmit = (values: CreateEditResultFormValues) => {
         onSubmit(values);
-    }
-
-    // Amplitude
-    const handleAmplitudeMinChanged = (newAmplitudeMin: number) => {
-        // If new min is > existing max, set new max
-        let amplitudeMax = form.values.stimulation_parameters.amplitude_ma_max;
-        if (newAmplitudeMin > form.values.stimulation_parameters.amplitude_ma_max) {
-            amplitudeMax = newAmplitudeMin;
-            form.setFieldValue('stimulation_parameters.amplitude_ma_max', newAmplitudeMin);
-        }
-
-        form.setFieldValue('stimulation_parameters.amplitude_ma_min', newAmplitudeMin);
-
-        // Compute new average
-        const new_avg = (newAmplitudeMin + amplitudeMax) / 2;
-        form.setFieldValue('stimulation_parameters.amplitude_ma_avg', new_avg);
-    }
-    const handleAmplitudeMaxChanged = (newAmplitudeMax: number) => {
-        // If new max is < existing min, set new min
-        let amplitudeMin = form.values.stimulation_parameters.amplitude_ma_min;
-        if (newAmplitudeMax < amplitudeMin) {
-            amplitudeMin = newAmplitudeMax;
-            form.setFieldValue('stimulation_parameters.amplitude_ma_min', newAmplitudeMax);
-        }
-
-        form.setFieldValue('stimulation_parameters.amplitude_ma_max', newAmplitudeMax);
-
-        // Compute new average
-        const new_avg = (amplitudeMin + newAmplitudeMax) / 2;
-        form.setFieldValue('stimulation_parameters.amplitude_ma_avg', new_avg);
     }
 
     // Frequency
@@ -171,15 +142,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     }
     const ElectrodeOptions = getElectrodeOptions();
 
-    const getBaseBodyPartOptions = (): SelectItem[] => {
-        return body_parts.map(part => (
-            {
-                value: part,
-                label: part.charAt(0).toUpperCase() + part.slice(1)
-            } as SelectItem)
-        )
-    };
-
     // Handling tab change from parent
     const [selectedTab, setSelectedTab] = useState<string>(selected_tab ? selected_tab : "parameters");
     const handleTabChange = (value: TabsValue) => setSelectedTab(value);
@@ -230,16 +192,26 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
                     <Tabs.Panel value="parameters" mx={"sm"}>
                         <Divider label="Stimulation" />
+                        <Switch
+                            size="lg"
+                            label="Parameters stated ?"
+                            labelPosition="left"
+                            onLabel="Stated"
+                            offLabel="Not stated"
+                            {...form.getInputProps('stimulation_parameters.stated', { type: 'checkbox' })}
+                        />
                         <Group align="flex-end">
                             <NumberInput
                                 label="Amplitude Min (mA)"
                                 precision={2}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_min')}
+                                disabled={!form.values.stimulation_parameters.stated}
                             />
                             <NumberInput
                                 label="Amplitude Avg (mA)"
                                 precision={2}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_avg')}
+                                disabled={!form.values.stimulation_parameters.stated}
                             />
                             <Button.Group>
                                 {preferences.amplitude_presets.map((v, i) =>
@@ -247,6 +219,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                         key={"amp_" + i}
                                         variant={form.values.stimulation_parameters.amplitude_ma_avg === v ? "filled" : "default"}
                                         onClick={() => form.setFieldValue('stimulation_parameters.amplitude_ma_avg', v)}
+                                        disabled={!form.values.stimulation_parameters.stated}
                                     >
                                         {v}
                                     </Button>
@@ -256,6 +229,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 label="Amplitude Max (mA)"
                                 precision={2}
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_max')}
+                                disabled={!form.values.stimulation_parameters.stated}
                             />
 
                         </Group>
@@ -266,13 +240,15 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     label="Frequency (Hz)"
                                     {...form.getInputProps('stimulation_parameters.frequency_hz')}
                                     onChange={(value) => handleFrequencyMinChanged(value === "" ? 0 : value)}
+                                    disabled={!form.values.stimulation_parameters.stated}
                                 />
                                 <Button.Group>
                                     {preferences.frequency_presets.map((v, i) =>
                                         <Button
                                             key={"freq_" + i}
                                             variant={form.values.stimulation_parameters.frequency_hz === v ? "filled" : "default"}
-                                            onClick={() => handleFrequencyMinChanged(v)}>
+                                            onClick={() => handleFrequencyMinChanged(v)}
+                                            disabled={!form.values.stimulation_parameters.stated}>
                                             {v}
                                         </Button>
                                     )}
@@ -281,6 +257,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     label="Frequency Max (Hz)"
                                     {...form.getInputProps('stimulation_parameters.frequency_hz_max')}
                                     onChange={(value) => handleFrequencyMaxChanged(value === "" ? 0 : value)}
+                                    disabled={!form.values.stimulation_parameters.stated}
                                 />
                             </Group>
                             <Group align="flex-end">
@@ -288,13 +265,15 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     label="Duration (s)"
                                     {...form.getInputProps('stimulation_parameters.duration_s')}
                                     onChange={(value) => handleDurationMinChanged(value === "" ? 0 : value)}
+                                    disabled={!form.values.stimulation_parameters.stated}
                                 />
                                 <Button.Group>
                                     {preferences.duration_presets.map((v, i) =>
                                         <Button
                                             key={"dur_" + i}
                                             variant={form.getInputProps('stimulation_parameters.duration_s').value === v ? "filled" : "default"}
-                                            onClick={() => handleDurationMinChanged(v)}>
+                                            onClick={() => handleDurationMinChanged(v)}
+                                            disabled={!form.values.stimulation_parameters.stated}>
                                             {v}
                                         </Button>
                                     )}
@@ -303,6 +282,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     label="Duration Max (s)"
                                     {...form.getInputProps('stimulation_parameters.duration_s_max')}
                                     onChange={(value) => handleDurationMaxChanged(value === "" ? 0 : value)}
+                                    disabled={!form.values.stimulation_parameters.stated}
                                 />
                             </Group>
                         </Group>
@@ -313,13 +293,15 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     label="Phase Length"
                                     precision={1}
                                     {...form.getInputProps('stimulation_parameters.phase_length')}
+                                    disabled={!form.values.stimulation_parameters.stated}
                                 />
                                 <Button.Group>
                                     {preferences.phase_length_presets.map((v, i) =>
                                         <Button
                                             key={"pl_" + i}
                                             variant={form.getInputProps('stimulation_parameters.phase_length').value === v ? "filled" : "default"}
-                                            onClick={() => form.setFieldValue('stimulation_parameters.phase_length', v)}>
+                                            onClick={() => form.setFieldValue('stimulation_parameters.phase_length', v)}
+                                            disabled={!form.values.stimulation_parameters.stated}>
                                             {v}
                                         </Button>
                                     )}
@@ -330,9 +312,9 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 {...form.getInputProps('stimulation_parameters.phase_type')}
                             >
                                 <Group mt="xs">
-                                    <Radio value="Monophasic" label="Monophasic" />
-                                    <Radio value="Biphasic" label="Biphasic" />
-                                    <Radio value="" label="N/A" />
+                                    <Radio value="Monophasic" label="Monophasic" disabled={!form.values.stimulation_parameters.stated} />
+                                    <Radio value="Biphasic" label="Biphasic" disabled={!form.values.stimulation_parameters.stated} />
+                                    <Radio value="" label="N/A" disabled={!form.values.stimulation_parameters.stated} />
                                 </Group>
                             </Radio.Group>
                         </Group>
@@ -342,10 +324,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 {...form.getInputProps('stimulation_parameters.epi_zone')}
                             >
                                 <Group mt="xs">
-                                    <Radio value="yes" label="Yes" />
-                                    <Radio value="no" label="No" />
-                                    <Radio value="unknown" label="Unknown" />
-                                    <Radio value="" label="Not stated" />
+                                    <Radio value="yes" label="Yes" disabled={!form.values.stimulation_parameters.stated} />
+                                    <Radio value="no" label="No" disabled={!form.values.stimulation_parameters.stated} />
+                                    <Radio value="unknown" label="Unknown" disabled={!form.values.stimulation_parameters.stated} />
+                                    <Radio value="" label="Not stated" disabled={!form.values.stimulation_parameters.stated} />
                                 </Group>
                             </Radio.Group>
                             <TextInput
@@ -600,6 +582,7 @@ export interface CreateEditResultFormValues {
         mni_average: boolean,
     },
     stimulation_parameters: {
+        stated: boolean,
         amplitude_ma_min: number,
         amplitude_ma_max: number,
         amplitude_ma_avg: number,

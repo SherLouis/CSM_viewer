@@ -31,6 +31,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 mni_average: values.roi.mni_average,
             },
             stimulation_parameters: {
+                stated: values.stimulation_parameters.stated,
                 amplitude_ma_min: values.stimulation_parameters.amplitude_ma_min,
                 amplitude_ma_max: values.stimulation_parameters.amplitude_ma_max,
                 amplitude_ma_avg: values.stimulation_parameters.amplitude_ma_avg,
@@ -283,12 +284,14 @@ const ResultsTable = (props: ResultsTableProps) => {
                 <Group position='apart'>
                     <Text>
                         {
-                            (result.stimulation_parameters.amplitude_ma_avg ? result.stimulation_parameters.amplitude_ma_avg : '-') +
-                            ' (' + (result.stimulation_parameters.amplitude_ma_min ? result.stimulation_parameters.amplitude_ma_min : '-') + '-' +
-                            (result.stimulation_parameters.amplitude_ma_max ? result.stimulation_parameters.amplitude_ma_max : '-') + ') mA ' + '| ' +
-                            (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz' + '| ' +
-                            (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s ' + '| ' +
-                            (result.stimulation_parameters.contact_length ? result.stimulation_parameters.contact_length : '-') + ' mm '
+                            result.stimulation_parameters.stated ?
+                                (result.stimulation_parameters.amplitude_ma_avg ? result.stimulation_parameters.amplitude_ma_avg : '-') +
+                                ' (' + (result.stimulation_parameters.amplitude_ma_min ? result.stimulation_parameters.amplitude_ma_min : '-') + '-' +
+                                (result.stimulation_parameters.amplitude_ma_max ? result.stimulation_parameters.amplitude_ma_max : '-') + ') mA ' + '| ' +
+                                (result.stimulation_parameters.frequency_hz ? result.stimulation_parameters.frequency_hz : '-') + ' Hz' + '| ' +
+                                (result.stimulation_parameters.duration_s ? result.stimulation_parameters.duration_s : '-') + ' s ' + '| ' +
+                                (result.stimulation_parameters.contact_length ? result.stimulation_parameters.contact_length : '-') + ' mm '
+                                : "Not stated"
                         }
                     </Text>
                     <Group spacing={0}>
