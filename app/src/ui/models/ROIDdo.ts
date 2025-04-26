@@ -1,6 +1,4 @@
 export type ROIDdo = {
-    level: string,
-    lobe: string,
-    region: string,
-    area: string
+    description: string,
+    mask: string
 }

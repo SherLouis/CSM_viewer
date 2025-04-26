@@ -1,60 +1,24 @@
 import { UseFormReturnType } from "@mantine/form";
 import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { ActionIcon, Table, TextInput } from "@mantine/core";
-import ColumnButtonSelect from "./ColumnButtonSelect";
-import { useState } from "react";
+import { ActionIcon, Select, SelectItem, Table, TextInput } from "@mantine/core";
 import { ROIDdo } from "../../models/ROIDdo";
 import { IconX } from "@tabler/icons-react";
 
-const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps) => {
-    const [lobe, setLobe] = useState("");
-    const [region, setRegion] = useState("");
-    const [area, setArea] = useState("");
-
-    const getRoiOptions = (level: 'lobe' | 'region' | 'area') => {
-        switch (level) {
-            case 'lobe':
-                return rois.filter((roi) => roi.level == level).map((roi) => roi.lobe);
-            case 'region':
-                return rois.filter((roi) => roi.level == level
-                    && roi.lobe == lobe).map((roi) => roi.region);
-            case 'area':
-                return rois.filter((roi) => roi.level == level
-                    && roi.lobe == lobe && roi.region == region).map((roi) => roi.area);
-            default:
-                return [];
-        }
-    }
-
-    const handleSelect = (level: 'lobe' | 'region' | 'area', value: string) => {
-        switch (level) {
-            case 'lobe':
-                setLobe(value)
-                onSelect('roi.lobe', value);
-                break;
-
-            case 'region':
-                setRegion(value)
-                onSelect('roi.lobe', lobe);
-                onSelect('roi.region', value);
-                break;
-
-            case 'area':
-                setArea(value)
-                onSelect('roi.lobe', lobe);
-                onSelect('roi.region', region);
-                onSelect('roi.area', value);
-                break
-        }
-    }
+const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
+    const maskConversionMethodOptions: SelectItem[] = [
+        { label: "Standard nomenclature", value: "standard_nomenclature" },
+        { label: "Reviewer's approximation from a figure", value: "approx_from_figure" },
+        { label: "Reviewer's approximation from text", value: "approx_from_text" },
+        { label: "Exact (MNI)", value: "exact" }
+    ];
 
     return (
         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
             <thead>
                 <tr>
-                    <th>Lobe</th>
-                    <th>Region</th>
-                    <th>Area</th>
+                    <th>Description</th>
+                    <th>Mask</th>
+                    <th>Mask conversion method</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,63 +26,36 @@ const ROIOptionsTableForm = ({ form, onSelect, rois }: ROIOptionsTableFormProps)
                     <td>
                         <TextInput
                             size="md"
-                            placeholder="Insert some value here"
+                            placeholder="How is the ROI described"
                             rightSection={
-                                form.values.roi.lobe !== "" &&
-                                <ActionIcon onClick={() => form.setFieldValue('roi.lobe', "")}>
+                                form.values.roi.description !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('roi.description', "")}>
                                     <IconX />
                                 </ActionIcon>
                             }
-                            {...form.getInputProps('roi.lobe')}
+                            {...form.getInputProps('roi.description')}
                         />
                     </td>
                     <td>
                         <TextInput
                             size="md"
-                            placeholder="Insert some value here"
+                            placeholder="ROI mask reference"
                             rightSection={
-                                form.values.roi.region !== "" &&
-                                <ActionIcon onClick={() => form.setFieldValue('roi.region', "")}>
+                                form.values.roi.mask !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('roi.mask', "")}>
                                     <IconX />
                                 </ActionIcon>
                             }
-                            {...form.getInputProps('roi.region')}
+                            {...form.getInputProps('roi.mask')}
                         />
                     </td>
                     <td>
-                        <TextInput
+                        <Select
                             size="md"
-                            placeholder="Insert some value here"
-                            rightSection={
-                                form.values.roi.area !== "" &&
-                                <ActionIcon onClick={() => form.setFieldValue('roi.area', "")}>
-                                    <IconX />
-                                </ActionIcon>
-                            }
-                            {...form.getInputProps('roi.area')}
-                        />
-                    </td>
-                </tr>
-                <tr key={"options"}>
-                    <td valign="top">
-                        <ColumnButtonSelect
-                            data={getRoiOptions('lobe')}
-                            onChange={(v) => handleSelect('lobe', v)}
-                            selectedValues={form.values.roi.lobe.split(';')}
-                        />
-                    </td>
-                    <td valign="top">
-                        <ColumnButtonSelect
-                            data={getRoiOptions('region')}
-                            onChange={(v) => handleSelect('region', v)}
-                            selectedValues={form.values.roi.region.split(';')}
-                        />
-                    </td>
-                    <td valign="top">
-                        <ColumnButtonSelect
-                            data={getRoiOptions('area')}
-                            onChange={(v) => handleSelect('area', v)}
-                            selectedValues={form.values.roi.area.split(';')}
+                            label="Mask conversion method"
+                            clearable
+                            data={maskConversionMethodOptions}
+                            {...form.getInputProps('roi.mask_conversion_method')}
                         />
                     </td>
                 </tr>
@@ -131,6 +68,5 @@ export default ROIOptionsTableForm;
 
 interface ROIOptionsTableFormProps {
     form: UseFormReturnType<CreateEditResultFormValues>;
-    onSelect: (form_path: string, value: string) => void;
     rois: ROIDdo[];
 }

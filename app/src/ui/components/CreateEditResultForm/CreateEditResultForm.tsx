@@ -22,14 +22,9 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         initialValues: {
             roi: {
                 side: edit_result && edit_result.roi.side != null ? edit_result.roi.side : "",
-                lobe: edit_result && edit_result.roi.lobe != null ? edit_result.roi.lobe : "",
-                region: edit_result && edit_result.roi.region != null ? edit_result.roi.region : "",
-                area: edit_result && edit_result.roi.area != null ? edit_result.roi.area : "",
-                from_figure: edit_result && edit_result.roi.from_figure != null ? edit_result.roi.from_figure : false,
-                mni_x: edit_result && edit_result.roi.mni_x != null ? edit_result.roi.mni_x : 0,
-                mni_y: edit_result && edit_result.roi.mni_y != null ? edit_result.roi.mni_y : 0,
-                mni_z: edit_result && edit_result.roi.mni_z != null ? edit_result.roi.mni_z : 0,
-                mni_average: edit_result && edit_result.roi.mni_average != null ? edit_result.roi.mni_average : false,
+                description: edit_result && edit_result.roi.description != null ? edit_result.roi.description : "",
+                mask: edit_result && edit_result.roi.mask != null ? edit_result.roi.mask : "",
+                mask_conversion_method: edit_result && edit_result.roi.mask_conversion_method != null ? edit_result.roi.mask_conversion_method : "",
             },
             stimulation_parameters: {
                 stated: edit_result && edit_result.stimulation_parameters.stated !== null ? edit_result.stimulation_parameters.stated : true,
@@ -438,45 +433,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 <Radio value="" label="Not stated" />
                             </Group>
                         </Radio.Group>
-                        <Accordion defaultValue="VEP" variant="contained">
-                            <Accordion.Item value="VEP">
-                                <Accordion.Control>{"VEP Lobe/Region/Area"}</Accordion.Control>
-                                <Accordion.Panel>
-                                    <ROIOptionsTableForm
-                                        form={form}
-                                        onSelect={(path, v) => appendValueToCurrentFormValue(path, v)}
-                                        rois={rois}
-                                    />
-                                </Accordion.Panel>
-                            </Accordion.Item>
-                            <Accordion.Item value="MNI">
-                                <Accordion.Control>{"MNI coordinates"}</Accordion.Control>
-                                <Accordion.Panel>
-                                    <Group position="apart">
-                                        <NumberInput
-                                            label="X"
-                                            precision={2}
-                                            {...form.getInputProps('roi.mni_x')}
-                                        />
-                                        <NumberInput
-                                            label="Y"
-                                            precision={2}
-                                            {...form.getInputProps('roi.mni_y')}
-                                        />
-                                        <NumberInput
-                                            label="Z"
-                                            precision={2}
-                                            {...form.getInputProps('roi.mni_z')}
-                                        />
-                                        <Switch
-                                            label="Average?"
-                                            labelPosition="left"
-                                            {...form.getInputProps('roi.mni_average', { type: 'checkbox' })}
-                                        />
-                                    </Group>
-                                </Accordion.Panel>
-                            </Accordion.Item>
-                        </Accordion>
+
+                        <ROIOptionsTableForm
+                            form={form}
+                            rois={rois}
+                        />
 
                     </Tabs.Panel>
 
@@ -572,14 +533,9 @@ interface ElectrodeOption { implantationType: "SEEG" | "Grids", make: string, di
 export interface CreateEditResultFormValues {
     roi: {
         side: string,
-        lobe: string,
-        region: string,
-        area: string,
-        from_figure: boolean,
-        mni_x: number,
-        mni_y: number,
-        mni_z: number,
-        mni_average: boolean,
+        description: string,
+        mask: string,
+        mask_conversion_method: string,
     },
     stimulation_parameters: {
         stated: boolean,

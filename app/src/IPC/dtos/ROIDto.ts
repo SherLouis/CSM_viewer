@@ -2,10 +2,8 @@ import { ROIDdo } from "../../ui/models/ROIDdo";
 import { ROI } from "../../core/models/ROI";
 
 export type ROIDto = {
-    level: string,
-    lobe: string,
-    region: string,
-    area: string
+    description: string,
+    mask: string
 }
 
 export class ROIDtoMapper {

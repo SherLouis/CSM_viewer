@@ -18,7 +18,6 @@ export default class SqlDataRepository implements IDataRepository {
     private dbLocation: string;
     private db: Database.Database;
 
-    private rois: ROI[];
     private effects: Effect[];
     private tasks: Task[];
     private functions: Function[];
@@ -26,7 +25,6 @@ export default class SqlDataRepository implements IDataRepository {
 
 
     constructor(dbLocation: string) {
-        this.rois = this.readRoisFromFile();
         this.effects = this.readEffectsFromFile();
         this.tasks = this.readTasksFromFile();
         this.functions = this.readFunctionsFromFile();
@@ -149,14 +147,9 @@ export default class SqlDataRepository implements IDataRepository {
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         source_id INTEGER NOT NULL,
                         roi_side TEXT,
-                        roi_lobe TEXT,
-                        roi_region TEXT,
-                        roi_area TEXT,
-                        roi_from_figure INTEGER,
-                        roi_mni_x REAL,
-                        roi_mni_y REAL,
-                        roi_mni_z REAL,
-                        roi_mni_average INTEGER,
+                        roi_description TEXT,
+                        roi_mask TEXT,
+                        roi_mask_conversion_method TEXT,
                         stim_params_stated INTEGER,
                         stim_amp_ma_min REAL,
                         stim_amp_ma_max REAL,
@@ -241,8 +234,8 @@ export default class SqlDataRepository implements IDataRepository {
             // Prepare to insert Results into result database
             const insertResult = resultDb.prepare(`
         INSERT INTO Results 
-        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, clinical_semiology, source_db)
-        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @clinical_semiology, @source_db)
+        (source_id, roi_side, roi_description, roi_mask, roi_mask_conversion_method, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, clinical_semiology, source_db)
+        Values (@source_id, @roi_side, @roi_description, @roi_mask, roi_mask_conversion_method, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @clinical_semiology, @source_db)
         `);
             // Merge Results from database A
             const resultsA = this.db.prepare('SELECT * FROM Results').all() as ReadResultEntity[];
@@ -287,7 +280,7 @@ export default class SqlDataRepository implements IDataRepository {
         // Query to join Results and Sources tables
         const query = `
         SELECT S.author, S.date, S.publisher, S.doi, S.title, S.cohort, S.state, S.validity_roi_nomenclature, S.validity_null_effects, S.validity_sham_stimulation, S.validity_control_for_after_discharge, S.validity_response_charact_cat_methodology, S.validity_response_charact_replicability_of_response, S.validity_response_charact_dose_responsiveness, S.validity_response_charact_dissection_of_response, S.details_paper_role_cartography_sec_only, S.details_paper_role_cartography_sec_compare_to_other_techniques, S.details_paper_role_research_technical_parameters_sec, S.details_paper_role_research_cognitive_functions, S.details_age_limits_min, S.details_age_limits_max, S.details_age_limits_avg,
-        R.roi_side, R.roi_lobe, R.roi_region, R.roi_area, R.roi_from_figure, R.roi_mni_x, R.roi_mni_y, R.roi_mni_z, R.roi_mni_average, 
+        R.roi_side, R.roi_description, R.roi_mask, R.roi_mask_conversion_method,
         R.stim_params_stated, R.stim_amp_ma_min, R.stim_amp_ma_max, R.stim_amp_ma_avg, R.stim_freq, R.stim_freq_max, R.stim_duration, R.stim_duration_max, R.stim_electrode_make, R.stim_implantation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_type, R.stim_epi_zone, R.stim_epi_zone_comments,
         R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
         R.task_category, R.task_subcategory, R.task_characteristic, R.task_comments, 
@@ -327,14 +320,9 @@ export default class SqlDataRepository implements IDataRepository {
                 { id: 'details_age_limits_max', title: 'Maximum age limit' },
                 { id: 'details_age_limits_avg', title: 'Average age limit' },
                 { id: 'roi_side', title: 'ROI side' },
-                { id: 'roi_lobe', title: 'ROI lobe' },
-                { id: 'roi_region', title: 'ROI region' },
-                { id: 'roi_area', title: 'ROI area' },
-                { id: 'roi_from_figure', title: 'ROI selected from figure' },
-                { id: 'roi_mni_x', title: 'ROI MNI X' },
-                { id: 'roi_mni_y', title: 'ROI MNI Y' },
-                { id: 'roi_mni_z', title: 'ROI MNI Z' },
-                { id: 'roi_mni_average', title: 'ROI MNI is average' },
+                { id: 'roi_description', title: 'ROI description' },
+                { id: 'roi_mask', title: 'ROI mask' },
+                { id: 'roi_mask_conversion_method', title: 'ROI mask conversion method' },
                 { id: 'stim_params_stated', title: "Simulation parameters stated" },
                 { id: 'stim_amp_ma_min', title: 'Stimulation Minimum Amplitude (mA)' },
                 { id: 'stim_amp_ma_max', title: 'Stimulation Maximum Amplitude (mA)' },
@@ -388,7 +376,8 @@ export default class SqlDataRepository implements IDataRepository {
 
     // ROIs
     getROIs(): ROI[] {
-        return this.rois;
+        // TODO: SQL query to have all ROI description to mask options
+        return [];
     }
 
     // Effects
@@ -567,19 +556,14 @@ export default class SqlDataRepository implements IDataRepository {
         console.debug("Inserting new result");
 
         const stmt = `INSERT INTO Results 
-        (source_id, roi_side, roi_lobe, roi_region, roi_area, roi_from_figure, roi_mni_x, roi_mni_y, roi_mni_z, roi_mni_average, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, clinical_semiology)
-        Values (@source_id, @roi_side, @roi_lobe, @roi_region, @roi_area, @roi_from_figure, @roi_mni_x, @roi_mni_y, @roi_mni_z, @roi_mni_average, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @clinical_semiology)`
+        (source_id, roi_side, roi_description, roi_mask, roi_mask_conversion_method, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_article_designed_for_function, function_comments, occurrences, comments, comments_2, precision_score, clinical_semiology)
+        Values (@source_id, @roi_side, @roi_description, @roi_mask, @roi_mask_conversion_method, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_article_designed_for_function, @function_comments, @occurrences, @comments, @comments_2, @precision_score, @clinical_semiology)`
         this.db.prepare(stmt).run({
             source_id: newResult.source_id,
             roi_side: newResult.roi.side,
-            roi_lobe: newResult.roi.lobe,
-            roi_region: newResult.roi.region,
-            roi_area: newResult.roi.area,
-            roi_from_figure: newResult.roi.from_figure ? 1 : 0,
-            roi_mni_x: newResult.roi.mni_x,
-            roi_mni_y: newResult.roi.mni_y,
-            roi_mni_z: newResult.roi.mni_z,
-            roi_mni_average: newResult.roi.mni_average ? 1 : 0,
+            roi_description: newResult.roi.description,
+            roi_mask: newResult.roi.mask,
+            roi_mask_conversion_method: newResult.roi.mask_conversion_method,
             stim_params_stated: newResult.stimulation_parameters.stated ? 1 : 0,
             stim_amp_ma_min: newResult.stimulation_parameters.amplitude_ma_min,
             stim_amp_ma_max: newResult.stimulation_parameters.amplitude_ma_max,
@@ -628,14 +612,9 @@ export default class SqlDataRepository implements IDataRepository {
         const stmt = `
         UPDATE Results SET 
             roi_side=@roi_side,
-            roi_lobe=@roi_lobe,
-            roi_region=@roi_region,
-            roi_area=@roi_area,
-            roi_from_figure=@roi_from_figure,
-            roi_mni_x=@roi_mni_x,
-            roi_mni_y=@roi_mni_y,
-            roi_mni_z=@roi_mni_z,
-            roi_mni_average=@roi_mni_average,
+            roi_description=@roi_description,
+            roi_mask=@roi_mask,
+            roi_mask_conversion_method=@roi_mask_conversion_method,
             stim_params_stated=@stim_params_stated,
             stim_amp_ma_min=@stim_amp_ma_min,
             stim_amp_ma_max=@stim_amp_ma_max,
@@ -678,14 +657,9 @@ export default class SqlDataRepository implements IDataRepository {
         WHERE id=@resultIdToEdit`
         this.db.prepare(stmt).run({
             roi_side: newResult.roi.side,
-            roi_lobe: newResult.roi.lobe,
-            roi_region: newResult.roi.region,
-            roi_area: newResult.roi.area,
-            roi_from_figure: newResult.roi.from_figure ? 1 : 0,
-            roi_mni_x: newResult.roi.mni_x,
-            roi_mni_y: newResult.roi.mni_y,
-            roi_mni_z: newResult.roi.mni_z,
-            roi_mni_average: newResult.roi.mni_average ? 1 : 0,
+            roi_description: newResult.roi.description,
+            roi_mask: newResult.roi.mask,
+            roi_mask_conversion_method: newResult.roi.mask_conversion_method,
             stim_params_stated: newResult.stimulation_parameters.stated ? 1 : 0,
             stim_amp_ma_min: newResult.stimulation_parameters.amplitude_ma_min,
             stim_amp_ma_max: newResult.stimulation_parameters.amplitude_ma_max,
@@ -736,27 +710,8 @@ export default class SqlDataRepository implements IDataRepository {
 
 
     // ROIs
-    private readRoisFromFile(): ROI[] {
-        let file = path.join(app.getAppPath(), '../..', 'resources', 'base_rois.json');
-        if (!fs.existsSync(file)) {
-            file = path.join(app.getAppPath(), 'resources', 'base_rois.json');
-        }
-        const jsonstring = fs.readFileSync(file, 'utf-8');
-        const base_rois = JSON.parse(jsonstring) as DataItem[];
+    // TODO: get ROI description to mask options
 
-        let rois: ROI[] = [];
-        for (let lobe of base_rois) {
-            rois.push({ level: 'lobe', lobe: lobe.name, region: null, area: null });
-            for (let region of lobe.children) {
-                rois.push({ level: 'region', lobe: lobe.name, region: region.name, area: null });
-                for (let area of region.children) {
-                    rois.push({ level: 'area', lobe: lobe.name, region: region.name, area: area.name });
-                }
-            }
-        }
-
-        return rois;
-    }
 
 
     // Effects
@@ -879,14 +834,9 @@ export default class SqlDataRepository implements IDataRepository {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 source_id INTEGER NOT NULL,
                 roi_side TEXT,
-                roi_lobe TEXT,
-                roi_region TEXT,
-                roi_area TEXT,
-                roi_from_figure INTEGER,
-                roi_mni_x REAL,
-                roi_mni_y REAL,
-                roi_mni_z REAL,
-                roi_mni_average INTEGER,
+                roi_description TEXT,
+                roi_mask TEXT,
+                roi_mask_conversion_method TEXT,
                 stim_params_stated INTEGER,
                 stim_amp_ma_min REAL,
                 stim_amp_ma_max REAL,

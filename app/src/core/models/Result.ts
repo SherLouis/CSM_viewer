@@ -3,14 +3,9 @@ export type Result = {
     source_id: number,
     roi: {
         side: string,
-        lobe: string,
-        region: string,
-        area: string,
-        from_figure: boolean,
-        mni_x: number,
-        mni_y: number,
-        mni_z: number,
-        mni_average: boolean,
+        description: string,
+        mask: string,
+        mask_conversion_method: string,
     },
     stimulation_parameters: {
         stated: boolean,
@@ -58,6 +53,6 @@ export type Result = {
     comments?: string,
     comments_2?: string,
     precision_score: number,
-    source_db? : string,
+    source_db?: string,
     clinical_semiology: string,
 }

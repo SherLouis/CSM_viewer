@@ -188,14 +188,9 @@ export const SourceDetailsPage = () => {
         const result = {
             roi: {
                 side: values.roi.side,
-                lobe: values.roi.lobe,
-                region: values.roi.region,
-                area: values.roi.area,
-                from_figure: values.roi.from_figure,
-                mni_x: values.roi.mni_x,
-                mni_y: values.roi.mni_y,
-                mni_z: values.roi.mni_z,
-                mni_average: values.roi.mni_average,
+                description: values.roi.description,
+                mask: values.roi.mask,
+                mask_conversion_method: values.roi.mask_conversion_method,
             },
             stimulation_parameters: {
                 stated: values.stimulation_parameters.stated,
@@ -252,7 +247,7 @@ export const SourceDetailsPage = () => {
     const onCreateButton = () => {
         setShowCreateForm(true);
     }
-    
+
     return (
         <Container size={"100%"}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />

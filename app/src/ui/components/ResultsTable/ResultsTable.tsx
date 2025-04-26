@@ -21,14 +21,9 @@ const ResultsTable = (props: ResultsTableProps) => {
             id: resultId,
             roi: {
                 side: values.roi.side,
-                lobe: values.roi.lobe,
-                region: values.roi.region,
-                area: values.roi.area,
-                from_figure: values.roi.from_figure,
-                mni_x: values.roi.mni_x,
-                mni_y: values.roi.mni_y,
-                mni_z: values.roi.mni_z,
-                mni_average: values.roi.mni_average,
+                description: values.roi.description,
+                mask: values.roi.mask,
+                mask_conversion_method: values.roi.mask_conversion_method,
             },
             stimulation_parameters: {
                 stated: values.stimulation_parameters.stated,
@@ -91,8 +86,9 @@ const ResultsTable = (props: ResultsTableProps) => {
         event.stopPropagation();
         let newResult = {
             id: undefined,
-            roi: { side: '', lobe: '', region: '', area: '', mni_x: 0, mni_y: 0, mni_z: 0, mni_average: false },
+            roi: { side: '', description: '', mask: '', mask_conversion_method: '' },
             stimulation_parameters: {
+                stated: true,
                 amplitude_ma_min: 0,
                 amplitude_ma_max: 0,
                 amplitude_ma_avg: 0,
@@ -183,6 +179,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 newResult = {
                     ...originalResult,
                     stimulation_parameters: {
+                        stated: true,
                         amplitude_ma_min: 0,
                         amplitude_ma_max: 0,
                         amplitude_ma_avg: 0,
@@ -202,7 +199,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             case "roi":
                 newResult = {
                     ...originalResult,
-                    roi: { side: '', lobe: '', region: '', area: '', mni_x: 0, mni_y: 0, mni_z: 0, mni_average: false }
+                    roi: { side: '', description: '', mask: '', mask_conversion_method: '' }
                 } as ResultDdo;
                 break;
             case "effect":
@@ -368,7 +365,7 @@ const ResultsTable = (props: ResultsTableProps) => {
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {result.roi.lobe + '/' + result.roi.region + '/' + result.roi.area}
+                        {result.roi.description + '|' + result.roi.mask + '|' + result.roi.mask_conversion_method}
                     </Text>
                     <Group spacing={0}>
                         <ActionIcon onClick={(e: MouseEvent) => handleDuplicate(e, result, 'roi')}>
@@ -476,7 +473,7 @@ const ResultsTable = (props: ResultsTableProps) => {
     useEffect(() => {
         var data = sortBy(props.data, sortStatus.columnAccessor) as ResultDdo[];
         data = data.filter((result) => {
-            const roiValue = result.roi.lobe + (result.roi.region ? ('/' + result.roi.region + (result.roi.area ? ('/' + result.roi.area) : '')) : '');
+            const roiValue = result.roi.description + (result.roi.mask ? ('|' + result.roi.mask + (result.roi.mask_conversion_method ? ('|' + result.roi.mask_conversion_method) : '')) : '');
             const effectValue = result.effect.class + (result.effect.descriptor ? ('/' + result.effect.descriptor + (result.effect.details ? ('/' + result.effect.details + (result.effect.body_part ? ('/' + result.effect.body_part) : '')) : '')) : '');
             const taskValue = result.task.category + (result.task.subcategory ? ('/' + result.task.subcategory + (result.task.characteristic ? ('/' + result.task.characteristic) : '')) : '');
             const functionValue = result.function.category + (result.function.subcategory ? ('/' + result.function.subcategory + (result.function.characteristic ? ('/' + result.function.characteristic) : '')) : '');
