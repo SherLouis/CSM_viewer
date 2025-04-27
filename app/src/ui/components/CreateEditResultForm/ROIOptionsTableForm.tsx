@@ -1,9 +1,8 @@
 import { UseFormReturnType } from "@mantine/form";
 import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { ActionIcon, Autocomplete, Select, SelectItem, Table, TextInput } from "@mantine/core";
+import { ActionIcon, Autocomplete, Select, SelectItem, Table } from "@mantine/core";
 import { ROIDdo } from "../../models/ROIDdo";
 import { IconX } from "@tabler/icons-react";
-import { useDebouncedState } from "@mantine/hooks";
 import { useMemo } from "react";
 
 const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
@@ -14,7 +13,6 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
         { label: "Exact (MNI)", value: "exact" }
     ];
 
-    // TODO: add validation for ROI ?
     const roiMasksByDescription = useMemo(() => {
         return rois.reduce((map, { description, mask, count }) => {
             if (!map.has(description)) {
@@ -106,12 +104,9 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
                         <Select
                             size="md"
                             data={maskConversionMethodOptions}
-                            rightSection={
-                                form.values.roi.mask !== "" &&
-                                <ActionIcon onClick={() => form.setFieldValue('roi.mask_conversion_method', "")}>
-                                    <IconX />
-                                </ActionIcon>
-                            }
+                            placeholder=" -- Select one --"
+                            required={form.values.roi.mask !== ""}
+                            clearable
                             {...form.getInputProps('roi.mask_conversion_method')}
                         />
                     </td>
