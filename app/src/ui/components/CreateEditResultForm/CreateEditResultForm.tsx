@@ -73,7 +73,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
             comments_2: edit_result && edit_result.comments_2 != null ? edit_result.comments_2 : "",
             precision_score: edit_result && edit_result.precision_score != null ? edit_result.precision_score : 0,
             clinical_semiology: edit_result && edit_result.clinical_semiology != null ? edit_result.clinical_semiology : "",
-        } as CreateEditResultFormValues
+        } as CreateEditResultFormValues,
     });
 
     const handleSubmit = (values: CreateEditResultFormValues) => {
