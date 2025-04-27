@@ -406,6 +406,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                     <Tabs.Panel value="function" mx={"sm"}>
                         <Switch
                             label="Stated ?"
+                            size="lg"
                             labelPosition="left"
                             onLabel="Stated"
                             offLabel="Not stated"
