@@ -64,7 +64,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 category: values.function.category,
                 subcategory: values.function.subcategory,
                 characteristic: values.function.characteristic,
-                article_designed_for_function: values.function.article_designed_for_function,
+                stated: values.function.stated,
                 comments: values.function.comments
             },
 
@@ -123,7 +123,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 category: '',
                 subcategory: '',
                 characteristic: '',
-                article_designed_for_function: false,
+                stated: false,
                 comments: '',
             },
             occurrences: 0,
@@ -235,7 +235,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                         category: '',
                         subcategory: '',
                         characteristic: '',
-                        article_designed_for_function: false,
+                        stated: false,
                         comments: '',
                     }
                 }

@@ -39,7 +39,7 @@ export type ReadResultEntity = {
     function_category: string,
     function_subcategory: string,
     function_characteristic: string,
-    function_article_designed_for_function: number,
+    function_stated: number,
     function_comments: string,
     occurrences: number,
     comments: string,
@@ -98,7 +98,7 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
             category: readEntity.function_category,
             subcategory: readEntity.function_subcategory,
             characteristic: readEntity.function_characteristic,
-            article_designed_for_function: readEntity.function_article_designed_for_function > 0,
+            stated: readEntity.function_stated > 0,
             comments: readEntity.function_comments
         },
         occurrences: readEntity.occurrences,

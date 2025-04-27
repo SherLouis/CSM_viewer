@@ -43,10 +43,10 @@ export type Result = {
         comments: string,
     },
     function: {
+        stated: boolean,
         category: string,
         subcategory: string,
         characteristic: string,
-        article_designed_for_function: boolean,
         comments: string,
     },
     occurrences: number,

@@ -65,7 +65,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 category: edit_result && edit_result.function.category != null ? edit_result.function.category : "",
                 subcategory: edit_result && edit_result.function.subcategory != null ? edit_result.function.subcategory : "",
                 characteristic: edit_result && edit_result.function.characteristic != null ? edit_result.function.characteristic : "",
-                article_designed_for_function: edit_result && edit_result.function.article_designed_for_function != null ? edit_result.function.article_designed_for_function : false,
+                stated: edit_result && edit_result.function.stated != null ? edit_result.function.stated : false,
                 comments: edit_result && edit_result.function.comments != null ? edit_result.function.comments : "",
             },
             occurrences: edit_result && edit_result.occurrences != null ? edit_result.occurrences : 0,
@@ -405,9 +405,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
                     <Tabs.Panel value="function" mx={"sm"}>
                         <Switch
-                            label="Article designed to assess specific function ?"
+                            label="Stated ?"
                             labelPosition="left"
-                            {...form.getInputProps('function.article_designed_for_function', { type: 'checkbox' })}
+                            onLabel="Stated"
+                            offLabel="Not stated"
+                            {...form.getInputProps('function.stated', { type: 'checkbox' })}
                         />
                         <FunctionOptionsTableForm
                             form={form}
@@ -576,7 +578,7 @@ export interface CreateEditResultFormValues {
         category: string,
         subcategory: string,
         characteristic: string,
-        article_designed_for_function: boolean,
+        stated: boolean,
         comments: string,
     },
     occurrences: number,

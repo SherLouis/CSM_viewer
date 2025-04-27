@@ -48,37 +48,32 @@ export const SourceDetailsPage = () => {
                 ResultUIService.getAllResultsForSource(sourceId)
                     .then((res) => {
                         resultsHandlers.setState(res);
-                        setIsLoading(false);
                         console.debug("getting ROIs");
-                    });
-            });
-    }, [sourceId]);
-
-    useEffect(() => {
-        console.debug("getting ROIs");
-        ResultUIService.getROIs()
-            .then((rois) => {
-                roisHandlers.setState(rois);
-                console.debug("getting Effects");
-                ResultUIService.getEffects()
-                    .then((res_effects) => {
-                        effectsHandlers.setState(res_effects)
-                        console.debug("getting Tasks");
-                        ResultUIService.getTasks()
-                            .then((tasks) => {
-                                tasksHandlers.setState(tasks)
-                                console.debug("getting Functions");
-                                ResultUIService.getFunctions()
-                                    .then((functions) => {
-                                        functionsHandlers.setState(functions);
-                                        console.debug("getting body parts");
-                                        ResultUIService.getBodyParts()
-                                            .then((bodyParts) => {
-                                                bodyPartsHandlers.setState(bodyParts);
-                                                setIsLoading(false);
+                        ResultUIService.getROIs()
+                            .then((rois) => {
+                                roisHandlers.setState(rois);
+                                console.debug("getting Effects");
+                                ResultUIService.getEffects()
+                                    .then((res_effects) => {
+                                        effectsHandlers.setState(res_effects)
+                                        console.debug("getting Tasks");
+                                        ResultUIService.getTasks()
+                                            .then((tasks) => {
+                                                tasksHandlers.setState(tasks)
+                                                console.debug("getting Functions");
+                                                ResultUIService.getFunctions()
+                                                    .then((functions) => {
+                                                        functionsHandlers.setState(functions);
+                                                        console.debug("getting body parts");
+                                                        ResultUIService.getBodyParts()
+                                                            .then((bodyParts) => {
+                                                                bodyPartsHandlers.setState(bodyParts);
+                                                                setIsLoading(false);
+                                                            })
+                                                    })
                                             })
-                                    })
-                            })
+                                    });
+                            });
                     });
             });
     }, []);
@@ -245,7 +240,7 @@ export const SourceDetailsPage = () => {
                 category: values.function.category,
                 subcategory: values.function.subcategory,
                 characteristic: values.function.characteristic,
-                article_designed_for_function: values.function.article_designed_for_function,
+                stated: values.function.stated,
                 comments: values.function.comments
             },
             occurrences: values.occurrences,

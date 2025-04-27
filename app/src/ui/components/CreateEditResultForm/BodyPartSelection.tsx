@@ -28,6 +28,7 @@ const BodyPartSelection = ({ bodyPartsOptions, form }: BodyPartSelectionProps) =
             <SimpleGrid cols={6}>
                 {bodyPartsOptions.map(bodyPart =>
                     <Button
+                        key={"btn_body_part_" + bodyPart}
                         variant={selectedBodyParts.includes(bodyPart) ? "filled" : "default"}
                         onClick={() => handleOptionClick(bodyPart)}
                     >

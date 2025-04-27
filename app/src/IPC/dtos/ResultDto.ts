@@ -49,7 +49,7 @@ export type ResultDto = {
         category: string,
         subcategory: string,
         characteristic: string,
-        article_designed_for_function: boolean,
+        stated: boolean,
         comments: string,
     },
     occurrences: number,
@@ -102,7 +102,7 @@ export class ResultsDtoMapper {
                 category: dto.function.category,
                 subcategory: dto.function.subcategory,
                 characteristic: dto.function.characteristic,
-                article_designed_for_function: dto.function.article_designed_for_function,
+                stated: dto.function.stated,
                 comments: dto.function.comments
             }
         } as Result

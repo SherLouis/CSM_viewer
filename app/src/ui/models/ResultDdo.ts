@@ -46,7 +46,7 @@ export interface ResultDdo {
         category: string,
         subcategory: string,
         characteristic: string,
-        article_designed_for_function: boolean,
+        stated: boolean,
         comments: string,
     },
     occurrences: number,
