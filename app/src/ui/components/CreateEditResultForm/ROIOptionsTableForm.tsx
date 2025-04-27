@@ -14,8 +14,7 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
         { label: "Exact (MNI)", value: "exact" }
     ];
 
-
-    // TODO: mask options from choices if exist
+    // TODO: add validation for ROI ?
     const roiMasksByDescription = useMemo(() => {
         return rois.reduce((map, { description, mask, count }) => {
             if (!map.has(description)) {
@@ -40,6 +39,29 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
         return Array.from(masks?.masks ?? []);
     }
 
+    const handleDescriptionChange = (value: string) => {
+        form.getInputProps('roi.description').onChange(value);
+        const option = roiMasksByDescription.get(value);
+        if (option != undefined) {
+            console.debug('Description selected from list :', value);
+            if (option.masks.size === 1) {
+                form.getInputProps('roi.mask').onChange(Array.from(option.masks)[0]);
+            }
+        }
+        else { // potential previously set mask is no longer valid
+            clearMask();
+        }
+    }
+
+    const clearDescription = () => {
+        form.getInputProps('roi.description').onChange("");
+        clearMask();
+    }
+
+    const clearMask = () => {
+        form.getInputProps('roi.mask').onChange("");
+    }
+
     return (
         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
             <thead>
@@ -58,11 +80,12 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
                             limit={5}
                             rightSection={
                                 form.values.roi.description !== "" &&
-                                <ActionIcon onClick={() => form.setFieldValue('roi.description', "")}>
+                                <ActionIcon onClick={clearDescription}>
                                     <IconX />
                                 </ActionIcon>
                             }
                             {...form.getInputProps('roi.description')}
+                            onChange={handleDescriptionChange}
                         />
                     </td>
                     <td>
@@ -72,7 +95,7 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
                             limit={5}
                             rightSection={
                                 form.values.roi.description !== "" &&
-                                <ActionIcon onClick={() => form.setFieldValue('roi.mask', "")}>
+                                <ActionIcon onClick={clearMask}>
                                     <IconX />
                                 </ActionIcon>
                             }
@@ -85,7 +108,7 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
                             data={maskConversionMethodOptions}
                             rightSection={
                                 form.values.roi.mask !== "" &&
-                                <ActionIcon onClick={() => form.setFieldValue('roi.mask', "")}>
+                                <ActionIcon onClick={() => form.setFieldValue('roi.mask_conversion_method', "")}>
                                     <IconX />
                                 </ActionIcon>
                             }
