@@ -38,6 +38,7 @@ export const SourceDetailsPage = () => {
     const [bodyParts, bodyPartsHandlers] = useListState<string>([]);
 
     // Load current source, results, rois, tasks and functions
+    // TODO: optimiser pour ne fetch les effects, task, function et body parts qu'une seule fois
     useEffect(() => {
         console.debug("getting current source");
         SourceUIService.getSource(sourceId)
@@ -87,6 +88,12 @@ export const SourceDetailsPage = () => {
             });
     }, [currentSource]);
 
+    const refreshRois = useCallback(() => {
+        console.debug("getting ROI options");
+        ResultUIService.getROIs()
+            .then(rois => roisHandlers.setState(rois));
+    }, [])
+
     // Listen for the event db location changed
     useEffect(() => {
         window.electronAPI.dbLocationChanged((event, value) => {
@@ -107,6 +114,7 @@ export const SourceDetailsPage = () => {
             .then((res: CreateResponseDto) => {
                 if (res.successful) {
                     refreshResults();
+                    refreshRois();
                 }
                 notifications.update({
                     id: 'creatingResult',
@@ -136,6 +144,7 @@ export const SourceDetailsPage = () => {
                         (r) => (r.id === result.id),
                         (r) => result
                     );
+                    refreshRois();
                 }
                 notifications.update({
                     id: 'editingResult',

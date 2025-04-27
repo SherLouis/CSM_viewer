@@ -1,8 +1,10 @@
 import { UseFormReturnType } from "@mantine/form";
 import { CreateEditResultFormValues } from "./CreateEditResultForm";
-import { ActionIcon, Select, SelectItem, Table, TextInput } from "@mantine/core";
+import { ActionIcon, Autocomplete, Select, SelectItem, Table, TextInput } from "@mantine/core";
 import { ROIDdo } from "../../models/ROIDdo";
 import { IconX } from "@tabler/icons-react";
+import { useDebouncedState } from "@mantine/hooks";
+import { useMemo } from "react";
 
 const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
     const maskConversionMethodOptions: SelectItem[] = [
@@ -12,10 +14,32 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
         { label: "Exact (MNI)", value: "exact" }
     ];
 
-    // TODO: searchable description + show options with count
+
     // TODO: mask options from choices if exist
-    // TODO: update roi options if inserted or updated result roi is not in existing ...
-    console.debug(rois);
+    const roiMasksByDescription = useMemo(() => {
+        return rois.reduce((map, { description, mask, count }) => {
+            if (!map.has(description)) {
+                map.set(description, { masks: new Set<string>(), total: 0 });
+            }
+            const entry = map.get(description)!;
+            entry.masks.add(mask);
+            entry.total += count;
+            return map;
+        }, new Map<string, { masks: Set<string>; total: number }>());
+    }, [rois]);
+
+    const descriptionAutoCompleteOptions = Array.from(roiMasksByDescription.entries())
+        .sort((a, b) => b[1].total - a[1].total)
+        .map(([description, { masks, total }]) => ({
+            value: description,
+            label: `${description} (${total} usages; ${masks.size} mask${masks.size > 1 ? "s" : ""})`,
+        }));
+
+    const getMaskOptions = () => {
+        const masks = roiMasksByDescription.get(form.values.roi.description);
+        return Array.from(masks?.masks ?? []);
+    }
+
     return (
         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
             <thead>
@@ -28,9 +52,10 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
             <tbody>
                 <tr>
                     <td>
-                        <TextInput
-                            size="md"
-                            placeholder="How is the ROI described"
+                        <Autocomplete
+                            placeholder="How is the ROI described (choose or type)"
+                            data={descriptionAutoCompleteOptions}
+                            limit={5}
                             rightSection={
                                 form.values.roi.description !== "" &&
                                 <ActionIcon onClick={() => form.setFieldValue('roi.description', "")}>
@@ -41,11 +66,12 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
                         />
                     </td>
                     <td>
-                        <TextInput
-                            size="md"
+                        <Autocomplete
                             placeholder="ROI mask reference"
+                            data={getMaskOptions()}
+                            limit={5}
                             rightSection={
-                                form.values.roi.mask !== "" &&
+                                form.values.roi.description !== "" &&
                                 <ActionIcon onClick={() => form.setFieldValue('roi.mask', "")}>
                                     <IconX />
                                 </ActionIcon>
@@ -56,9 +82,13 @@ const ROIOptionsTableForm = ({ form, rois }: ROIOptionsTableFormProps) => {
                     <td>
                         <Select
                             size="md"
-                            label="Mask conversion method"
-                            clearable
                             data={maskConversionMethodOptions}
+                            rightSection={
+                                form.values.roi.mask !== "" &&
+                                <ActionIcon onClick={() => form.setFieldValue('roi.mask', "")}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             {...form.getInputProps('roi.mask_conversion_method')}
                         />
                     </td>
