@@ -68,10 +68,10 @@ const ResultsTable = (props: ResultsTableProps) => {
                 comments: values.function.comments
             },
 
-            occurrences: values.occurrences,
+            occurrence_clinical_effect: values.occurrence_clinical_effect,
             comments: values.comments,
             comments_2: values.comments_2,
-            precision_score: values.precision_score,
+            nb_stimulations: values.nb_stimulations,
             clinical_semiology: values.clinical_semiology,
         } as ResultDdo
         props.onEdit(result);
@@ -126,10 +126,10 @@ const ResultsTable = (props: ResultsTableProps) => {
                 stated: false,
                 comments: '',
             },
-            occurrences: 0,
+            occurrence_clinical_effect: 0,
             comments: '',
             comments_2: '',
-            precision_score: 0
+            nb_stimulations: 0
         } as ResultDdo;
         switch (level) {
             case "stim":
@@ -243,10 +243,10 @@ const ResultsTable = (props: ResultsTableProps) => {
             case "details":
                 newResult = {
                     ...originalResult,
-                    occurrences: 0,
+                    occurrence_clinical_effect: 0,
                     comments: '',
                     comments_2: '',
-                    precision_score: 0
+                    nb_stimulations: 0
                 }
                 break;
         }
@@ -418,13 +418,13 @@ const ResultsTable = (props: ResultsTableProps) => {
             filtering: effectQuery != '',
         },
         {
-            accessor: 'occurrences',
+            accessor: 'occurrence_clinical_effect',
             title: 'Occurrences',
             sortable: true,
             render: (result) => (
                 <Group position='apart'>
                     <Text>
-                        {result.occurrences}
+                        {result.occurrence_clinical_effect}
                     </Text>
                     <ActionIcon onClick={(e: MouseEvent) => handleClearSectionValues(e, result, 'details')}>
                         <IconX size={16} />
@@ -583,7 +583,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                         case 'function':
                             setSelectedTabForEdit("function");
                             break;
-                        case 'occurrences':
+                        case 'occurrence_clinical_effect':
                             setSelectedTabForEdit("details");
                             break;
                         default:

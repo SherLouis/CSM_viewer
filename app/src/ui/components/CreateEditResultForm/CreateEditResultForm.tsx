@@ -68,10 +68,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 stated: edit_result && edit_result.function.stated != null ? edit_result.function.stated : false,
                 comments: edit_result && edit_result.function.comments != null ? edit_result.function.comments : "",
             },
-            occurrences: edit_result && edit_result.occurrences != null ? edit_result.occurrences : 0,
+            occurrence_clinical_effect: edit_result && edit_result.occurrence_clinical_effect != null ? edit_result.occurrence_clinical_effect : 0,
             comments: edit_result && edit_result.comments != null ? edit_result.comments : "",
             comments_2: edit_result && edit_result.comments_2 != null ? edit_result.comments_2 : "",
-            precision_score: edit_result && edit_result.precision_score != null ? edit_result.precision_score : 0,
+            nb_stimulations: edit_result && edit_result.nb_stimulations != null ? edit_result.nb_stimulations : 0,
             clinical_semiology: edit_result && edit_result.clinical_semiology != null ? edit_result.clinical_semiology : "",
         } as CreateEditResultFormValues,
     });
@@ -498,9 +498,9 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
                     <Tabs.Panel value="details" mx={"sm"}>
                         <NumberInput
-                            label="Occurrences"
+                            label="Occurrences of clinical effect"
                             autoFocus
-                            {...form.getInputProps('occurrences')}
+                            {...form.getInputProps('occurrence_clinical_effect')}
                         />
                         <Textarea
                             label="Comments"
@@ -513,9 +513,8 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             {...form.getInputProps('comments_2')}
                         />
                         <NumberInput
-                            label="Precision score"
-                            precision={2}
-                            {...form.getInputProps('precision_score')}
+                            label="Nb. of stimulations"
+                            {...form.getInputProps('nb_stimulations')}
                         />
                         <Textarea
                             label="Clinical Semiology"
@@ -582,10 +581,10 @@ export interface CreateEditResultFormValues {
         stated: boolean,
         comments: string,
     },
-    occurrences: number,
+    occurrence_clinical_effect: number,
     comments?: string,
     comments_2?: string,
-    precision_score: number,
+    nb_stimulations: number,
     clinical_semiology: string,
 }
 

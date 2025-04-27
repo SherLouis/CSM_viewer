@@ -49,10 +49,10 @@ export type Result = {
         characteristic: string,
         comments: string,
     },
-    occurrences: number,
+    occurrence_clinical_effect: number,
     comments?: string,
     comments_2?: string,
-    precision_score: number,
+    nb_stimulations: number,
     source_db?: string,
     clinical_semiology: string,
 }

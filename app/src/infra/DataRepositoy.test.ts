@@ -61,7 +61,7 @@ describe('Given Source in DB', () => {
                     contact_separation_mm: 2,
                     frequency_hz: 5
                 },
-                occurrences: 3,
+                occurrence_clinical_effect: 3,
                 comments: null
             } as Result)
         })
@@ -95,7 +95,7 @@ const insertEffect = () => {
 }
 
 const insertResult = () => {
-    db.prepare(`INSERT INTO Results (id,source_id,roi_id,stim_amp_ma,stim_freq,stim_contact_separation,stim_duration_ms,effect_id,effect_post_discharge,occurrences,comments)
-                    VALUES (@id,@source_id,@roi_id,@stim_amp_ma,@stim_freq,@stim_contact_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrences,@comments)`)
-        .run({ id: 1, source_id: 1, roi_id: 1, stim_amp_ma: 5, stim_freq: 5, stim_contact_separation: 2, stim_duration_ms: 2, effect_id: 1, effect_post_discharge: 0, occurrences: 3, comments: null })
+    db.prepare(`INSERT INTO Results (id,source_id,roi_id,stim_amp_ma,stim_freq,stim_contact_separation,stim_duration_ms,effect_id,effect_post_discharge,occurrence_clinical_effect,comments)
+                    VALUES (@id,@source_id,@roi_id,@stim_amp_ma,@stim_freq,@stim_contact_separation,@stim_duration_ms,@effect_id,@effect_post_discharge,@occurrence_clinical_effect,@comments)`)
+        .run({ id: 1, source_id: 1, roi_id: 1, stim_amp_ma: 5, stim_freq: 5, stim_contact_separation: 2, stim_duration_ms: 2, effect_id: 1, effect_post_discharge: 0, occurrence_clinical_effect: 3, comments: null })
 }

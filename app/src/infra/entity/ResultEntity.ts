@@ -41,10 +41,10 @@ export type ReadResultEntity = {
     function_characteristic: string,
     function_stated: number,
     function_comments: string,
-    occurrences: number,
+    occurrence_clinical_effect: number,
     comments: string,
     comments_2: string,
-    precision_score: number,
+    nb_stimulations: number,
     clinical_semiology: string,
     source_db?: string
 }
@@ -101,10 +101,10 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
             stated: readEntity.function_stated > 0,
             comments: readEntity.function_comments
         },
-        occurrences: readEntity.occurrences,
+        occurrence_clinical_effect: readEntity.occurrence_clinical_effect,
         comments: readEntity.comments,
         comments_2: readEntity.comments_2,
-        precision_score: readEntity.precision_score,
+        nb_stimulations: readEntity.nb_stimulations,
         clinical_semiology: readEntity.clinical_semiology,
         source_db: readEntity.source_db
     }
