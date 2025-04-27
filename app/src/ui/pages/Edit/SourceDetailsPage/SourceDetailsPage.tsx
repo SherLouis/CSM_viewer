@@ -244,9 +244,13 @@ export const SourceDetailsPage = () => {
                 comments: values.function.comments
             },
             occurrence_clinical_effect: values.occurrence_clinical_effect,
+            nb_stimulations: values.nb_stimulations,
+            occurrence_ns: values.occurrence_ns,
+            complement_parameters: values.complement_parameters,
+            complement_parameters_result_id: values.complement_parameters_result_id,
+            occurrence_responsive_rate: values.occurrence_responsive_rate,
             comments: values.comments,
             comments_2: values.comments_2,
-            nb_stimulations: values.nb_stimulations,
             clinical_semiology: values.clinical_semiology,
         } as ResultDdo
         setShowCreateForm(false);

@@ -69,9 +69,13 @@ const ResultsTable = (props: ResultsTableProps) => {
             },
 
             occurrence_clinical_effect: values.occurrence_clinical_effect,
+            nb_stimulations: values.nb_stimulations,
+            occurrence_ns: values.occurrence_ns,
+            complement_parameters: values.complement_parameters,
+            complement_parameters_result_id: values.complement_parameters_result_id,
+            occurrence_responsive_rate: values.occurrence_responsive_rate,
             comments: values.comments,
             comments_2: values.comments_2,
-            nb_stimulations: values.nb_stimulations,
             clinical_semiology: values.clinical_semiology,
         } as ResultDdo
         props.onEdit(result);
@@ -127,9 +131,13 @@ const ResultsTable = (props: ResultsTableProps) => {
                 comments: '',
             },
             occurrence_clinical_effect: 0,
+            nb_stimulations: 0,
+            occurrence_ns: false,
+            complement_parameters: false,
+            complement_parameters_result_id: 0,
+            occurrence_responsive_rate: false,
             comments: '',
             comments_2: '',
-            nb_stimulations: 0
         } as ResultDdo;
         switch (level) {
             case "stim":

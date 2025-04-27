@@ -42,9 +42,13 @@ export type ReadResultEntity = {
     function_stated: number,
     function_comments: string,
     occurrence_clinical_effect: number,
+    nb_stimulations: number,
+    occurrence_ns: number,
+    complement_parameters: number,
+    complement_parameters_result_id: number,
+    occurrence_responsive_rate: number,
     comments: string,
     comments_2: string,
-    nb_stimulations: number,
     clinical_semiology: string,
     source_db?: string
 }
@@ -102,9 +106,13 @@ export const ReadResultEntityToModel = (readEntity: ReadResultEntity): Result =>
             comments: readEntity.function_comments
         },
         occurrence_clinical_effect: readEntity.occurrence_clinical_effect,
+        nb_stimulations: readEntity.nb_stimulations,
+        occurrence_ns: readEntity.occurrence_ns > 0,
+        complement_parameters: readEntity.complement_parameters > 0,
+        complement_parameters_result_id: readEntity.complement_parameters_result_id,
+        occurrence_responsive_rate: readEntity.occurrence_responsive_rate > 0,
         comments: readEntity.comments,
         comments_2: readEntity.comments_2,
-        nb_stimulations: readEntity.nb_stimulations,
         clinical_semiology: readEntity.clinical_semiology,
         source_db: readEntity.source_db
     }

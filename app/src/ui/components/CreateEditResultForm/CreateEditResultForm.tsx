@@ -69,9 +69,13 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 comments: edit_result && edit_result.function.comments != null ? edit_result.function.comments : "",
             },
             occurrence_clinical_effect: edit_result && edit_result.occurrence_clinical_effect != null ? edit_result.occurrence_clinical_effect : 0,
+            nb_stimulations: edit_result && edit_result.nb_stimulations != null ? edit_result.nb_stimulations : 0,
+            occurrence_ns: edit_result && edit_result.occurrence_ns !== null ? edit_result.occurrence_ns : false,
+            complement_parameters: edit_result && edit_result.complement_parameters !== null ? edit_result.complement_parameters : false,
+            complement_parameters_result_id: edit_result && edit_result.complement_parameters_result_id !== null ? edit_result.complement_parameters_result_id : 0,
+            occurrence_responsive_rate: edit_result && edit_result.occurrence_responsive_rate !== null ? edit_result.occurrence_responsive_rate : false,
             comments: edit_result && edit_result.comments != null ? edit_result.comments : "",
             comments_2: edit_result && edit_result.comments_2 != null ? edit_result.comments_2 : "",
-            nb_stimulations: edit_result && edit_result.nb_stimulations != null ? edit_result.nb_stimulations : 0,
             clinical_semiology: edit_result && edit_result.clinical_semiology != null ? edit_result.clinical_semiology : "",
         } as CreateEditResultFormValues,
     });
@@ -502,6 +506,36 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             autoFocus
                             {...form.getInputProps('occurrence_clinical_effect')}
                         />
+                        <NumberInput
+                            label="Nb. of stimulations"
+                            {...form.getInputProps('nb_stimulations')}
+                        />
+                        <Group>
+                            <Button
+                                variant={form.values.occurrence_ns ? "filled" : "default"}
+                                onClick={() => form.setFieldValue('occurrence_ns', !form.values.occurrence_ns)}>
+                                {"NS"}
+                            </Button>
+                            <Button
+                                variant={form.values.complement_parameters ? "filled" : "default"}
+                                onClick={() => form.setFieldValue('complement_parameters', !form.values.complement_parameters)}>
+                                {"Complement parameters"}
+                            </Button>
+                            <NumberInput
+                                label="Complement parameters for result ID"
+                                disabled={!form.values.complement_parameters}
+                                {...form.getInputProps('complement_parameters_result_id')} />
+                            <Button
+                                variant={form.values.occurrence_responsive_rate ? "filled" : "default"}
+                                onClick={() => form.setFieldValue('occurrence_responsive_rate', !form.values.occurrence_responsive_rate)}>
+                                {"None (Responsive rate)"}
+                            </Button>
+                        </Group>
+                        <Textarea
+                            label="Clinical Semiology"
+                            placeholder="Write here"
+                            {...form.getInputProps('clinical_semiology')}
+                        />
                         <Textarea
                             label="Comments"
                             placeholder="Write your comments here"
@@ -511,15 +545,6 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             label="Comments 2"
                             placeholder="Write your comments here"
                             {...form.getInputProps('comments_2')}
-                        />
-                        <NumberInput
-                            label="Nb. of stimulations"
-                            {...form.getInputProps('nb_stimulations')}
-                        />
-                        <Textarea
-                            label="Clinical Semiology"
-                            placeholder="Write here"
-                            {...form.getInputProps('clinical_semiology')}
                         />
                     </Tabs.Panel>
                 </Tabs>
@@ -582,9 +607,13 @@ export interface CreateEditResultFormValues {
         comments: string,
     },
     occurrence_clinical_effect: number,
+    nb_stimulations: number,
+    occurrence_ns: boolean,
+    complement_parameters: boolean,
+    complement_parameters_result_id: number,
+    occurrence_responsive_rate: boolean,
     comments?: string,
     comments_2?: string,
-    nb_stimulations: number,
     clinical_semiology: string,
 }
 
