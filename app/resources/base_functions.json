@@ -1,78 +1,42 @@
 [
     {
-        "name": "Function1",
+        "name": "Language",
         "level": "category",
-        "children": [
-            {
-                "name": "Function1 sub1",
-                "level": "subcategory",
-                "children": [
-                    {
-                        "name": "Function1 Sub1 Characteristic 1",
-                        "level": "characteristic",
-                        "children": []
-                    },
-                    {
-                        "name": "Function1 Sub1 Characteristic 2",
-                        "level": "characteristic",
-                        "children": []
-                    }
-                ]
-            },
-            {
-                "name": "Function1 sub2",
-                "level": "subcategory",
-                "children": [
-                    {
-                        "name": "Function1 Sub2 Characteristic 1",
-                        "level": "characteristic",
-                        "children": []
-                    },
-                    {
-                        "name": "Function1 Sub2 Characteristic 2",
-                        "level": "characteristic",
-                        "children": []
-                    }
-                ]
-            }
-        ]
+        "children": []
     },
     {
-        "name": "Function2",
+        "name": "Memory",
         "level": "category",
-        "children": [
-            {
-                "name": "Function2 Sub1",
-                "level": "subcategory",
-                "children": [
-                    {
-                        "name": "Function2 Sub1 Characteristic 1",
-                        "level": "characteristic",
-                        "children": []
-                    },
-                    {
-                        "name": "Function2 Sub1 Characteristic 2",
-                        "level": "characteristic",
-                        "children": []
-                    }
-                ]
-            },
-            {
-                "name": "Function2 Sub2",
-                "level": "subcategory",
-                "children": [
-                    {
-                        "name": "Function2 Sub2 Characteristic 1",
-                        "level": "characteristic",
-                        "children": []
-                    },
-                    {
-                        "name": "Function2 Sub2 Characteristic 2",
-                        "level": "characteristic",
-                        "children": []
-                    }
-                ]
-            }
-        ]
+        "children": []
+    },
+    {
+        "name": "Sensitive - Motor",
+        "level": "category",
+        "children": []
+    },
+    {
+        "name": "Vision (not reading)",
+        "level": "category",
+        "children": []
+    },
+    {
+        "name": "Audition (not language)",
+        "level": "category",
+        "children": []
+    },
+    {
+        "name": "Emotion",
+        "level": "category",
+        "children": []
+    },
+    {
+        "name": "Autonomic",
+        "level": "category",
+        "children": []
+    },
+    {
+        "name": "Other",
+        "level": "category",
+        "children": []
     }
 ]
