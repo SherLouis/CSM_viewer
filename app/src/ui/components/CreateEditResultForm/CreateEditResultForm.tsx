@@ -31,10 +31,13 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 amplitude_ma_min: edit_result && edit_result.stimulation_parameters.amplitude_ma_min != null ? edit_result.stimulation_parameters.amplitude_ma_min : 0,
                 amplitude_ma_max: edit_result && edit_result.stimulation_parameters.amplitude_ma_max != null ? edit_result.stimulation_parameters.amplitude_ma_max : 0,
                 amplitude_ma_avg: edit_result && edit_result.stimulation_parameters.amplitude_ma_avg != null ? edit_result.stimulation_parameters.amplitude_ma_avg : 0,
+                amplitude_variable: edit_result && edit_result.stimulation_parameters.amplitude_variable != null ? edit_result.stimulation_parameters.amplitude_variable : false,
                 frequency_hz: edit_result && edit_result.stimulation_parameters.frequency_hz != null ? edit_result.stimulation_parameters.frequency_hz : 0,
                 frequency_hz_max: edit_result && edit_result.stimulation_parameters.frequency_hz_max != null ? edit_result.stimulation_parameters.frequency_hz_max : 0,
+                frequency_multiple: edit_result && edit_result.stimulation_parameters.frequency_multiple != null ? edit_result.stimulation_parameters.frequency_multiple : "",
                 duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0,
                 duration_s_max: edit_result && edit_result.stimulation_parameters.duration_s_max != null ? edit_result.stimulation_parameters.duration_s_max : 0,
+                duration_multiple: edit_result && edit_result.stimulation_parameters.duration_multiple != null ? edit_result.stimulation_parameters.duration_multiple : "",
                 electrode_make: edit_result && edit_result.stimulation_parameters.electrode_make != null ? edit_result.stimulation_parameters.electrode_make : "",
                 implantation_type: edit_result && edit_result.stimulation_parameters.implantation_type != null ? edit_result.stimulation_parameters.implantation_type : "",
                 contact_separation: edit_result && edit_result.stimulation_parameters.contact_separation != null ? edit_result.stimulation_parameters.contact_separation : 0,
@@ -136,8 +139,33 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
             { implantationType: "SEEG", make: "AdTech", diameter: 0.9, separation: 4, lenght: 2.3 },
             { implantationType: "SEEG", make: "Dixi", diameter: 0.8, separation: 3.5, lenght: 2 },
             { implantationType: "SEEG", make: "Huake-Hengsheng", diameter: 0.8, separation: 3.5, lenght: 2 },
+            { implantationType: "SEEG", make: "DIXI Médical – MICRODEEP®", lenght: 2, separation: 3.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "ALCIS Neuro – Type C(3,5)", lenght: 2, separation: 3.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "ALCIS Neuro – Type C(4)", lenght: 2, separation: 4, diameter: 0.8 },
+            { implantationType: "SEEG", make: "ALCIS Neuro – Type E (haute résolution)", lenght: 1, separation: 2, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 1.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 1.6, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 1.7, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 1.8, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 1.9, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.0, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.1, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.2, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.3, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.4, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.6, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.7, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.8, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 2.9, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 3.0, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 3.1, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 3.2, diameter: 0.8 },
+            { implantationType: "SEEG", make: "PMT Corporation", lenght: 2, separation: 3.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "Ad-Tech Médical", lenght: 1.3, separation: 5, diameter: 0.86 },
+            { implantationType: "SEEG", make: "Ad-Tech Médical", lenght: 1.3, separation: 10, diameter: 0.86 }
         ] as ElectrodeOption[];
-        return new Map(options.map(opt => [opt.implantationType + '|' + opt.make + '|' + opt.diameter + '|' + opt.separation + '|' + opt.lenght, opt]));
+        return new Map(options.map(opt => [opt.implantationType + ' | ' + opt.make + ' | diameter: ' + opt.diameter + 'mm | separation: ' + opt.separation + 'mm | lenght: ' + opt.lenght + 'mm', opt]));
     }
     const ElectrodeOptions = getElectrodeOptions();
 
@@ -230,6 +258,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 {...form.getInputProps('stimulation_parameters.amplitude_ma_max')}
                                 disabled={!form.values.stimulation_parameters.stated}
                             />
+                            <Switch
+                                size="lg"
+                                label="Variable (incremental)"
+                                labelPosition="left"
+                                onLabel="Yes"
+                                offLabel="No"
+                                {...form.getInputProps('stimulation_parameters.amplitude_variable', { type: 'checkbox' })}
+                            />
 
                         </Group>
 
@@ -258,6 +294,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     onChange={(value) => handleFrequencyMaxChanged(value === "" ? 0 : value)}
                                     disabled={!form.values.stimulation_parameters.stated}
                                 />
+                                <TextInput
+                                    label="Multiple frequencies"
+                                    {...form.getInputProps('stimulation_parameters.frequency_multiple')}
+                                />
                             </Group>
                             <Group align="flex-end">
                                 <NumberInput
@@ -282,6 +322,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     {...form.getInputProps('stimulation_parameters.duration_s_max')}
                                     onChange={(value) => handleDurationMaxChanged(value === "" ? 0 : value)}
                                     disabled={!form.values.stimulation_parameters.stated}
+                                />
+                                <TextInput
+                                    label="Multiple durations"
+                                    {...form.getInputProps('stimulation_parameters.duration_multiple')}
                                 />
                             </Group>
                         </Group>
@@ -569,10 +613,13 @@ export interface CreateEditResultFormValues {
         amplitude_ma_min: number,
         amplitude_ma_max: number,
         amplitude_ma_avg: number,
+        amplitude_variable: boolean,
         frequency_hz: number,
         frequency_hz_max: number,
+        frequency_multiple: string,
         duration_s: number,
         duration_s_max: number,
+        duration_multiple: string,
         implantation_type: string,
         electrode_make: string,
         contact_separation: number,
