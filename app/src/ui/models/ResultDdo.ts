@@ -25,6 +25,7 @@ export interface ResultDdo {
         contact_diameter: number,
         contact_length: number,
         phase_length: number,
+        phase_length_multiple: string,
         phase_type: string,
         epi_zone: string,
         epi_zone_comments: string,

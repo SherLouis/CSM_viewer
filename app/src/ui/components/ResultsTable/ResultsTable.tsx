@@ -43,6 +43,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 contact_diameter: values.stimulation_parameters.contact_diameter,
                 contact_length: values.stimulation_parameters.contact_length,
                 phase_length: values.stimulation_parameters.phase_length,
+                phase_length_multiple: values.stimulation_parameters.phase_length_multiple,
                 phase_type: values.stimulation_parameters.phase_type,
                 epi_zone: values.stimulation_parameters.epi_zone,
                 epi_zone_comments: values.stimulation_parameters.epi_zone_comments,
@@ -111,6 +112,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                 contact_diameter: 0,
                 contact_length: 0,
                 phase_length: 0,
+                phase_length_multiple: '',
                 phase_type: ''
             },
             effect: {
@@ -209,6 +211,7 @@ const ResultsTable = (props: ResultsTableProps) => {
                         contact_diameter: 0,
                         contact_length: 0,
                         phase_length: 0,
+                        phase_length_multiple: '',
                         phase_type: ''
                     }
                 } as ResultDdo;

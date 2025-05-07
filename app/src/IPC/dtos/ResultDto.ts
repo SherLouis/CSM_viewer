@@ -27,6 +27,7 @@ export type ResultDto = {
         contact_separation: number,
         contact_diameter: number,
         contact_length: number,
+        phase_length_multiple: string,
         phase_length: number,
         phase_type: string,
         epi_zone: string,

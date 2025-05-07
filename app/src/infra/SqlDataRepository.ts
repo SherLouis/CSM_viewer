@@ -282,7 +282,7 @@ export default class SqlDataRepository implements IDataRepository {
         const query = `
         SELECT S.author, S.date, S.publisher, S.doi, S.title, S.cohort, S.state, S.validity_roi_nomenclature, S.validity_null_effects, S.validity_sham_stimulation, S.validity_control_for_after_discharge, S.validity_response_charact_cat_methodology, S.validity_response_charact_replicability_of_response, S.validity_response_charact_dose_responsiveness, S.validity_response_charact_dissection_of_response, S.details_paper_role_cartography_sec_only, S.details_paper_role_cartography_sec_compare_to_other_techniques, S.details_paper_role_research_technical_parameters_sec, S.details_paper_role_research_cognitive_functions, S.details_age_limits_min, S.details_age_limits_max, S.details_age_limits_avg,
         R.roi_side, R.roi_description, R.roi_mask, R.roi_mask_conversion_method,
-        R.stim_params_stated, R.stim_amp_ma_min, R.stim_amp_ma_max, R.stim_amp_ma_avg, R.stim_amplitude_variable, R.stim_freq, R.stim_freq_max, R.stim_frequency_multiple, R.stim_duration, R.stim_duration_max, R.stim_duration_multiple, R.stim_electrode_make, R.stim_implantation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_type, R.stim_epi_zone, R.stim_epi_zone_comments,
+        R.stim_params_stated, R.stim_amp_ma_min, R.stim_amp_ma_max, R.stim_amp_ma_avg, R.stim_amplitude_variable, R.stim_freq, R.stim_freq_max, R.stim_frequency_multiple, R.stim_duration, R.stim_duration_max, R.stim_duration_multiple, R.stim_electrode_make, R.stim_implantation_type, R.stim_contact_separation, R.stim_contact_diameter, R.stim_contact_length, R.stim_phase_length, R.stim_phase_length_multiple, R.stim_phase_type, R.stim_epi_zone, R.stim_epi_zone_comments,
         R.effect_class, R.effect_descriptor, R.effect_details, R.effect_post_discharge, R.effect_lateralization, R.effect_dominant, R.effect_body_part, R.effect_comments, 
         R.task_category, R.task_subcategory, R.task_characteristic, R.task_comments, 
         R.function_category, R.function_subcategory, R.function_characteristic, R.function_stated, R.function_comments, 
@@ -328,19 +328,20 @@ export default class SqlDataRepository implements IDataRepository {
                 { id: 'stim_amp_ma_min', title: 'Stimulation Minimum Amplitude (mA)' },
                 { id: 'stim_amp_ma_max', title: 'Stimulation Maximum Amplitude (mA)' },
                 { id: 'stim_amp_ma_avg', title: 'Stimulation Average Amplitude (mA)' },
-                { id: 'stim_amplitude_variable', title: 'Stimulation amplitude variable'},
+                { id: 'stim_amplitude_variable', title: 'Stimulation amplitude variable' },
                 { id: 'stim_freq', title: 'Stimulation Frequency (Hz)' },
                 { id: 'stim_freq_max', title: 'Stimulation Maximum Frequency (Hz)' },
-                { id: 'stim_frequency_multiple', title: 'Stimulation frequency multiple'},
+                { id: 'stim_frequency_multiple', title: 'Stimulation frequency multiple' },
                 { id: 'stim_duration', title: 'Stimulation Duration' },
                 { id: 'stim_duration_max', title: 'Stimulation Maximum Duration' },
-                { id: 'stim_duration_multiple', title: 'Stimulation duration multiple'},
+                { id: 'stim_duration_multiple', title: 'Stimulation duration multiple' },
                 { id: 'stim_electrode_make', title: 'Electrode Make' },
                 { id: 'stim_implantation_type', title: 'Implentation Type' },
                 { id: 'stim_contact_separation', title: 'Contact Separation' },
                 { id: 'stim_contact_diameter', title: 'Contact Diameter' },
                 { id: 'stim_contact_length', title: 'Contact Lenght' },
                 { id: 'stim_phase_length', title: 'Phase Length' },
+                { id: 'stim_phase_length_multiple', title: 'Phase Length multiple' },
                 { id: 'stim_phase_type', title: 'Phase Type' },
                 { id: 'stim_epi_zone', title: 'Épileptogenic Zone' },
                 { id: 'stim_epi_zone_comments', title: 'Épileptogenic Zone Comments' },
@@ -564,8 +565,8 @@ export default class SqlDataRepository implements IDataRepository {
         console.debug("Inserting new result");
 
         const stmt = `INSERT INTO Results 
-        (source_id, roi_side, roi_description, roi_mask, roi_mask_conversion_method, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_amplitude_variable, stim_freq, stim_freq_max, stim_frequency_multiple, stim_duration, stim_duration_max, stim_duration_multiple, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_stated, function_comments, occurrence_clinical_effect, nb_stimulations, occurrence_ns, complement_parameters, complement_parameters_result_id, occurrence_responsive_rate, comments, comments_2, clinical_semiology)
-        Values (@source_id, @roi_side, @roi_description, @roi_mask, @roi_mask_conversion_method, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_amplitude_variable, @stim_freq, @stim_freq_max, @stim_frequency_multiple, @stim_duration, @stim_duration_max, @stim_duration_multiple, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_stated, @function_comments, @occurrence_clinical_effect, @nb_stimulations, @occurrence_ns, @complement_parameters, @complement_parameters_result_id, @occurrence_responsive_rate, @comments, @comments_2, @clinical_semiology)`
+        (source_id, roi_side, roi_description, roi_mask, roi_mask_conversion_method, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_amplitude_variable, stim_freq, stim_freq_max, stim_frequency_multiple, stim_duration, stim_duration_max, stim_duration_multiple, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_length_multiple, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_stated, function_comments, occurrence_clinical_effect, nb_stimulations, occurrence_ns, complement_parameters, complement_parameters_result_id, occurrence_responsive_rate, comments, comments_2, clinical_semiology)
+        Values (@source_id, @roi_side, @roi_description, @roi_mask, @roi_mask_conversion_method, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_amplitude_variable, @stim_freq, @stim_freq_max, @stim_frequency_multiple, @stim_duration, @stim_duration_max, @stim_duration_multiple, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_length_multiple, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_stated, @function_comments, @occurrence_clinical_effect, @nb_stimulations, @occurrence_ns, @complement_parameters, @complement_parameters_result_id, @occurrence_responsive_rate, @comments, @comments_2, @clinical_semiology)`
         this.db.prepare(stmt).run({
             source_id: newResult.source_id,
             roi_side: newResult.roi.side,
@@ -589,6 +590,7 @@ export default class SqlDataRepository implements IDataRepository {
             stim_contact_diameter: newResult.stimulation_parameters.contact_diameter,
             stim_contact_length: newResult.stimulation_parameters.contact_length,
             stim_phase_length: newResult.stimulation_parameters.phase_length,
+            stim_phase_length_multiple: newResult.stimulation_parameters.phase_length_multiple,
             stim_phase_type: newResult.stimulation_parameters.phase_type,
             stim_epi_zone: newResult.stimulation_parameters.epi_zone,
             stim_epi_zone_comments: newResult.stimulation_parameters.epi_zone_comments,
@@ -647,6 +649,7 @@ export default class SqlDataRepository implements IDataRepository {
             stim_contact_diameter=@stim_contact_diameter,
             stim_contact_length=@stim_contact_length,
             stim_phase_length=@stim_phase_length,
+            stim_phase_length_multiple=@stim_phase_length_multiple,
             stim_phase_type=@stim_phase_type,
             stim_epi_zone=@stim_epi_zone,
             stim_epi_zone_comments=@stim_epi_zone_comments,
@@ -698,6 +701,7 @@ export default class SqlDataRepository implements IDataRepository {
             stim_contact_separation: newResult.stimulation_parameters.contact_separation,
             stim_contact_diameter: newResult.stimulation_parameters.contact_diameter,
             stim_contact_length: newResult.stimulation_parameters.contact_length,
+            stim_phase_length_multiple: newResult.stimulation_parameters.phase_length_multiple,
             stim_phase_length: newResult.stimulation_parameters.phase_length,
             stim_phase_type: newResult.stimulation_parameters.phase_type,
             stim_epi_zone: newResult.stimulation_parameters.epi_zone,
@@ -748,8 +752,6 @@ export default class SqlDataRepository implements IDataRepository {
         const rois = this.db.prepare(stmt).all() as RoiEntity[];
         return rois;
     }
-
-
 
     // Effects
     private readEffectsFromFile(): Effect[] {
@@ -891,6 +893,7 @@ export default class SqlDataRepository implements IDataRepository {
                 stim_contact_diameter INTEGER,
                 stim_contact_length INTEGER,
                 stim_phase_length REAL,
+                stim_phase_length_multiple TEXT,
                 stim_phase_type TEXT,
                 stim_epi_zone TEXT,
                 stim_epi_zone_comments TEXT,

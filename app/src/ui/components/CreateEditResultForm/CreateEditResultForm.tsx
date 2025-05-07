@@ -44,6 +44,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 contact_diameter: edit_result && edit_result.stimulation_parameters.contact_diameter != null ? edit_result.stimulation_parameters.contact_diameter : 0,
                 contact_length: edit_result && edit_result.stimulation_parameters.contact_length != null ? edit_result.stimulation_parameters.contact_length : 0,
                 phase_length: edit_result && edit_result.stimulation_parameters.phase_length != null ? edit_result.stimulation_parameters.phase_length : 0,
+                phase_length_multiple: edit_result && edit_result.stimulation_parameters.phase_length_multiple != null ? edit_result.stimulation_parameters.phase_length_multiple : "",
                 phase_type: edit_result && edit_result.stimulation_parameters.phase_type != null ? edit_result.stimulation_parameters.phase_type : "",
                 epi_zone: edit_result && edit_result.stimulation_parameters.epi_zone != null ? edit_result.stimulation_parameters.epi_zone : "",
                 epi_zone_comments: edit_result && edit_result.stimulation_parameters.epi_zone_comments != null ? edit_result.stimulation_parameters.epi_zone_comments : "",
@@ -253,65 +254,63 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
                         </Group>
 
-                        <Group position="apart">
-                            <Group align="flex-end">
-                                <NumberInput
-                                    label="Frequency (Hz)"
-                                    {...form.getInputProps('stimulation_parameters.frequency_hz')}
-                                    onChange={(value) => handleFrequencyMinChanged(value === "" ? 0 : value)}
-                                    disabled={!form.values.stimulation_parameters.stated}
-                                />
-                                <Button.Group>
-                                    {preferences.frequency_presets.map((v, i) =>
-                                        <Button
-                                            key={"freq_" + i}
-                                            variant={form.values.stimulation_parameters.frequency_hz === v ? "filled" : "default"}
-                                            onClick={() => handleFrequencyMinChanged(v)}
-                                            disabled={!form.values.stimulation_parameters.stated}>
-                                            {v}
-                                        </Button>
-                                    )}
-                                </Button.Group>
-                                <NumberInput
-                                    label="Frequency Max (Hz)"
-                                    {...form.getInputProps('stimulation_parameters.frequency_hz_max')}
-                                    onChange={(value) => handleFrequencyMaxChanged(value === "" ? 0 : value)}
-                                    disabled={!form.values.stimulation_parameters.stated}
-                                />
-                                <TextInput
-                                    label="Multiple frequencies"
-                                    {...form.getInputProps('stimulation_parameters.frequency_multiple')}
-                                />
-                            </Group>
-                            <Group align="flex-end">
-                                <NumberInput
-                                    label="Duration (s)"
-                                    {...form.getInputProps('stimulation_parameters.duration_s')}
-                                    onChange={(value) => handleDurationMinChanged(value === "" ? 0 : value)}
-                                    disabled={!form.values.stimulation_parameters.stated}
-                                />
-                                <Button.Group>
-                                    {preferences.duration_presets.map((v, i) =>
-                                        <Button
-                                            key={"dur_" + i}
-                                            variant={form.getInputProps('stimulation_parameters.duration_s').value === v ? "filled" : "default"}
-                                            onClick={() => handleDurationMinChanged(v)}
-                                            disabled={!form.values.stimulation_parameters.stated}>
-                                            {v}
-                                        </Button>
-                                    )}
-                                </Button.Group>
-                                <NumberInput
-                                    label="Duration Max (s)"
-                                    {...form.getInputProps('stimulation_parameters.duration_s_max')}
-                                    onChange={(value) => handleDurationMaxChanged(value === "" ? 0 : value)}
-                                    disabled={!form.values.stimulation_parameters.stated}
-                                />
-                                <TextInput
-                                    label="Multiple durations"
-                                    {...form.getInputProps('stimulation_parameters.duration_multiple')}
-                                />
-                            </Group>
+                        <Group align="flex-end">
+                            <NumberInput
+                                label="Frequency (Hz)"
+                                {...form.getInputProps('stimulation_parameters.frequency_hz')}
+                                onChange={(value) => handleFrequencyMinChanged(value === "" ? 0 : value)}
+                                disabled={!form.values.stimulation_parameters.stated}
+                            />
+                            <Button.Group>
+                                {preferences.frequency_presets.map((v, i) =>
+                                    <Button
+                                        key={"freq_" + i}
+                                        variant={form.values.stimulation_parameters.frequency_hz === v ? "filled" : "default"}
+                                        onClick={() => handleFrequencyMinChanged(v)}
+                                        disabled={!form.values.stimulation_parameters.stated}>
+                                        {v}
+                                    </Button>
+                                )}
+                            </Button.Group>
+                            <NumberInput
+                                label="Frequency Max (Hz)"
+                                {...form.getInputProps('stimulation_parameters.frequency_hz_max')}
+                                onChange={(value) => handleFrequencyMaxChanged(value === "" ? 0 : value)}
+                                disabled={!form.values.stimulation_parameters.stated}
+                            />
+                            <TextInput
+                                label="Multiple frequencies"
+                                {...form.getInputProps('stimulation_parameters.frequency_multiple')}
+                            />
+                        </Group>
+                        <Group align="flex-end">
+                            <NumberInput
+                                label="Duration (s)"
+                                {...form.getInputProps('stimulation_parameters.duration_s')}
+                                onChange={(value) => handleDurationMinChanged(value === "" ? 0 : value)}
+                                disabled={!form.values.stimulation_parameters.stated}
+                            />
+                            <Button.Group>
+                                {preferences.duration_presets.map((v, i) =>
+                                    <Button
+                                        key={"dur_" + i}
+                                        variant={form.getInputProps('stimulation_parameters.duration_s').value === v ? "filled" : "default"}
+                                        onClick={() => handleDurationMinChanged(v)}
+                                        disabled={!form.values.stimulation_parameters.stated}>
+                                        {v}
+                                    </Button>
+                                )}
+                            </Button.Group>
+                            <NumberInput
+                                label="Duration Max (s)"
+                                {...form.getInputProps('stimulation_parameters.duration_s_max')}
+                                onChange={(value) => handleDurationMaxChanged(value === "" ? 0 : value)}
+                                disabled={!form.values.stimulation_parameters.stated}
+                            />
+                            <TextInput
+                                label="Multiple durations"
+                                {...form.getInputProps('stimulation_parameters.duration_multiple')}
+                            />
                         </Group>
 
                         <Group position="left">
@@ -344,6 +343,10 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                     <Radio value="" label="N/A" disabled={!form.values.stimulation_parameters.stated} />
                                 </Group>
                             </Radio.Group>
+                            <TextInput
+                                label="Multiple phase lengths"
+                                {...form.getInputProps('stimulation_parameters.phase_length_multiple')}
+                            />
                         </Group>
                         <Group position="left">
                             <Radio.Group
@@ -609,6 +612,7 @@ export interface CreateEditResultFormValues {
         contact_separation: number,
         contact_diameter: number,
         contact_length: number,
+        phase_length_multiple: string,
         phase_length: number,
         phase_type: string,
         epi_zone: string,
