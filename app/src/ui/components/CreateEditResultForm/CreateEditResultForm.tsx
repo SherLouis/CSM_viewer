@@ -135,21 +135,21 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
 
     const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
         const options = [
-            { implantationType: "SEEG", make: "AdTech", diameter: 0.9, separation: 3, lenght: 2.3 },
-            { implantationType: "SEEG", make: "AdTech", diameter: 0.9, separation: 4, lenght: 2.3 },
-            { implantationType: "SEEG", make: "Dixi", diameter: 0.8, separation: 3.5, lenght: 2 },
-            { implantationType: "SEEG", make: "Huake-Hengsheng", diameter: 0.8, separation: 3.5, lenght: 2 },
-            { implantationType: "SEEG", make: "DIXI Médical – MICRODEEP®", lenght: 2, separation: 3.5, diameter: 0.8 },
-            { implantationType: "SEEG", make: "ALCIS Neuro – Type C(3,5)", lenght: 2, separation: 3.5, diameter: 0.8 },
-            { implantationType: "SEEG", make: "ALCIS Neuro – Type C(4)", lenght: 2, separation: 4, diameter: 0.8 },
-            { implantationType: "SEEG", make: "ALCIS Neuro – Type E (haute résolution)", lenght: 1, separation: 2, diameter: 0.8 },
-            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 1.5, diameter: 0.8 },
-            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", lenght: 2, separation: 3.2, diameter: 0.8 },
-            { implantationType: "SEEG", make: "PMT Corporation", lenght: 2, separation: 3.5, diameter: 0.8 },
-            { implantationType: "SEEG", make: "Ad-Tech Médical", lenght: 1.3, separation: 5, diameter: 0.86 },
-            { implantationType: "SEEG", make: "Ad-Tech Médical", lenght: 1.3, separation: 10, diameter: 0.86 }
+            { implantationType: "SEEG", make: "AdTech", diameter: 0.9, separation: 3, length: 2.3 },
+            { implantationType: "SEEG", make: "AdTech", diameter: 0.9, separation: 4, length: 2.3 },
+            { implantationType: "SEEG", make: "Dixi", diameter: 0.8, separation: 3.5, length: 2 },
+            { implantationType: "SEEG", make: "Huake-Hengsheng", diameter: 0.8, separation: 3.5, length: 2 },
+            { implantationType: "SEEG", make: "DIXI Médical – MICRODEEP®", length: 2, separation: 3.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "ALCIS Neuro – Type C(3,5)", length: 2, separation: 3.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "ALCIS Neuro – Type C(4)", length: 2, separation: 4, diameter: 0.8 },
+            { implantationType: "SEEG", make: "ALCIS Neuro – Type E (haute résolution)", length: 1, separation: 2, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", length: 2, separation: 1.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "NeuroOne – EVO® sEEG", length: 2, separation: 3.2, diameter: 0.8 },
+            { implantationType: "SEEG", make: "PMT Corporation", length: 2, separation: 3.5, diameter: 0.8 },
+            { implantationType: "SEEG", make: "Ad-Tech Médical", length: 1.3, separation: 5, diameter: 0.86 },
+            { implantationType: "SEEG", make: "Ad-Tech Médical", length: 1.3, separation: 10, diameter: 0.86 }
         ] as ElectrodeOption[];
-        return new Map(options.map(opt => [opt.implantationType + ' | ' + opt.make + ' | diameter: ' + opt.diameter + 'mm | separation: ' + opt.separation + 'mm | lenght: ' + opt.lenght + 'mm', opt]));
+        return new Map(options.map(opt => [opt.implantationType + ' | ' + opt.make + ' | diameter: ' + opt.diameter + 'mm | separation: ' + opt.separation + 'mm | length: ' + opt.length + 'mm', opt]));
     }
     const ElectrodeOptions = getElectrodeOptions();
 
@@ -374,7 +374,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                         form.setFieldValue('stimulation_parameters.electrode_make', option.make);
                                         form.setFieldValue('stimulation_parameters.contact_diameter', option.diameter);
                                         form.setFieldValue('stimulation_parameters.contact_separation', option.separation);
-                                        form.setFieldValue('stimulation_parameters.contact_length', option.lenght);
+                                        form.setFieldValue('stimulation_parameters.contact_length', option.length);
                                     }
                                 }}
                             />
@@ -583,7 +583,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
     )
 }
 
-interface ElectrodeOption { implantationType: "SEEG" | "Grids", make: string, diameter: number, separation: number, lenght: number }
+interface ElectrodeOption { implantationType: "SEEG" | "Grids", make: string, diameter: number, separation: number, length: number }
 
 export interface CreateEditResultFormValues {
     roi: {
