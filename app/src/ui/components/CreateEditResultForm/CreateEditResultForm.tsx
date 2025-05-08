@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Box, Group, Button, NativeSelect, NumberInput, Switch, Textarea, Tabs, rem, Radio, Stack, Divider, SelectItem, TextInput, Accordion, TabsValue, MultiSelect, ActionIcon } from "@mantine/core"
-import { useForm } from '@mantine/form';
+import { FormErrors, useForm } from '@mantine/form';
 import { ResultDdo } from "../../models/ResultDdo";
 import { IconTargetArrow, IconSettingsBolt, IconReportMedical, IconChartPie, IconSubtask, IconMathFunction, IconX } from "@tabler/icons-react";
 import { ROIDdo } from "../../models/ROIDdo";
@@ -82,11 +82,14 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
             comments_2: edit_result && edit_result.comments_2 != null ? edit_result.comments_2 : "",
             clinical_semiology: edit_result && edit_result.clinical_semiology != null ? edit_result.clinical_semiology : "",
         } as CreateEditResultFormValues,
+        validate: {
+            stimulation_parameters: {
+                implantation_type: (value) => value === '' ? "Please select one" : null,
+                epi_zone: (value) => value === '' ? "Please select one" : null,
+            }
+        },
+        validateInputOnBlur: true,
     });
-
-    const handleSubmit = (values: CreateEditResultFormValues) => {
-        onSubmit(values);
-    }
 
     // Frequency
     const handleFrequencyMinChanged = (newMin: number) => {
@@ -170,10 +173,40 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         }
     }, [form.values])
 
+    const handleSubmit = (values: CreateEditResultFormValues) => {
+        onSubmit(values);
+    }
+
+    const handleValidationFailure = (errors: FormErrors, values: CreateEditResultFormValues) => {
+        if (errors.length === 0) {
+            return;
+        }
+        console.debug(errors);
+        const errorKeys = Object.keys(errors);
+        if (errorKeys.some(k=>k.startsWith("stimulation_parameters"))) {
+            setSelectedTab('parameters');
+        }
+        else if (errorKeys.some(k=>k.startsWith("task"))) {
+            setSelectedTab('task');
+        }
+        else if (errorKeys.some(k=>k.startsWith("function"))) {
+            setSelectedTab('function');
+        }
+        else if (errorKeys.some(k=>k.startsWith("roi"))) {
+            setSelectedTab('roi');
+        }
+        else if (errorKeys.some(k=>k.startsWith("effect"))) {
+            setSelectedTab('effect');
+        }
+        else {
+            setSelectedTab('details');
+        }
+    }
+
     const iconStyle = { width: rem(12), height: rem(12) };
     return (
         <Box>
-            <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+            <form onSubmit={form.onSubmit((values, event) => handleSubmit(values), (errors, values) => handleValidationFailure(errors, values))}>
                 <Tabs value={selectedTab} onTabChange={handleTabChange} >
                     <Group position="apart" align='start' w={"100%"} spacing={"md"} noWrap>
                         <Tabs.List grow w={"85%"}>
@@ -350,14 +383,15 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         </Group>
                         <Group position="left">
                             <Radio.Group
-                                label="In épileptogenic zone ?"
+                                label="In epileptogenic zone ?"
+                                required
                                 {...form.getInputProps('stimulation_parameters.epi_zone')}
                             >
                                 <Group mt="xs">
                                     <Radio value="yes" label="Yes" disabled={!form.values.stimulation_parameters.stated} />
                                     <Radio value="no" label="No" disabled={!form.values.stimulation_parameters.stated} />
                                     <Radio value="unknown" label="Unknown" disabled={!form.values.stimulation_parameters.stated} />
-                                    <Radio value="" label="Not stated" disabled={!form.values.stimulation_parameters.stated} />
+                                    <Radio value="not_stated" label="Not stated" disabled={!form.values.stimulation_parameters.stated} />
                                 </Group>
                             </Radio.Group>
                             <TextInput
@@ -384,12 +418,13 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             <Group position="apart" spacing={"sm"}>
                                 <Radio.Group
                                     label="Implentation type"
+                                    required
                                     {...form.getInputProps('stimulation_parameters.implantation_type')}
                                 >
                                     <Group mt="xs">
                                         <Radio value="SEEG" label="SEEG" />
                                         <Radio value="Grids" label="Grids" />
-                                        <Radio value="" label="N/A" />
+                                        <Radio value="N/A" label="N/A" />
                                     </Group>
                                 </Radio.Group>
                                 <TextInput
