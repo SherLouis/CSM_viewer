@@ -86,6 +86,9 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
             stimulation_parameters: {
                 implantation_type: (value) => value === '' ? "Please select one" : null,
                 epi_zone: (value) => value === '' ? "Please select one" : null,
+            },
+            roi: {
+                side: (value) => value === '' ? "Please select one" : null,
             }
         },
         validateInputOnBlur: true,
@@ -498,12 +501,13 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                     <Tabs.Panel value="roi" mx={"sm"}>
                         <Radio.Group
                             label="Side"
+                            required
                             {...form.getInputProps('roi.side')}
                         >
                             <Group mt="xs">
                                 <Radio value="left" label="Left" />
                                 <Radio value="right" label="Right" />
-                                <Radio value="" label="Not stated" />
+                                <Radio value="not_stated" label="Not stated" />
                             </Group>
                         </Radio.Group>
 
