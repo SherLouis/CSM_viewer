@@ -89,6 +89,11 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
             },
             roi: {
                 side: (value) => value === '' ? "Please select one" : null,
+            },
+            effect: {
+                post_discharge: (value) => value === '' ? "Please select one" : null,
+                lateralization: (value) => value === '' ? "Please select one" : null,
+                dominant: (value) => value === '' ? "Please select one" : null,
             }
         },
         validateInputOnBlur: true,
@@ -184,21 +189,20 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
         if (errors.length === 0) {
             return;
         }
-        console.debug(errors);
         const errorKeys = Object.keys(errors);
-        if (errorKeys.some(k=>k.startsWith("stimulation_parameters"))) {
+        if (errorKeys.some(k => k.startsWith("stimulation_parameters"))) {
             setSelectedTab('parameters');
         }
-        else if (errorKeys.some(k=>k.startsWith("task"))) {
+        else if (errorKeys.some(k => k.startsWith("task"))) {
             setSelectedTab('task');
         }
-        else if (errorKeys.some(k=>k.startsWith("function"))) {
+        else if (errorKeys.some(k => k.startsWith("function"))) {
             setSelectedTab('function');
         }
-        else if (errorKeys.some(k=>k.startsWith("roi"))) {
+        else if (errorKeys.some(k => k.startsWith("roi"))) {
             setSelectedTab('roi');
         }
-        else if (errorKeys.some(k=>k.startsWith("effect"))) {
+        else if (errorKeys.some(k => k.startsWith("effect"))) {
             setSelectedTab('effect');
         }
         else {
@@ -527,33 +531,36 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                         <Divider />
                         <Radio.Group
                             label="Post discharge ?"
+                            required
                             {...form.getInputProps('effect.post_discharge')}
                         >
                             <Group mt="xs">
                                 <Radio value="yes" label="Yes" />
                                 <Radio value="no" label="No" />
-                                <Radio value="" label="Not stated" />
+                                <Radio value="not_stated" label="Not stated" />
                             </Group>
                         </Radio.Group>
                         <Radio.Group
                             label="Lateralization"
+                            required
                             {...form.getInputProps('effect.lateralization')}
                         >
                             <Group mt="xs">
                                 <Radio value="ipsilateral" label="Ipsilateral" />
                                 <Radio value="non-lateralizable" label="Non-lateralizable" />
                                 <Radio value="contralateral" label="Contralateral" />
-                                <Radio value="" label="Not stated" />
+                                <Radio value="not_stated" label="Not stated" />
                             </Group>
                         </Radio.Group>
                         <Radio.Group
                             label="Dominance"
+                            required
                             {...form.getInputProps('effect.dominant')}
                         >
                             <Group mt="xs">
                                 <Radio value="dominant" label="Dominant" />
                                 <Radio value="non-dominant" label="Non-dominant" />
-                                <Radio value="" label="Not stated" />
+                                <Radio value="not_stated" label="Not stated" />
                             </Group>
                         </Radio.Group>
 
