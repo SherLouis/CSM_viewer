@@ -285,7 +285,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             />
                             <Switch
                                 size="lg"
-                                label="Variable (incremental)"
+                                label="Variable intensity (incremental)"
                                 labelPosition="left"
                                 onLabel="Yes"
                                 offLabel="No"
@@ -596,7 +596,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                             <Button
                                 variant={form.values.complement_parameters ? "filled" : "default"}
                                 onClick={() => form.setFieldValue('complement_parameters', !form.values.complement_parameters)}>
-                                {"Complement parameters"}
+                                {"None (Complement parameters)"}
                             </Button>
                             <NumberInput
                                 label="Complement parameters for result ID"
