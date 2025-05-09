@@ -37,6 +37,7 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                 frequency_multiple: edit_result && edit_result.stimulation_parameters.frequency_multiple != null ? edit_result.stimulation_parameters.frequency_multiple : "",
                 duration_s: edit_result && edit_result.stimulation_parameters.duration_s != null ? edit_result.stimulation_parameters.duration_s : 0,
                 duration_s_max: edit_result && edit_result.stimulation_parameters.duration_s_max != null ? edit_result.stimulation_parameters.duration_s_max : 0,
+                duration_variable: edit_result && edit_result.stimulation_parameters.duration_variable != null ? edit_result.stimulation_parameters.duration_variable : false,
                 duration_multiple: edit_result && edit_result.stimulation_parameters.duration_multiple != null ? edit_result.stimulation_parameters.duration_multiple : "",
                 electrode_make: edit_result && edit_result.stimulation_parameters.electrode_make != null ? edit_result.stimulation_parameters.electrode_make : "",
                 implantation_type: edit_result && edit_result.stimulation_parameters.implantation_type != null ? edit_result.stimulation_parameters.implantation_type : "",
@@ -347,8 +348,17 @@ export const CreateEditResultForm = ({ onSubmit, onCancel, edit_result, rois, ef
                                 onChange={(value) => handleDurationMaxChanged(value === "" ? 0 : value)}
                                 disabled={!form.values.stimulation_parameters.stated}
                             />
+                            <Switch
+                                size="lg"
+                                label="Variable duration (incremental)"
+                                labelPosition="left"
+                                onLabel="Yes"
+                                offLabel="No"
+                                {...form.getInputProps('stimulation_parameters.duration_variable', { type: 'checkbox' })}
+                            />
                             <TextInput
                                 label="Multiple durations"
+                                disabled={!form.values.stimulation_parameters.duration_variable}
                                 {...form.getInputProps('stimulation_parameters.duration_multiple')}
                             />
                         </Group>
@@ -652,6 +662,7 @@ export interface CreateEditResultFormValues {
         frequency_multiple: string,
         duration_s: number,
         duration_s_max: number,
+        duration_variable: boolean,
         duration_multiple: string,
         implantation_type: string,
         electrode_make: string,

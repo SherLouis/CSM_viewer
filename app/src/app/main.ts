@@ -141,7 +141,10 @@ class Main {
         if (!value.canceled && value.filePaths.length > 0) {
           mergeWithOtherDbLocation = value.filePaths[0];
           // Select where to save result
-          dialog.showSaveDialog(this.mainWindow, { title: "Save merge result as", filters: [{ "name": "SQL database files", "extensions": ["db", "sqlite"] }] })
+          dialog.showSaveDialog(this.mainWindow, {
+            title: "Save merge result as",
+            filters: [{ "name": "SQL database files", "extensions": ["db", "sqlite"] }]
+          })
             .then((value) => {
               if (!value.canceled) {
                 resultDbLocation = value.filePath;

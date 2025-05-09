@@ -21,6 +21,7 @@ export type ResultDto = {
         frequency_multiple: string,
         duration_s: number,
         duration_s_max: number,
+        duration_variable: boolean,
         duration_multiple: string,
         electrode_make: string,
         implantation_type: string,
