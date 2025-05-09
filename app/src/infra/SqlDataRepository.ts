@@ -143,55 +143,64 @@ export default class SqlDataRepository implements IDataRepository {
                         details_age_limits_max INTEGER,
                         details_age_limits_avg INTEGER
                     );`;
+
             const createResultsTableStmt = `
-                    CREATE TABLE IF NOT EXISTS Results (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        source_id INTEGER NOT NULL,
-                        roi_side TEXT,
-                        roi_description TEXT,
-                        roi_mask TEXT,
-                        roi_mask_conversion_method TEXT,
-                        stim_params_stated INTEGER,
-                        stim_amp_ma_min REAL,
-                        stim_amp_ma_max REAL,
-                        stim_amp_ma_avg REAL,
-                        stim_freq INTEGER,
-                        stim_freq_max INTEGER,
-                        stim_duration INTEGER,
-                        stim_duration_max INTEGER,
-                        stim_implantation_type TEXT,
-                        stim_electrode_make TEXT,
-                        stim_contact_separation INTEGER,
-                        stim_contact_diameter INTEGER,
-                        stim_contact_length INTEGER,
-                        stim_phase_length REAL,
-                        stim_phase_type TEXT,
-                        stim_epi_zone TEXT,
-                        stim_epi_zone_comments TEXT,
-                        effect_class TEXT,
-                        effect_descriptor TEXT,
-                        effect_details TEXT,
-                        effect_post_discharge INTEGER,
-                        effect_lateralization TEXT,
-                        effect_dominant TEXT,
-                        effect_body_part TEXT,
-                        effect_comments TEXT,
-                        task_category TEXT,
-                        task_subcategory TEXT,
-                        task_characteristic TEXT,
-                        task_comments TEXT,
-                        function_category TEXT,
-                        function_subcategory TEXT,
-                        function_characteristic TEXT,
-                        function_stated INTEGER,
-                        function_comments TEXT,
-                        occurrence_clinical_effect INTEGER,
-                        comments TEXT,
-                        comments_2 TEXT,
-                        nb_stimulations REAL,
-                        clinical_semiology TEXT,
-                        source_db TEXT
-                    );`;
+            CREATE TABLE IF NOT EXISTS Results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_id INTEGER NOT NULL,
+                roi_side TEXT,
+                roi_description TEXT,
+                roi_mask TEXT,
+                roi_mask_conversion_method TEXT,
+                stim_params_stated INTEGER,
+                stim_amp_ma_min REAL,
+                stim_amp_ma_max REAL,
+                stim_amp_ma_avg REAL,
+                stim_amplitude_variable INTEGER,
+                stim_freq INTEGER,
+                stim_freq_max INTEGER,
+                stim_frequency_multiple TEXT,
+                stim_duration INTEGER,
+                stim_duration_max INTEGER,
+                stim_duration_multiple TEXT,
+                stim_implantation_type TEXT,
+                stim_electrode_make TEXT,
+                stim_contact_separation INTEGER,
+                stim_contact_diameter INTEGER,
+                stim_contact_length INTEGER,
+                stim_phase_length REAL,
+                stim_phase_length_multiple TEXT,
+                stim_phase_type TEXT,
+                stim_epi_zone TEXT,
+                stim_epi_zone_comments TEXT,
+                effect_class TEXT,
+                effect_descriptor TEXT,
+                effect_details TEXT,
+                effect_post_discharge INTEGER,
+                effect_lateralization TEXT,
+                effect_dominant TEXT,
+                effect_body_part TEXT,
+                effect_comments TEXT,
+                task_category TEXT,
+                task_subcategory TEXT,
+                task_characteristic TEXT,
+                task_comments TEXT,
+                function_category TEXT,
+                function_subcategory TEXT,
+                function_characteristic TEXT,
+                function_stated INTEGER,
+                function_comments TEXT,
+                occurrence_clinical_effect INTEGER,
+                nb_stimulations REAL,
+                occurrence_ns INTEGER,
+                complement_parameters INTEGER,
+                complement_parameters_result_id INTEGER,
+                occurrence_responsive_rate INTEGER,
+                comments TEXT,
+                comments_2 TEXT,
+                clinical_semiology TEXT,
+                source_db TEXT
+            );`;
             resultDb.prepare(createSourcesTableStmt).run();
             resultDb.prepare(createResultsTableStmt).run();
 
@@ -203,7 +212,7 @@ export default class SqlDataRepository implements IDataRepository {
             // Insert sources from database A into database C
             const insertSource = resultDb.prepare(`
         INSERT INTO Sources (author, date, publisher, doi, title, cohort, state, validity_roi_nomenclature, validity_null_effects, validity_sham_stimulation, validity_control_for_after_discharge, validity_response_charact_cat_methodology, validity_response_charact_replicability_of_response, validity_response_charact_dose_responsiveness, validity_response_charact_dissection_of_response, details_paper_role_cartography_sec_only, details_paper_role_cartography_sec_compare_to_other_techniques, details_paper_role_research_technical_parameters_sec, details_paper_role_research_cognitive_functions, details_age_limits_min, details_age_limits_max, details_age_limits_avg)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
             const sourcesA = this.db.prepare('SELECT * FROM Sources').all() as SourceEntity[];
@@ -235,8 +244,8 @@ export default class SqlDataRepository implements IDataRepository {
             // Prepare to insert Results into result database
             const insertResult = resultDb.prepare(`
         INSERT INTO Results 
-        (source_id, roi_side, roi_description, roi_mask, roi_mask_conversion_method, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_freq, stim_freq_max, stim_duration, stim_duration_max, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_stated, function_comments, occurrence_clinical_effect, nb_stimulations, occurrence_ns, complement_parameters, complement_parameters_result_id, occurrence_responsive_rate, comments, comments_2, clinical_semiology, source_db)
-        Values (@source_id, @roi_side, @roi_description, @roi_mask, roi_mask_conversion_method, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_freq, @stim_freq_max, @stim_duration, @stim_duration_max, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_stated, @function_comments, @occurrence_clinical_effect, @nb_stimulations, @occurrence_ns, @complement_parameters, @complement_parameters_result_id, @occurrence_responsive_rate, @comments, @comments_2, @clinical_semiology, @source_db)
+        (source_id, roi_side, roi_description, roi_mask, roi_mask_conversion_method, stim_params_stated, stim_amp_ma_min, stim_amp_ma_max, stim_amp_ma_avg, stim_amplitude_variable, stim_freq, stim_freq_max, stim_frequency_multiple, stim_duration, stim_duration_max, stim_duration_multiple, stim_implantation_type, stim_electrode_make, stim_contact_separation, stim_contact_diameter, stim_contact_length, stim_phase_length, stim_phase_length_multiple, stim_phase_type, stim_epi_zone, stim_epi_zone_comments, effect_class, effect_descriptor, effect_details, effect_post_discharge, effect_lateralization, effect_dominant, effect_body_part, effect_comments, task_category, task_subcategory, task_characteristic, task_comments, function_category, function_subcategory, function_characteristic, function_stated, function_comments, occurrence_clinical_effect, nb_stimulations, occurrence_ns, complement_parameters, complement_parameters_result_id, occurrence_responsive_rate, comments, comments_2, clinical_semiology, source_db)
+        Values (@source_id, @roi_side, @roi_description, @roi_mask, @roi_mask_conversion_method, @stim_params_stated, @stim_amp_ma_min, @stim_amp_ma_max, @stim_amp_ma_avg, @stim_amplitude_variable, @stim_freq, @stim_freq_max, @stim_frequency_multiple, @stim_duration, @stim_duration_max, @stim_duration_multiple, @stim_implantation_type, @stim_electrode_make, @stim_contact_separation, @stim_contact_diameter, @stim_contact_length, @stim_phase_length, @stim_phase_length_multiple, @stim_phase_type, @stim_epi_zone, @stim_epi_zone_comments, @effect_class, @effect_descriptor, @effect_details, @effect_post_discharge, @effect_lateralization, @effect_dominant, @effect_body_part, @effect_comments, @task_category, @task_subcategory, @task_characteristic, @task_comments, @function_category, @function_subcategory, @function_characteristic, @function_stated, @function_comments, @occurrence_clinical_effect, @nb_stimulations, @occurrence_ns, @complement_parameters, @complement_parameters_result_id, @occurrence_responsive_rate, @comments, @comments_2, @clinical_semiology, @source_db)
         `);
             // Merge Results from database A
             const resultsA = this.db.prepare('SELECT * FROM Results').all() as ReadResultEntity[];
@@ -273,6 +282,7 @@ export default class SqlDataRepository implements IDataRepository {
 
         catch (error) {
             console.error('Error merging databases');
+            console.error(error);
             return false;
         }
     }

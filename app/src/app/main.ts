@@ -91,6 +91,9 @@ class Main {
       .then((value) => {
         if (!value.canceled) {
           let dbLocation = value.filePath;
+          if (!dbLocation.endsWith('.db') && !dbLocation.endsWith('.sqlite')) {
+            dbLocation = dbLocation + '.sqlite';
+          }
           let okChangedDb = this.dataRepository.setDbLocation(dbLocation);
           if (okChangedDb) {
             this.setNewDbLocation(dbLocation);
@@ -109,6 +112,9 @@ class Main {
       .then((value) => {
         if (!value.canceled) {
           let dbLocation = value.filePath;
+          if (!dbLocation.endsWith('.db') && !dbLocation.endsWith('.sqlite')) {
+            dbLocation = dbLocation + '.sqlite';
+          }
           let okMigratedDb = this.dataRepository.migrateDb(dbLocation);
           if (okMigratedDb) {
             this.setNewDbLocation(dbLocation);
@@ -139,6 +145,9 @@ class Main {
             .then((value) => {
               if (!value.canceled) {
                 resultDbLocation = value.filePath;
+                if (!resultDbLocation.endsWith('.db') && !resultDbLocation.endsWith('.sqlite')) {
+                  resultDbLocation = resultDbLocation + '.sqlite';
+                }
                 // Merge databases and change db location to result location
                 const okMerged = this.dataRepository.mergeWith(mergeWithOtherDbLocation, resultDbLocation);
                 if (okMerged) {
